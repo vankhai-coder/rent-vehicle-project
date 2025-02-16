@@ -1,24 +1,15 @@
 import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema(
-    {
-        title: {
-            type: String,
-            required: true,
-        },
-        content: {
-            type: String,
-            required: true,
-        },
-        author: {
-            type: mongoose.Schema.Types.ObjectId,  
-            ref: "Author",  
-            required: true,
-        },
-    },
-    { timestamps: true } 
+  {
+    image: { type: String, required: true }, // Image URL or file path
+    title: { type: String, required: true }, // Post title
+    content: { type: String, required: true }, // Post content
+    heart: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Users who liked the post
+    inProvince: { type: String, required: true } // Province where the post is relevant
+  },
+  { timestamps: true }
 );
 
 const Post = mongoose.model("Post", postSchema);
-
 export default Post;
