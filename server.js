@@ -26,11 +26,7 @@ app.get('/', (req, res) => {
     res.json({ message: "app running success!" })
 })
 
-// author routes : 
-// app.use('/author' , authorRoutes )
-
-// post routes : 
-// app.use('/post' , postRoutes )
+// customer route : 
 
 
 // listen port : 
