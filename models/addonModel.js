@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const addonSchema = new mongoose.Schema(
   {
-    image: { type: String }, // Store URL or file path
+    image: { type: String, required: true }, 
     name: { type: String, required: true }
   },
   { timestamps: true }
