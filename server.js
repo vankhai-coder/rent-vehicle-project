@@ -2,7 +2,8 @@ import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
 import { connectDB } from './config/db.js'
-
+// import routes : 
+import authRoutes from './routes/auth/authRoute.js'
 // init app : 
 const app = express()
 // port : 
@@ -24,3 +25,6 @@ app.listen(PORT, (req, res) => {
 app.get('/', (req, res) => {
     res.json({ message: "app running success!" })
 })
+
+// authentication routes : 
+app.use('/user' , authRoutes )
