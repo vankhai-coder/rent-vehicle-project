@@ -20,18 +20,51 @@ export const register = async (req, res) => {
         }
         // if create success : 
         // generate jwt : 
-        const token = jwt.sign({ userId: newUser._id, role: newUser.role }, process.env.JWT_SECRET_KEY)
+        const token = jwt.sign({ userId: newUser._id, role: newUser.role }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" })
         // set cookie : 
         res.cookie('jwt_token', token, {
-            maxAge: 1 * 24 * 60 * 60 * 1000 , // 1 day , 
+            maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day , 
             httpOnly: true,
-            sameSite: 'Strict' ,
+            sameSite: 'Strict',
         })
         // response
-        return res.status(201).json({ error: false, message: 'User register successfully!' })
+        return res.status(200).json({ error: false, message: 'User register successfully!' })
 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ error: true, message: 'Internal Server Error!' })
+    }
+}
+
+export const login = async (req, res) => {
+    try {
+        const { username, password } = req.body
+        // check required : 
+        if (!username || !password) {
+            return res.status(400).json({ error: true, message: "All fields required!" })
+        }
+        // check username exist : 
+        const user = await User.findOne({ username })
+        if (!user) {
+            return res.status(400).json({ error: true, message: "Invalid credential!" })
+        }
+        // check if password correct : 
+        const passwordCorrect = await user.isPasswordCorrect(password)
+        if (!passwordCorrect) {
+            return res.status(400).json({ error: true, message: "Invalid credential!" })
+        }
+        // generate jwt : 
+        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" })
+        // set cookie : 
+        res.cookie('jwt_token', token, {
+            maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day , 
+            httpOnly: true,
+            sameSite: 'Strict',
+        })
+        // response
+        return res.status(201).json({ error: false, message: 'Log in successfully!' })
+    } catch (error) {
+        console.log("error in login : ", error.message);
         return res.status(500).json({ error: true, message: 'Internal Server Error!' })
     }
 }

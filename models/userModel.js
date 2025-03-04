@@ -38,6 +38,11 @@ userSchema.pre('save', async function (next) {
     }
 })
 
+// instance method for compare password : 
+userSchema.methods.isPasswordCorrect = async function (enterdPassword) {
+    return  bcrypt.compare(enterdPassword, this.password)
+}
+
 // create model : 
 const User = mongoose.model("User", userSchema);
 export default User;
