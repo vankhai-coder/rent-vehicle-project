@@ -17,8 +17,8 @@ const userSchema = new mongoose.Schema(
         image: { type: String }, // Store URL or file path
         isBanned: { type: Boolean, default: false },
         role: { type: String, enum: ["customer", "admin", "owner"], required: true, default: 'customer' },
-        driverLicencs: [{ type: String }], // Array of driver license images or numbers
-        identityCard: [{ type: String }]   // Array of identity card images or numbers
+        driverLicencs: [{ url: String}],
+        identityCard: [{ url: String }]
     },
     { timestamps: true }
 );
@@ -39,9 +39,15 @@ userSchema.pre('save', async function (next) {
 })
 
 // instance method for compare password : 
-userSchema.methods.isPasswordCorrect = async function (enterdPassword) {
-    return  bcrypt.compare(enterdPassword, this.password)
-}
+userSchema.methods.isPasswordCorrect = async function (enteredPassword) {
+    try {
+        return await bcrypt.compare(enteredPassword, this.password);
+    } catch (error) {
+        console.error("Error comparing password: ", error);
+        return false;
+    }
+};
+
 
 // create model : 
 const User = mongoose.model("User", userSchema);

@@ -16,7 +16,11 @@ const motobikeSchema = new mongoose.Schema(
         },
         storeLocation: { type: mongoose.Schema.Types.ObjectId, ref: "StoreLocation", required: true },
         isAvailable: { type: Boolean, default: true },
-        pricePerDay: { type: Number, required: true } 
+        pricePerDay: { 
+            type: Number, 
+            required: true,
+            min: [1, "Price per day must be at least 1"]
+        }
     },
     { timestamps: true }
 );
