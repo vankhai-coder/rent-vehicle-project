@@ -1,26 +1,43 @@
-import { uploadImage } from "../../utils/cloudinary.js"
-import AddOn from '../../models/addonModel.js'
+import AddOn from '../../models/addonModel.js';
+import cloudinary from '../../config/cloudinary.js';
 
 export const createAddOn = async (req, res) => {
     try {
-        // get name from req.body : 
-        const { name } = req.body
-        if (!name) {
-            return res.status(400).json({ error: true, message: 'Name Add On is required!' })
-        }
-        // check if name already exist in db : 
-        const existAddOnName = await AddOn.findOne({ name })
-        if (existAddOnName) {
-            return res.status(400).json({ error: true, message: 'Name already exist!' })
-        }
-        // upload image : 
-      
-        // save to db : 
-       
-        // response : 
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: false, message: 'Error when create Add On!' })
+        const { name, image } = req.body;
 
+        // Validate input
+        if (!name || !image) {
+            return res.status(400).json({ error: true, message: 'Name and image are required!' });
+        }
+
+        // Check if name already exists in DB
+        const existAddOn = await AddOn.findOne({ name });
+        if (existAddOn) {
+            return res.status(400).json({ error: true, message: 'Name already exists!' });
+        }
+
+        // Ensure image is a Base64 string
+        if (!image.startsWith('data:image')) {
+            return res.status(400).json({ error: true, message: 'Invalid image format!' });
+        }
+
+        // Upload Base64 image to Cloudinary
+        const result = await cloudinary.uploader.upload(image, {
+            folder: 'rent_moto_project',
+            resource_type: 'auto',  // Automatically detect file type
+        });
+
+        // Save to DB
+        const newAddOn = await AddOn.create({ name, image: result.secure_url });
+
+        // Respond with created add-on
+        return res.status(201).json({
+            error: false,
+            message: 'Add-On created successfully!',
+            data: newAddOn
+        });
+    } catch (error) {
+        console.error('Error creating Add-On:', error);
+        return res.status(500).json({ error: true, message: 'Server error while creating Add-On!' });
     }
-}
+};
