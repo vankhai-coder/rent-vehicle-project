@@ -14,11 +14,17 @@ const userSchema = new mongoose.Schema(
         commute: { type: String },
         district: { type: String },
         province: { type: String },
-        image: { type: String }, // Store URL or file path
+        image: { type: String }, 
         isBanned: { type: Boolean, default: false },
         role: { type: String, enum: ["customer", "admin", "owner"], required: true, default: 'customer' },
-        driverLicencs: [{ url: String}],
-        identityCard: [{ url: String }]
+        driverLicencs: {
+            before: { type: String },
+            after: { type: String }
+        },
+        identityCard: {
+            before: { type: String },
+            after: { type: String }
+        }
     },
     { timestamps: true }
 );

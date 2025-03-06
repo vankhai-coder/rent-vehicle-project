@@ -54,3 +54,41 @@ export const createMotobikeType = async (req, res) => {
         return res.status(500).json({ error: true, message: "Server error while creating motobike type!" });
     }
 };
+
+export const getAllMotobikeTypes = async (req, res) => {
+    try {
+        // Retrieve all motorbike types from the database
+        const motobikeTypes = await MotobikeType.find();
+
+        return res.status(200).json({ error : false , data: motobikeTypes });
+    } catch (error) {
+        console.error("Error in getAllMotobikeTypes:", error);
+        return res.status(500).json({ error: true, message: "Server Error" });
+    }
+};
+
+export const updateMotobikeType = async (req, res) => {
+    try {
+         // only admin and owner can update : 
+         if(req.user.role !=='admin' && req.user.role !=='owner'){
+            return res.status(401).json({ error: true, message: "Unauthorizied , can not access this route!" });
+        }
+        const { id } = req.params; // Get ID from the request params
+
+        const updatedMotobikeType = await MotobikeType.findByIdAndUpdate(
+            id,
+            { $set: req.body }, // Update only provided fields
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedMotobikeType) {
+            return res.status(404).json({ error: true, message: "Motobike Type not found" });
+        }
+
+        return res.status(200).json({ success: true, data: updatedMotobikeType });
+    } catch (error) {
+        console.error("Error in updateMotobikeType:", error);
+        return res.status(500).json({ error: true, message: "Server Error" });
+    }
+};
+

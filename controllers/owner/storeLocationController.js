@@ -3,8 +3,8 @@ import StoreLocation from "../../models/storeLocationModel.js";
 
 export const createStoreLocation = async (req, res) => {
     try {
-         // only owner can create : 
-         if(req.user.role !=='owner'){
+        // only owner can create : 
+        if (req.user.role !== 'owner') {
             return res.status(401).json({ error: true, message: "Unauthorizied , can not access this route!" });
         }
         const { province, district, commune, address } = req.body;
@@ -49,6 +49,33 @@ export const createStoreLocation = async (req, res) => {
     } catch (error) {
         console.error("Error creating store location:", error);
         return res.status(500).json({ error: true, message: "Server error while creating store location!" });
+    }
+};
+
+export const getAllStoreLocationsOfEachOwner = async (req, res) => {
+    try {
+        let filter = {};
+
+        if (req.user.role === "owner") {
+            // Owners can only retrieve their own store locations
+            filter.owner = req.user.userId;
+        } else if (req.user.role === "admin") {
+            // Admins can retrieve store locations of any owner (by ownerId from request params)
+            if (!req.params.ownerId) {
+                return res.status(400).json({ error: true, message: "Owner ID is required" });
+            }
+            filter.owner = req.params.ownerId;
+        } else {
+            return res.status(401).json({ error: true, message: "Unauthorized to access this route!" });
+        }
+
+        // Retrieve store locations based on the filter
+        const storeLocations = await StoreLocation.find(filter);
+
+        return res.status(200).json({ success: true, data: storeLocations });
+    } catch (error) {
+        console.error("Error in getAllStoreLocationsOfEachOwner:", error);
+        return res.status(500).json({ error: true, message: "Server Error" });
     }
 };
 
