@@ -10,12 +10,15 @@ import { connectDB } from './config/db.js'
 import authRoutes from './routes/auth/authRoute.js'
 import addOnRoutes from './routes/owner/addOnRoute.js'
 import storeLocationRoutes from './routes/owner/storeLocationRoute.js'
+import motobikeTypeRoutes from './routes/owner/motobikeTypeRoute.js'
+import motobikeRoutes from './routes/owner/motobikeRoutes.js'
+
 // init app : 
 const app = express()
 
 // middleware : 
 app.use(express.json())
-app.use(urlencoded({extended : true}))
+app.use(urlencoded({ extended: true }))
 app.use(cookieParser())
 
 // log request : 
@@ -42,6 +45,7 @@ app.get('/api', (req, res) => {
 app.use('/api/auth', authRoutes)
 
 // OWNER ROUTES : 
-// Add On routes : 
-app.use('/api/owner/add-on' , addOnRoutes )
-app.use('/api/owner/store-location' , storeLocationRoutes )
+app.use('/api/owner/add-on', addOnRoutes)
+app.use('/api/owner/store-location', storeLocationRoutes)
+app.use('/api/owner/motobike-type', motobikeTypeRoutes)
+app.use('/api/owner/motobike', motobikeRoutes)

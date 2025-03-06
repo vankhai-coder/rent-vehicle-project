@@ -1,9 +1,12 @@
 import User from "../../models/userModel.js";
-import mongoose from "mongoose";
 import StoreLocation from "../../models/storeLocationModel.js";
 
 export const createStoreLocation = async (req, res) => {
     try {
+         // only owner can create : 
+         if(req.user.role !=='owner'){
+            return res.status(401).json({ error: true, message: "Unauthorizied , can not access this route!" });
+        }
         const { province, district, commune, address } = req.body;
         const { userId } = req.user; // Extract userId from req.user
 
@@ -11,12 +14,6 @@ export const createStoreLocation = async (req, res) => {
         if (!province || !district || !commune || !address) {
             return res.status(400).json({ error: true, message: "All fields are required!" });
         }
-
-        //  Check if userId is a valid MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ error: true, message: "Invalid User ID!" });
-        }
-
         // Check if the User exists in the database
         const userExists = await User.findById(userId);
         if (!userExists) {

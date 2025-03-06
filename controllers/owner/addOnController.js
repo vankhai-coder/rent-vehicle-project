@@ -3,6 +3,10 @@ import cloudinary from '../../config/cloudinary.js';
 
 export const createAddOn = async (req, res) => {
     try {
+         // only admin and owner can create : 
+         if(req.user.role !=='admin' && req.user.role !=='owner'){
+            return res.status(401).json({ error: true, message: "Unauthorizied , can not access this route!" });
+        }
         const { name, image } = req.body;
 
         // Validate input
@@ -13,7 +17,7 @@ export const createAddOn = async (req, res) => {
         // Check if name already exists in DB
         const existAddOn = await AddOn.findOne({ name });
         if (existAddOn) {
-            return res.status(400).json({ error: true, message: 'Name already exists!' });
+            return res.status(400).json({ error: true, message: 'Add on name already exists!' });
         }
 
         // Ensure image is a Base64 string
@@ -23,7 +27,7 @@ export const createAddOn = async (req, res) => {
 
         // Upload Base64 image to Cloudinary
         const result = await cloudinary.uploader.upload(image, {
-            folder: 'rent_moto_project',
+            folder: 'rent_moto_project/add_ons',
             resource_type: 'auto',  // Automatically detect file type
         });
 

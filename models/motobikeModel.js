@@ -7,17 +7,17 @@ const motobikeSchema = new mongoose.Schema(
         motobikeType: { type: mongoose.Schema.Types.ObjectId, ref: "MotobikeType", required: true },
         bookedDate: {
             type: [Date],
-            default: [] 
+            default: []
         },
         freeAddons: {
             type: [mongoose.Schema.Types.ObjectId],
             ref: 'Addon',
-            default: [] 
+            default: []
         },
         storeLocation: { type: mongoose.Schema.Types.ObjectId, ref: "StoreLocation", required: true },
         isAvailable: { type: Boolean, default: true },
-        pricePerDay: { 
-            type: Number, 
+        pricePerDay: {
+            type: Number,
             required: true,
             min: [1, "Price per day must be at least 1"]
         }
