@@ -3,6 +3,7 @@ import Booking from "../../models/bookingModel.js";
 import Feedback from "../../models/feedbackModel.js";
 import Addon from "../../models/addonModel.js";
 import MotobikeType from '../../models/motobikeTypeModel.js'
+import mongoose from "mongoose";
 
 
 export const searchMotoByListOfDates = async (req, res) => {
@@ -80,89 +81,43 @@ export const searchMotoByListOfDates = async (req, res) => {
     // ]
 };
 
-export const searchMotoByType = async (req, res) => {
+export const searchMotoBikeByType = async (req, res) => {
     try {
-        // motobikeTypeId la id 
-        const { motobikeTypeId } = req.query; // becarefulll , req.body ?
-
-        if (!motobikeTypeId) {
-            return res.status(400).json({ message: "MotobikeType ID is required" });
+      const motobikeTypeId = req.params.motobikeTypeId;
+  
+      // Find all available motobikes of the specified type
+      const motobikes = await Motobike.find({ 
+        motobikeType: motobikeTypeId, 
+        isAvailable: true 
+      }).populate([
+        { path: "storeLocation", select: "province" },
+        { path: "freeAddons", select: "name image" },
+        { path: "motobikeType", select: "name height weight image description color" }
+      ]);
+  
+      // Format the response
+      const results = motobikes.map(moto => ({
+        storeLocationProvince: moto.storeLocation.province,
+        pricePerDay: moto.pricePerDay,
+        freeAddons: moto.freeAddons.map(addon => ({
+            name: addon.name,
+            image: addon.image
+          })),
+        motobikeTypeDetails: {
+          name: moto.motobikeType.name,
+          height: moto.motobikeType.height,
+          weight: moto.motobikeType.weight,
+          image: moto.motobikeType.image,
+          description: moto.motobikeType.description,
+          color: moto.motobikeType.color
         }
-
-        // Check if the MotobikeType exists
-        const motoType = await MotobikeType.findById(motobikeTypeId);
-        if (!motoType) {
-            return res.status(404).json({ message: "MotobikeType not found" });
-        }
-
-        // Query motorbikes of this type
-        const motobikes = await Motobike.aggregate([
-            {
-                $match: { motobikeType: new mongoose.Types.ObjectId(motobikeTypeId) }
-            },
-            {
-                $lookup: {
-                    from: "storelocations",
-                    localField: "storeLocation",
-                    foreignField: "_id",
-                    as: "storeLocation"
-                }
-            },
-            { $unwind: "$storeLocation" },
-            {
-                $lookup: {
-                    from: "addons",
-                    localField: "addons",
-                    foreignField: "_id",
-                    as: "listOfAddon"
-                }
-            },
-            {
-                $lookup: {
-                    from: "feedbacks",
-                    localField: "_id",
-                    foreignField: "motobike",
-                    as: "feedbacks"
-                }
-            },
-            {
-                $group: {
-                    _id: "$storeLocation.province", // Group by province
-                    motobikeId: { $first: "$_id" },
-                    image: { $first: "$image" },
-                    province: { $first: "$storeLocation.province" },
-                    listOfAddon: { $first: "$listOfAddon.name" },
-                    pricePerDay: { $first: "$pricePerDay" },
-                    name: { $first: "$name" },
-                    numberOfFeedback: { $first: { $size: "$feedbacks" } },
-                    height: { $first: "$height" },
-                    weight: { $first: "$weight" },
-                    description: { $first: "$description" },
-                    color: { $first: "$color" }
-                }
-            },
-            {
-                $project: {
-                    _id: "$motobikeId",
-                    image: 1,
-                    province: 1,
-                    listOfAddon: 1,
-                    pricePerDay: 1,
-                    name: 1,
-                    numberOfFeedback: 1,
-                    height: 1,
-                    weight: 1,
-                    description: 1,
-                    color: 1
-                }
-            }
-        ]);
-
-        res.status(200).json(motobikes);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+      }));
+  
+      res.status(200).json(results);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
-};
+  };
 // example return of searchMotoByType funtion like above : 
 export const searchMotoByProvince = async (req, res) => {
     try {

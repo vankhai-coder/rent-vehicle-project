@@ -45,3 +45,24 @@ export const createAddOn = async (req, res) => {
         return res.status(500).json({ error: true, message: 'Server error while creating Add-On!' });
     }
 };
+
+export const getAllAddOns = async (req, res) => {
+    try {
+         // only admin and owner get all add on  : 
+         if(req.user.role !=='admin' && req.user.role !=='owner'){
+            return res.status(401).json({ error: true, message: "Unauthorizied , can not access this route!" });
+        }
+        // Fetch all add-ons from the database
+        const addOns = await AddOn.find().sort({ createdAt: -1 });
+
+        // Send response
+        return res.status(200).json({
+            error: false,
+            message: 'Add-Ons retrieved successfully!',
+            data: addOns
+        });
+    } catch (error) {
+        console.error('Error fetching Add-Ons:', error);
+        return res.status(500).json({ error: true, message: 'Server error while fetching Add-Ons!' });
+    }
+};
