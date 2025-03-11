@@ -3,18 +3,18 @@ import jwt from 'jsonwebtoken'
 
 export const register = async (req, res) => {
     try {
-        const { username, password } = req.body
-        // require username and password fields : 
-        if (!username || !password) {
+        const { email, password } = req.body
+        // require email and password fields : 
+        if (!email || !password) {
             return res.status(400).json({ error: true, message: 'All fields required!' })
         }
         // check if user exist : 
-        const existUser = await User.findOne({ username })
+        const existUser = await User.findOne({ email })
         if (existUser) {
-            return res.status(400).json({ error: true, message: 'username already exist!' })
+            return res.status(400).json({ error: true, message: 'email already exist!' })
         }
-        // if username is ok : 
-        const newUser = await User.create({ username, password })
+        // if email is ok : 
+        const newUser = await User.create({ email, password })
         if (!newUser) {
             return res.status(400).json({ error: true, message: 'Error when create new user!' })
         }
@@ -38,13 +38,13 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { username, password } = req.body
+        const { email, password } = req.body
         // check required : 
-        if (!username || !password) {
+        if (!email || !password) {
             return res.status(400).json({ error: true, message: "All fields required!" })
         }
-        // check username exist : 
-        const user = await User.findOne({ username })
+        // check email exist : 
+        const user = await User.findOne({ email })
         if (!user) {
             return res.status(400).json({ error: true, message: "Invalid credential!" })
         }
@@ -66,7 +66,7 @@ export const login = async (req, res) => {
             sameSite: 'Strict',
         })
         // response
-        return res.status(201).json({ error: false, message: 'Log in successfully!' , user })
+        return res.status(200).json({ error: false, message: 'Log in successfully!' , user })
     } catch (error) {
         console.log("error in login : ", error.message);
         return res.status(500).json({ error: true, message: 'Internal Server Error!' })

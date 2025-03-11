@@ -1,5 +1,6 @@
 import express, { urlencoded } from 'express'
 import dotenv from 'dotenv'
+
 dotenv.config()
 import cookieParser from 'cookie-parser'
 
@@ -16,6 +17,7 @@ import motobikeRoutes from './routes/owner/motobikeRoutes.js'
 
 // customer routes : 
 import customerSearchRoutes from './routes/customer/customerSearchRoutes.js'
+import customerBookingRoutes from './routes/customer/bookingRoutes.js'
 // init app : 
 const app = express()
 
@@ -55,3 +57,4 @@ app.use('/api/owner/motobike', motobikeRoutes)
 
 // CUSTOMER ROUTES : 
 app.use('/api/customer/search' , customerSearchRoutes )
+app.use('/api/customer/booking' , customerBookingRoutes )
