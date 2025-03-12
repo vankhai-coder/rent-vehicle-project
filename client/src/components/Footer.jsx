@@ -2,7 +2,11 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <div>Footer</div>
+    <div>
+    <div className='w-full h-[320px] bg-cover bg-center'
+      style={{ backgroundImage: `url('/footer.png')` }}
+    ></div>
+  </div>
   )
 }
 

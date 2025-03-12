@@ -1,14 +1,30 @@
 import Header from "./components/Header"
 import Footer from "@/components/Footer"
-import Counter from "./pages/Counter"
-
+import { Routes, Route } from "react-router-dom"
+import Home from '@/pages/Home'
+import Login from "./pages/Login"
+import Vehicle from "./pages/Vehicle"
 
 function App() {
   return (
-    <div className="md:max-w-8/12 mx-auto bg-amber-200">
-    <Header />
-    <Counter />
-    <Footer />
+    <div className="w-full h-full bg-white">
+      <div className="max-w-8/12 mx-auto ">
+
+        {/* Header :  */}
+        <Header />
+
+        {/* Routes */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/vehicle" element={<Vehicle />} />
+          {/* <Route path="/profile" element={<Profile />} /> */}
+          {/* <Route path="/post" element={<Post />} />  */}
+        </Routes>
+
+        {/* Footer :  */}
+        <Footer />
+      </div>
     </div>
   )
 }
