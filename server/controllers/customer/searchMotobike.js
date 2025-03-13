@@ -15,7 +15,7 @@ dayjs.extend(timezone);
 export const searchMotoByListOfDates = async (req, res) => {
     try {
         // Extract dates from the request body
-        const { dates } = req.body; // Array of booked dates
+        const { dates } = req.body;
 
         if (!dates || !Array.isArray(dates) || dates.length === 0) {
             return res.status(400).json({ message: "Invalid date list" });
@@ -40,7 +40,8 @@ export const searchMotoByListOfDates = async (req, res) => {
         })
             .populate("motobikeType")
             .populate("storeLocation")
-            .populate("freeAddons");
+            .populate("freeAddons")
+            .populate("owner", "_id"); // Populating owner to fetch ownerId
 
         // Use a Map to ensure one motobike type per district
         const uniqueMotobikes = new Map();
@@ -51,39 +52,31 @@ export const searchMotoByListOfDates = async (req, res) => {
             // Add only one motobike per type per district
             if (!uniqueMotobikes.has(uniqueKey)) {
                 uniqueMotobikes.set(uniqueKey, {
-                    _id: moto.motobikeType._id,
                     image: moto.motobikeType.image,
-                    district: moto.storeLocation.district,
-                    listOfAddon: moto.freeAddons.map(addon => ({
-                        name: addon.name,
-                        image: addon.image // Include the image field for addons
-                    })),
-                    pricePerDay: moto.pricePerDay,
+                    price: moto.pricePerDay,
                     name: moto.motobikeType.name,
-                    numberOfFeedback: 0, // Placeholder for now
+                    addOns: moto.freeAddons.map(addon => ({
+                        name: addon.name,
+                        image: addon.image
+                    })),
+                    district: moto.storeLocation.district,
+                    ownerId: moto.owner._id,
+                    motobike: moto._id,
                     height: moto.motobikeType.height,
-                    weight: moto.motobikeType.weight,
-                    description: moto.motobikeType.description,
-                    color: moto.motobikeType.color
+                    weight: moto.motobikeType.weight
                 });
             }
         });
 
-        // Add feedback counts for each unique motobike
-        const result = await Promise.all(
-            Array.from(uniqueMotobikes.values()).map(async (moto) => {
-                moto.numberOfFeedback = await Feedback.countDocuments({ motobike: moto._id });
-                return moto;
-            })
-        );
+        // Convert the Map to an array for the final response
+        const result = Array.from(uniqueMotobikes.values());
 
-        res.status(200).json(result);
+        res.status(200).json({ error: false, data: result });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
-
 export const searchMotoBikeByType = async (req, res) => {
     try {
         const motobikeTypeId = req.params.motobikeTypeId;
@@ -95,46 +88,43 @@ export const searchMotoBikeByType = async (req, res) => {
         }).populate([
             { path: "storeLocation", select: "district" },
             { path: "freeAddons", select: "name image" },
-            { path: "motobikeType", select: "name height weight image description color" }
+            { path: "motobikeType", select: "name height weight image" },
+            { path: "owner", select: "_id" } // Populate owner to get ownerId
         ]);
 
-        // Use a Map to keep track of the first motobike per district
+        // Use a Map to ensure one motobike per type per district
         const uniqueMotobikes = new Map();
 
         motobikes.forEach(moto => {
             const district = moto.storeLocation.district;
 
-            // If the district is not already in the map, add the motobike
+            // Add only the first motobike for each district
             if (!uniqueMotobikes.has(district)) {
                 uniqueMotobikes.set(district, {
-                    storeLocationDistrict: district,
-                    pricePerDay: moto.pricePerDay,
-                    freeAddons: moto.freeAddons.map(addon => ({
+                    image: moto.motobikeType.image,
+                    price: moto.pricePerDay,
+                    name: moto.motobikeType.name,
+                    addOns: moto.freeAddons.map(addon => ({
                         name: addon.name,
                         image: addon.image
                     })),
-                    motobikeTypeDetails: {
-                        name: moto.motobikeType.name,
-                        height: moto.motobikeType.height,
-                        weight: moto.motobikeType.weight,
-                        image: moto.motobikeType.image,
-                        description: moto.motobikeType.description,
-                        color: moto.motobikeType.color
-                    }
+                    district: district,
+                    ownerId: moto.owner._id,
+                    motobike: moto._id,
+                    height: moto.motobikeType.height,
+                    weight: moto.motobikeType.weight
                 });
             }
         });
 
-        // Convert the Map's values to an array for the response
+        // Convert the Map to an array for the response
         const results = Array.from(uniqueMotobikes.values());
-
-        res.status(200).json(results);
+        return res.status(200).json({ error: false, data: results });
     } catch (err) {
         console.error("Error searching motobike by type:", err.message);
         res.status(500).json({ error: err.message });
     }
 };
-
 export const searchByDistrict = async (req, res) => {
     try {
         // Extract the district from the request body
@@ -144,43 +134,42 @@ export const searchByDistrict = async (req, res) => {
             return res.status(400).json({ success: false, message: "District is required" });
         }
 
-        // Find all motobikes in the specified district
+        // Find all motobikes and populate relevant fields
         const motobikes = await Motobike.find()
             .populate([
                 { path: "storeLocation", select: "district" },
                 { path: "freeAddons", select: "name image" },
-                { path: "motobikeType", select: "name height weight image description color" }
+                { path: "motobikeType", select: "name height weight image" },
+                { path: "owner", select: "_id" } // Populate owner to fetch ownerId
             ])
-            .lean(); // Use lean to get plain JavaScript objects for easier processing
+            .lean();
 
-        // Filter motobikes belonging to the specified district
+        // Filter motobikes in the specified district
         const filteredByDistrict = motobikes.filter(
             moto => moto.storeLocation.district === district
         );
 
-        // Use a Map to ensure only one motobike is returned per type
+        // Use a Map to ensure one motorbike per type in the district
         const uniqueMotobikeTypes = new Map();
 
         filteredByDistrict.forEach(moto => {
-            const motobikeTypeId = moto.motobikeType._id.toString();
+            const uniqueKey = `${moto.motobikeType._id}_${moto.storeLocation.district}`;
 
-            // Add only the first motobike of each type to the Map
-            if (!uniqueMotobikeTypes.has(motobikeTypeId)) {
-                uniqueMotobikeTypes.set(motobikeTypeId, {
-                    storeLocationDistrict: moto.storeLocation.district,
-                    pricePerDay: moto.pricePerDay,
-                    freeAddons: moto.freeAddons.map(addon => ({
+            // Add only the first motobike of each type in the district
+            if (!uniqueMotobikeTypes.has(uniqueKey)) {
+                uniqueMotobikeTypes.set(uniqueKey, {
+                    image: moto.motobikeType.image,
+                    price: moto.pricePerDay,
+                    name: moto.motobikeType.name,
+                    addOns: moto.freeAddons.map(addon => ({
                         name: addon.name,
                         image: addon.image
                     })),
-                    motobikeTypeDetails: {
-                        name: moto.motobikeType.name,
-                        height: moto.motobikeType.height,
-                        weight: moto.motobikeType.weight,
-                        image: moto.motobikeType.image,
-                        description: moto.motobikeType.description,
-                        color: moto.motobikeType.color
-                    }
+                    district: moto.storeLocation.district,
+                    ownerId: moto.owner._id,
+                    motobike: moto._id,
+                    height: moto.motobikeType.height,
+                    weight: moto.motobikeType.weight
                 });
             }
         });
@@ -188,13 +177,12 @@ export const searchByDistrict = async (req, res) => {
         // Convert the Map's values to an array for the response
         const results = Array.from(uniqueMotobikeTypes.values());
 
-        res.status(200).json({ success: true, data: results });
+        res.status(200).json({ error: false, data: results });
     } catch (error) {
         console.error("Error searching by district:", error.message);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: true, error: error.message });
     }
 };
-
 // search by 2 categories :
 
 export const searchByDatesAndType = async (req, res) => {
@@ -222,54 +210,60 @@ export const searchByDatesAndType = async (req, res) => {
         }
 
         // Query to find motobikes available by type and excluding booked dates
-        const motobikes = await Motobike.aggregate([
-            {
-                $match: {
-                    motobikeType: motobikeType._id,
-                    isAvailable: true,
-                    bookedDate: { $not: { $elemMatch: { $in: normalizedDates } } }
-                }
-            },
-            {
-                $lookup: {
-                    from: "storelocations",
-                    localField: "storeLocation",
-                    foreignField: "_id",
-                    as: "storeLocationDetails"
-                }
-            },
-            {
-                $unwind: "$storeLocationDetails"
-            },
-            {
-                $group: {
-                    _id: "$storeLocationDetails.district",
-                    motobike: { $first: "$$ROOT" } // Select only one motobike per district
-                }
-            },
-            {
-                $replaceRoot: {
-                    newRoot: "$motobike"
-                }
-            }
-        ]);
+        const motobikes = await Motobike.find({
+            motobikeType: motobikeType._id,
+            isAvailable: true,
+            bookedDate: { $not: { $elemMatch: { $in: normalizedDates } } }
+        })
+            .populate([
+                { path: "storeLocation", select: "district" },
+                { path: "freeAddons", select: "name image" },
+                { path: "motobikeType", select: "name height weight image" },
+                { path: "owner", select: "_id" } // Populate owner to fetch ownerId
+            ]);
 
         if (motobikes.length === 0) {
             return res.status(404).json({ success: false, message: "No motobikes available for the specified criteria" });
         }
 
-        // Respond with the motobikes (one per district)
+        // Use a Map to ensure one motobike per district
+        const uniqueMotobikes = new Map();
+
+        motobikes.forEach(moto => {
+            const uniqueKey = moto.storeLocation.district;
+
+            // Add only the first motobike of the type in each district
+            if (!uniqueMotobikes.has(uniqueKey)) {
+                uniqueMotobikes.set(uniqueKey, {
+                    image: moto.motobikeType.image,
+                    price: moto.pricePerDay,
+                    name: moto.motobikeType.name,
+                    addOns: moto.freeAddons.map(addon => ({
+                        name: addon.name,
+                        image: addon.image
+                    })),
+                    district: moto.storeLocation.district,
+                    ownerId: moto.owner._id,
+                    motobike: moto._id,
+                    height: moto.motobikeType.height,
+                    weight: moto.motobikeType.weight
+                });
+            }
+        });
+
+        // Convert the Map to an array for the response
+        const results = Array.from(uniqueMotobikes.values());
+
+        // Respond with formatted data
         return res.status(200).json({
-            success: true,
-            message: "Available motobikes fetched successfully (one per district)",
-            data: motobikes
+            error: false,
+            data: results
         });
     } catch (error) {
         console.error("Error in searchByDatesAndType: ", error.message);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
-
 export const searchByDatesAndDistrict = async (req, res) => {
     try {
         const { district, dates } = req.body;
@@ -295,41 +289,57 @@ export const searchByDatesAndDistrict = async (req, res) => {
         }
         const storeLocationIds = storeLocations.map(location => location._id);
 
-        // Query for motobikes in the district that match criteria
+        // Query for motobikes in the district that are available on the specified dates
         const motobikes = await Motobike.find({
             storeLocation: { $in: storeLocationIds },
             isAvailable: true,
             bookedDate: { $not: { $elemMatch: { $in: normalizedDates } } }
-        }).populate("storeLocation motobikeType owner");
+        }).populate([
+            { path: "storeLocation", select: "district" },
+            { path: "freeAddons", select: "name image" },
+            { path: "motobikeType", select: "name height weight image" },
+            { path: "owner", select: "_id" } // Populate owner to get ownerId
+        ]);
 
         if (motobikes.length === 0) {
             return res.status(404).json({ success: false, message: "No motobikes available for the specified criteria" });
         }
 
-        // Create a map to store only one motobike per type
+        // Use a Map to ensure only one motobike per type in the district
         const uniqueMotobikes = new Map();
-        motobikes.forEach(motobike => {
-            const motobikeTypeId = motobike.motobikeType._id.toString();
-            if (!uniqueMotobikes.has(motobikeTypeId)) {
-                uniqueMotobikes.set(motobikeTypeId, motobike); // Add the first motobike of this type
+        motobikes.forEach(moto => {
+            const motobikeTypeKey = `${moto.motobikeType._id}_${moto.storeLocation.district}`;
+            if (!uniqueMotobikes.has(motobikeTypeKey)) {
+                uniqueMotobikes.set(motobikeTypeKey, {
+                    image: moto.motobikeType.image,
+                    price: moto.pricePerDay,
+                    name: moto.motobikeType.name,
+                    addOns: moto.freeAddons.map(addon => ({
+                        name: addon.name,
+                        image: addon.image
+                    })),
+                    district: moto.storeLocation.district,
+                    ownerId: moto.owner._id,
+                    motobike: moto._id,
+                    height: moto.motobikeType.height,
+                    weight: moto.motobikeType.weight
+                });
             }
         });
 
-        // Convert the map back to an array of unique motobikes
-        const result = Array.from(uniqueMotobikes.values());
+        // Convert the Map to an array for the response
+        const results = Array.from(uniqueMotobikes.values());
 
-        // Respond with one motobike per type
+        // Respond with formatted data
         return res.status(200).json({
-            success: true,
-            message: "Available motobikes fetched successfully (one per type)",
-            data: result
+            error: false,
+            data: results
         });
     } catch (error) {
         console.error("Error in searchByDatesAndDistrict: ", error.message);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
-
 export const searchByTypeAndDistrict = async (req, res) => {
     try {
         const { motobikeTypeName, district } = req.body;
@@ -360,37 +370,52 @@ export const searchByTypeAndDistrict = async (req, res) => {
             motobikeType: motobikeType._id,
             storeLocation: { $in: storeLocationIds },
             isAvailable: true
-        }).populate("storeLocation motobikeType owner");
+        }).populate([
+            { path: "storeLocation", select: "district" },
+            { path: "freeAddons", select: "name image" },
+            { path: "motobikeType", select: "name height weight image" },
+            { path: "owner", select: "_id" } // Populate owner to get ownerId
+        ]);
 
         if (motobikes.length === 0) {
             return res.status(404).json({ success: false, message: "No motobikes available for the specified type and district" });
         }
 
-        // Use a Map to ensure one motobike per type
+        // Use a Map to ensure only one motobike per type in the district
         const uniqueMotobikes = new Map();
-        motobikes.forEach(motobike => {
-            const motobikeTypeId = motobike.motobikeType._id.toString();
-            if (!uniqueMotobikes.has(motobikeTypeId)) {
-                uniqueMotobikes.set(motobikeTypeId, motobike); // Add the first motobike of this type
+        motobikes.forEach(moto => {
+            const motobikeTypeKey = `${moto.motobikeType._id}_${moto.storeLocation.district}`;
+            if (!uniqueMotobikes.has(motobikeTypeKey)) {
+                uniqueMotobikes.set(motobikeTypeKey, {
+                    image: moto.motobikeType.image,
+                    price: moto.pricePerDay,
+                    name: moto.motobikeType.name,
+                    addOns: moto.freeAddons.map(addon => ({
+                        name: addon.name,
+                        image: addon.image
+                    })),
+                    district: moto.storeLocation.district,
+                    ownerId: moto.owner._id,
+                    motobike: moto._id,
+                    height: moto.motobikeType.height,
+                    weight: moto.motobikeType.weight
+                });
             }
         });
 
-        // Convert the map back to an array
-        const result = Array.from(uniqueMotobikes.values());
+        // Convert the Map to an array for the response
+        const results = Array.from(uniqueMotobikes.values());
 
-        // Respond with one motobike per type
+        // Respond with formatted data
         return res.status(200).json({
-            success: true,
-            message: "Available motobikes fetched successfully (one per type)",
-            data: result
+            error: false,
+            data: results
         });
     } catch (error) {
         console.error("Error in searchByTypeAndDistrict: ", error.message);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ error: true, message: "Internal server error" });
     }
 };
-
-
 
 // search by 3 categories : 
 export const searchByDistrictWithDatesAndType = async (req, res) => {
@@ -427,52 +452,59 @@ export const searchByDistrictWithDatesAndType = async (req, res) => {
         }
         const storeLocationIds = storeLocations.map(location => location._id);
 
-        // Query matching motobikes
-        const matchingMotobikes = await Motobike.find({
+        // Query for motobikes matching the criteria
+        const motobikes = await Motobike.find({
             storeLocation: { $in: storeLocationIds },
             motobikeType: motobikeType._id,
             isAvailable: true,
-            bookedDate: { $not: { $elemMatch: { $in: normalizedDates } } } // Exclude if dates overlap
-        }).populate("storeLocation motobikeType owner");
+            bookedDate: { $not: { $elemMatch: { $in: normalizedDates } } }
+        }).populate([
+            { path: "storeLocation", select: "district" },
+            { path: "freeAddons", select: "name image" },
+            { path: "motobikeType", select: "name height weight image" },
+            { path: "owner", select: "_id" } // Populate owner to get ownerId
+        ]);
 
-        if (matchingMotobikes.length === 0) {
+        if (motobikes.length === 0) {
             return res.status(404).json({ success: false, message: "No motobikes available for the specified criteria" });
         }
 
-        // Get the IDs of all available motobikes
-        const motobikesAvailableIds = matchingMotobikes.map(motobike => motobike._id);
-
-        // Optionally retrieve one motobike to show as an example
-        const motobikeExample = matchingMotobikes[0]; // Take the first motobike as an example
-
-        // Format the example data with detailed motobike information
-        const formattedResponse = {
-            ownerId: motobikeExample.owner._id.toString(),
-            motobike: motobikesAvailableIds,
-            bookedDate: dates,
-            amountMotobike: matchingMotobikes.length,
-            example: {
-                motobikeId: motobikeExample._id.toString(),
-                vehicleNumber: motobikeExample.vehicleNumber,
-                storeLocation: motobikeExample.storeLocation.address + " - " + motobikeExample.storeLocation.commune + " - " + motobikeExample.storeLocation.district + " - " + motobikeExample.storeLocation.province,
-                motobikeType: motobikeExample.motobikeType.name,
-                isAvailable: motobikeExample.isAvailable,
-                pricePerDay: motobikeExample.pricePerDay,
-                color: motobikeExample.motobikeType.color,
+        // Use a Map to ensure only one motobike per type in the district
+        const uniqueMotobikes = new Map();
+        motobikes.forEach(moto => {
+            const uniqueKey = `${moto.motobikeType._id}_${moto.storeLocation.district}`;
+            if (!uniqueMotobikes.has(uniqueKey)) {
+                uniqueMotobikes.set(uniqueKey, {
+                    image: moto.motobikeType.image,
+                    price: moto.pricePerDay,
+                    name: moto.motobikeType.name,
+                    addOns: moto.freeAddons.map(addon => ({
+                        name: addon.name,
+                        image: addon.image
+                    })),
+                    district: moto.storeLocation.district,
+                    ownerId: moto.owner._id,
+                    motobike: moto._id,
+                    height: moto.motobikeType.height,
+                    weight: moto.motobikeType.weight
+                });
             }
-        };
+        });
 
-        // Respond with the formatted result
+        // Convert the Map to an array for the response
+        const results = Array.from(uniqueMotobikes.values());
+
+        // Respond with formatted data
         return res.status(200).json({
-            success: true,
-            message: "Motobike search completed successfully",
-            data: formattedResponse
+            error: false,
+            data: results
         });
     } catch (error) {
         console.error("Error in searchByDistrictWithDatesAndType: ", error.message);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ error: true, message: "Internal server error" });
     }
 };
+
 
 
 

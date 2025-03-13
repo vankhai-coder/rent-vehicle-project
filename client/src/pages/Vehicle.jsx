@@ -137,11 +137,12 @@ const Vehicle = () => {
         <DatePickerWithRange />
         {/* district */}
         <Select className='text-white'>
-          <SelectTrigger className="inline-flex items-center justify-center text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]   hover:bg-primary/90 h-10 px-4 py-2">
+          <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]   hover:bg-primary/90 h-10 px-4 py-2">
             <SelectValue placeholder="Select District" className='text-white ' />
           </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
+          <SelectContent >
+            <SelectGroup >
+              <SelectItem value="none">Select District</SelectItem>
               <SelectItem value="apple">Apple</SelectItem>
               <SelectItem value="banana">Banana</SelectItem>
               <SelectItem value="blueberry">Blueberry</SelectItem>
@@ -152,11 +153,12 @@ const Vehicle = () => {
         </Select>
         {/* type */}
         <Select className='text-white'>
-          <SelectTrigger className="inline-flex items-center justify-center text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]  hover:bg-primary/90  h-10 px-4 py-2">
+          <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]  hover:bg-primary/90  h-10 px-4 py-2">
             <SelectValue placeholder="Select Motbike" className='text-white' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
+            <SelectItem value="none">Select Motobike</SelectItem>
               <SelectItem value="apple">Apple</SelectItem>
               <SelectItem value="banana">Banana</SelectItem>
               <SelectItem value="blueberry">Blueberry</SelectItem>
@@ -167,17 +169,13 @@ const Vehicle = () => {
         </Select>
         {/* price */}
         <Select className='text-white'>
-          <SelectTrigger className="inline-flex items-center justify-center text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]  hover:bg-primary/90 h-10 px-4 py-2">
+          <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]  hover:bg-primary/90 h-10 px-4 py-2">
             <SelectValue placeholder="Select Price" className='text-white' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {/* <SelectLabel>Type</SelectLabel> */}
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
+              <SelectItem value="apple">Lowest</SelectItem>
+              <SelectItem value="pineapple">Highest</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
