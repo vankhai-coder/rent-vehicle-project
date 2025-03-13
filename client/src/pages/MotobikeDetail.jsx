@@ -1,5 +1,6 @@
 import OwnerProfile from "@/components/OwnerProfileCard";
 import ReviewSection from "@/components/ReviewSection";
+import Booking from '@/components/Booking'
 
 function CarDetails() {
     const ownerData = {
@@ -44,7 +45,7 @@ function CarDetails() {
                 <div className="md:w-1/2">
                     <h1 className="text-3xl font-bold mb-2">BMW</h1>
                     <p className="text-2xl text-gray-700 mb-4">$25 / day</p>
-                    <div className="bg-gray-200 h-64 w-full mb-4 rounded-lg">
+                    <div className="bg-gray-200 h-64 w-full mb-4 rounded-lg bg-cover bg-center" style={{ backgroundImage: 'url("https://cdn.riderly.com/storage/media/img/bikes/Piaggio__Liberty_125_2.png")' }}>
                         {/* Placeholder for Car Image */}
                     </div>
                     <div className="flex space-x-2">
@@ -72,7 +73,7 @@ function CarDetails() {
                         {/* Fuel */}
                         <div className="text-center bg-gray-100 rounded-2xl p-4">
                             <img
-                                src="fuel-icon.png" // Replace with your actual fuel icon path
+                                src="https://cdn-icons-png.flaticon.com/128/921/921063.png" // Fuel pump icon
                                 alt="Fuel"
                                 className="mx-auto h-8 mb-2"
                             />
@@ -83,7 +84,7 @@ function CarDetails() {
                         {/* Doors */}
                         <div className="text-center bg-gray-100 rounded-2xl p-4">
                             <img
-                                src="door-icon.png" // Replace with your actual door icon path
+                                src="https://cdn-icons-png.flaticon.com/128/594/594777.png" // Car door icon
                                 alt="Doors"
                                 className="mx-auto h-8 mb-2"
                             />
@@ -94,7 +95,7 @@ function CarDetails() {
                         {/* Air Conditioner */}
                         <div className="text-center bg-gray-100 rounded-2xl p-4">
                             <img
-                                src="ac-icon.png" // Replace with your actual AC icon path
+                                src="https://cdn-icons-png.flaticon.com/128/977/977114.png" // Air conditioner icon
                                 alt="AC"
                                 className="mx-auto h-8 mb-2"
                             />
@@ -105,7 +106,7 @@ function CarDetails() {
                         {/* Seats */}
                         <div className="text-center bg-gray-100 rounded-2xl p-4">
                             <img
-                                src="seats-icon.png" // Replace with your actual seats icon path
+                                src="https://cdn-icons-png.flaticon.com/128/483/483610.png" // Car seat icon
                                 alt="Seats"
                                 className="mx-auto h-8 mb-2"
                             />
@@ -116,18 +117,13 @@ function CarDetails() {
                         {/* Distance */}
                         <div className="text-center bg-gray-100 rounded-2xl p-4">
                             <img
-                                src="distance-icon.png" // Replace with your actual distance icon path
+                                src="https://cdn-icons-png.flaticon.com/128/447/447548.png" // Speedometer or odometer icon
                                 alt="Distance"
                                 className="mx-auto h-8 mb-2"
                             />
                             <p className="text-md font-bold">Distance</p>
                             <p className="text-xs">500</p>
                         </div>
-                    </div>
-                    <div className='flex'>
-                        <button className="bg-[#5937E0] hover:bg-purple-700 rounded-3xl text-white font-bold py-2 px-3 w-1/2 mx-auto mb-6">
-                            Rent a motobike
-                        </button>
                     </div>
                     <h2 className="text-2xl font-semibold mb-4">Motobike Equipment</h2>
                     <div className="grid grid-cols-2 gap-4">
@@ -170,24 +166,32 @@ function CarDetails() {
                     </div>
                 </div>
             </div>
-            {/* owner profile :  */}
-            <div className="flex justify-start">
-                <OwnerProfile
-                    name={ownerData.name}
-                    image={ownerData.image}
-                    bio={ownerData.bio}
-                    reviews={ownerData.reviews}
-                    joinDate={ownerData.joinDate}
-                    numberOfStores={ownerData.numberOfStores}
-                />
-            </div>
-            {/* review sections :  */}
+            {/* booking section :  */}
             <div>
-                <ReviewSection
-                    numberOfReviews={reviewsData.numberOfReviews}
-                    arrayOfReviews={reviewsData.arrayOfReviews}
-                />
-                {/* thi */}
+                <h1 className="text-center text-3xl font-bold">Reserve now!</h1>
+            </div>
+            <div className="my-6">
+                <Booking />
+            </div>
+            <div className="flex justify-between gap-8">
+                {/* owner profile :  */}
+                <div className="flex justify-start w-1/2">
+                    <OwnerProfile
+                        name={ownerData.name}
+                        image={ownerData.image}
+                        bio={ownerData.bio}
+                        reviews={ownerData.reviews}
+                        joinDate={ownerData.joinDate}
+                        numberOfStores={ownerData.numberOfStores}
+                    />
+                </div>
+                {/* review sections :  */}
+                <div className="w-1/2">
+                    <ReviewSection
+                        numberOfReviews={reviewsData.numberOfReviews}
+                        arrayOfReviews={reviewsData.arrayOfReviews}
+                    />
+                </div>
             </div>
             {/* thing to know ; */}
             <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-md ml-0 my-10">

@@ -5,6 +5,8 @@ import Home from '@/pages/Home'
 import Login from "./pages/Login"
 import Vehicle from "./pages/Vehicle"
 import MotobikeDetail from './pages/MotobikeDetail'
+import ForgotPassword from "./pages/ForgotPassword"
+import SignUp from "./pages/SignUp"
 
 function App() {
   return (
@@ -16,11 +18,23 @@ function App() {
 
         {/* Routes */}
         <Routes>
+
           <Route path="/" element={<Home />} />
+
+          {/* auth: */}
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          {/* customer */}
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/detail" element={<MotobikeDetail />} />
-          {/* <Route path="/post" element={<Post />} />  */}
+
+          {/* owner */}
+
+
+          {/* admin */}
+
         </Routes>
 
         {/* Footer :  */}
