@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom"
 import Home from '@/pages/Home'
 import Login from "./pages/Login"
 import Vehicle from "./pages/Vehicle"
+import MotobikeDetail from './pages/MotobikeDetail'
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/vehicle" element={<Vehicle />} />
-          {/* <Route path="/profile" element={<Profile />} /> */}
+          <Route path="/detail" element={<MotobikeDetail />} />
           {/* <Route path="/post" element={<Post />} />  */}
         </Routes>
 

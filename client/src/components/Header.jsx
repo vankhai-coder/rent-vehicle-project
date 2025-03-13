@@ -43,14 +43,19 @@ const Header = () => {
           <Car color="black" size={48} fill='true' />
         </div>
         <div className='flex justify-center'>
-          <p className='font-bold ml-2'>V5 Rental</p>
+          <Link to={'/'}>
+            <p className='font-bold ml-2'>V5 Rental</p>
+          </Link>
         </div>
       </div>
 
       {/* navigate :  */}
       <div className='flex items-center space-x-6'>
-        <p className='font-bold text-sm'>Home</p>
+        <Link to={'/'}>
+          <p className='font-bold text-sm'>Home</p>
+        </Link>
         <Link to={'/vehicle'}><p className='font-medium text-sm'>Vehicle</p></Link>
+        <Link to={'/detail'}><p className='font-medium text-sm'>Detail</p></Link>
         <p className='font-medium text-sm'>About Us</p>
         <p className='font-medium text-sm'>Contact Us</p>
       </div>
