@@ -28,7 +28,7 @@ export const register = async (req, res) => {
             sameSite: 'Strict',
         })
         // response
-        return res.status(200).json({ error: false, message: 'User register successfully!' , newUser })
+        return res.status(200).json({ error: false, message: 'User register successfully!', user: { userId: newUser._id, role: newUser.role } })
 
     } catch (error) {
         console.log(error);
@@ -49,7 +49,7 @@ export const login = async (req, res) => {
             return res.status(400).json({ error: true, message: "Invalid credential!" })
         }
         // check if user is banned : 
-        if(user.isBanned){
+        if (user.isBanned) {
             return res.status(400).json({ error: true, message: "Account is banned!" })
         }
         // check if password correct : 
@@ -66,7 +66,7 @@ export const login = async (req, res) => {
             sameSite: 'Strict',
         })
         // response
-        return res.status(200).json({ error: false, message: 'Log in successfully!' , user })
+        return res.status(200).json({ error: false, message: 'Log in successfully!', user: { userId: user._id, role: user.role } })
     } catch (error) {
         console.log("error in login : ", error.message);
         return res.status(500).json({ error: true, message: 'Internal Server Error!' })

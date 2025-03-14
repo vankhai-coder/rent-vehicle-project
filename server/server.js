@@ -1,7 +1,8 @@
 import express, { urlencoded } from 'express'
 import dotenv from 'dotenv'
-
 dotenv.config()
+import cors from 'cors'
+
 import cookieParser from 'cookie-parser'
 
 // connect to DB : 
@@ -25,6 +26,12 @@ const app = express()
 app.use(express.json())
 app.use(urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(cors({
+    origin : 'http://localhost:5173' ,
+    methods : 'GET,POST,PUT,DELETE,PATCH' , 
+    allowedHeaders: "Content-Type,Authorization",
+    credentials : true
+}))
 
 // log request : 
 app.use((req, res, next) => {

@@ -8,6 +8,7 @@ import MotobikeDetail from './pages/MotobikeDetail'
 import ForgotPassword from "./pages/ForgotPassword"
 import SignUp from "./pages/Register"
 
+
 function App() {
   return (
     <div className="w-full h-full bg-white">
