@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const SignUP = () => {
+const Register = () => {
     return (
         <div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div class="sm:mx-auto sm:w-full sm:max-w-md">
@@ -112,4 +112,4 @@ const SignUP = () => {
     )
 }
 
-export default SignUP
+export default Register

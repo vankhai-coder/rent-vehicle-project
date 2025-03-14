@@ -6,7 +6,7 @@ import Login from "./pages/Login"
 import Vehicle from "./pages/Vehicle"
 import MotobikeDetail from './pages/MotobikeDetail'
 import ForgotPassword from "./pages/ForgotPassword"
-import SignUp from "./pages/SignUp"
+import SignUp from "./pages/Register"
 
 function App() {
   return (
