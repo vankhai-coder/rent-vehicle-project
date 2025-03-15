@@ -1,5 +1,6 @@
 import User from '../../models/userModel.js'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 export const register = async (req, res) => {
     try {
@@ -28,7 +29,7 @@ export const register = async (req, res) => {
             sameSite: 'Strict',
         })
         // response
-        return res.status(200).json({ error: false, message: 'User register successfully!', user: { userId: newUser._id, role: newUser.role } })
+        return res.status(201).json({ error: false, message: 'User register successfully!', user: { userId: newUser._id, role: newUser.role, userImage: newUser.image } })
 
     } catch (error) {
         console.log(error);
@@ -66,10 +67,58 @@ export const login = async (req, res) => {
             sameSite: 'Strict',
         })
         // response
-        return res.status(200).json({ error: false, message: 'Log in successfully!', user: { userId: user._id, role: user.role } })
+        return res.status(200).json({ error: false, message: 'Log in successfully!', user: { userId: user._id, role: user.role, userImage: user.image } })
     } catch (error) {
         console.log("error in login : ", error.message);
         return res.status(500).json({ error: true, message: 'Internal Server Error!' })
+    }
+}
+
+export const logout = async (req, res) => {
+    try {
+        // Clear the authentication cookie
+        res.clearCookie('jwt_token', {
+            httpOnly: true, // Ensures the cookie can't be accessed via JavaScript
+            sameSite: 'strict' // Prevents cross-site request forgery
+        });
+
+        // Send success response
+        res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        console.log('Error during logout:', error);
+
+        // Send error response
+        res.status(500).json({ message: 'Error during logout' });
+    }
+};
+
+export const updatePassword = async (req, res) => {
+    try {
+        // get currentPassword , newPassword : 
+        const { currentPassword, newPassword } = req.body
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: true, message: "All fields required!" })
+        }
+        // get user : 
+        const userId = req.user.userId
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(400).json({ error: true, message: "Can not find this user!" })
+        }
+        // check if current password is match with database : 
+        const isMatch = await bcrypt.compare(currentPassword, user.password)
+        if (!isMatch) {
+            return res.status(400).json({ error: true, message: "Current password is incorrect!" })
+        }
+        // update password : 
+        user.password = newPassword
+        // save : 
+        await user.save()
+        // response : 
+        return res.status(200).json({ error: false, message: "Update password successfully!" })
+    } catch (error) {
+        console.log('Error when update password : ', error);
+        return res.status(500).json({ error: false, message: "Internal server error!" })
     }
 }
 

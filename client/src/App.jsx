@@ -6,7 +6,7 @@ import Login from "./pages/Login"
 import Vehicle from "./pages/Vehicle"
 import MotobikeDetail from './pages/MotobikeDetail'
 import ForgotPassword from "./pages/ForgotPassword"
-import SignUp from "./pages/Register"
+import Register from "./pages/Register"
 
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
 
           {/* auth: */}
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* customer */}
