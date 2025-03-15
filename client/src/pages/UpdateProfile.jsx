@@ -5,7 +5,73 @@ import { Loader } from 'lucide-react';
 
 const UpdateProfile = () => {
 
+  const [fullName, setFullName] = React.useState('');
+  const [age, setAge] = React.useState('');
+  const [phone, setPhone] = React.useState('');
+  const [gender, setGender] = React.useState('');
+  const [address, setAddress] = React.useState('');
+  const [province, setProvince] = React.useState('');
+  const [district, setDistrict] = React.useState('');
+  const [commune, setCommune] = React.useState('');
+  const [image, setImage] = React.useState('');
+  const [driverLicense, setDriverLicense] = React.useState({ before: '', after: '' });
+  const [identityCard, setIdentityCard] = React.useState({ before: '', after: '' });
+
   const { userImage } = useSelector(state => state.user)
+
+  // handle file change : 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Convert file to Base64
+      reader.onloadend = () => {
+        setImage(reader.result); // Set Base64 string
+      };
+    }
+  };
+  // handle file change for driver license :
+  const handleDriverLicenseChangeBefore = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Convert file to Base64
+      reader.onloadend = () => {
+        setDriverLicense({ ...driverLicense, before: reader.result }); // Set Base64 string
+      };
+    }
+  }
+  const handleDriverLicenseChangeAfter = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Convert file to Base64
+      reader.onloadend = () => {
+        setDriverLicense({ ...driverLicense, after: reader.result }); // Set Base64 string
+      };
+    }
+  }
+  // handle file change for identity card :
+  const handleIdentityCardChangeBefore = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Convert file to Base64
+      reader.onloadend = () => {
+        setIdentityCard({ ...identityCard, before: reader.result }); // Set Base64 string
+      };
+    }
+  }
+  const handleIdentityCardChangeAfter = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Convert file to Base64
+      reader.onloadend = () => {
+        setIdentityCard({ ...identityCard, after: reader.result }); // Set Base64 string
+      };
+    }
+  }
 
   return (
     <div className="bg-gray-800 text-white p-8 rounded-lg shadow-md w-full max-w-2xl mx-auto">
@@ -27,6 +93,8 @@ const UpdateProfile = () => {
               type="file"
               id="avatar"
               className="hidden"
+              accept='image/*'
+              onChange={handleFileChange}
             />
             <label
               htmlFor="avatar"
@@ -41,53 +109,56 @@ const UpdateProfile = () => {
         </div>
       </div>
 
-      {/* First and Last Name */}
+      {/* FullName and age */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm font-medium mb-2">First Name</label>
+          <label className="block text-sm font-medium mb-2">Full Name</label>
           <input
             type="text"
-            value="Helene" // Replace with actual value
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">Last Name</label>
+          <label className="block text-sm font-medium mb-2">Age</label>
           <input
-            type="text"
-            value="Engels" // Replace with actual value
+            type="number"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
         </div>
       </div>
 
-      {/* Email and User Permissions */}
+      {/* Phone and User Gender */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Email</label>
+          <label className="block text-sm font-medium mb-2">Phone</label>
           <input
-            type="email"
-            value="helene@company.com" // Replace with actual value
+            type="phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">User Permissions</label>
+          <label className="block text-sm font-medium mb-2">Gender</label>
           <select
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-            value="Operational" // Replace with actual value
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
           >
-            <option value="Operational">Operational</option>
-            <option value="Admin">Admin</option>
-            {/* Add more options as needed */}
+            <option value="male">Male</option>
+            <option value="female">Femail</option>
           </select>
         </div>
       </div>
 
-      {/* Email Status and Job Title */}
+      {/* Province and District :*/}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Email Status</label>
+          <label className="block text-sm font-medium mb-2">Province</label>
           <select
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
             value="Verified" // Replace with actual value
@@ -98,65 +169,116 @@ const UpdateProfile = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">Job Title</label>
-          <input
-            type="text"
-            value="React Developer" // Replace with actual value
+          <label className="block text-sm font-medium mb-2">District</label>
+          <select
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-          />
+            value="Verified" // Replace with actual value
+          >
+            <option value="Verified">Verified</option>
+            <option value="Unverified">Unverified</option>
+          </select>
         </div>
       </div>
 
-      {/* User Role and Account */}
+      {/* Commune and address */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm font-medium mb-2">User Role</label>
+          <label className="block text-sm font-medium mb-2">Commune</label>
           <select
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-            value="Owner" // Replace with actual value
+            value="Verified" // Replace with actual value
           >
-            <option value="Owner">Owner</option>
-            <option value="Admin">Admin</option>
-            {/* Add more options as needed */}
+            <option value="Verified">Verified</option>
+            <option value="Unverified">Unverified</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">Account</label>
-          <select
+          <label className="block text-sm font-medium mb-2">Address</label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-            value="PRO Account" // Replace with actual value
-          >
-            <option value="PRO Account">PRO Account</option>
-            <option value="Basic Account">Basic Account</option>
-            {/* Add more options as needed */}
-          </select>
+          />
         </div>
       </div>
 
-      {/* Password and Confirm Password */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Diver licenes : */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Password</label>
+          <label className="block text-sm font-medium mb-2">Driver Licenes Before</label>
           <input
-            type="password"
-            placeholder="********" // Replace with actual value
+            type="file"
+            accept="image/*"
+            onChange={handleDriverLicenseChangeBefore}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
+          {/* preview image :  */}
+          <div className='mt-1'>
+            {driverLicense.before && (
+              <img src={driverLicense.before} alt="Preview" className="size-20  ml-4 rounded" />
+            )}
+          </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">Confirm password</label>
+          <label className="block text-sm font-medium mb-2">Driver Licenes After</label>
           <input
-            type="password"
-            placeholder="********" // Replace with actual value
+            type="file"
+            accept="image/*"
+            onChange={handleDriverLicenseChangeAfter}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
+          {/* preview image : */}
+          <div className='mt-1'>
+            {driverLicense.after && (
+              <img src={driverLicense.after} alt="Preview" className="size-20  ml-4 rounded" />
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Identity Card : */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">Identity Card Before</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleIdentityCardChangeBefore}
+            className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
+          />
+          {/* preview image :  */}
+          <div className='mt-1'>
+            {identityCard.before && (
+              <img src={identityCard.before} alt="Preview" className="size-20  ml-4 rounded" />
+            )}
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Identity Card After</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleIdentityCardChangeAfter}
+            className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
+          />
+          {/* preview image : */}
+          <div className='mt-1'>
+            {identityCard.after && (
+              <img src={identityCard.after} alt="Preview" className="size-20  ml-4 rounded" />
+            )}
+          </div>
         </div>
       </div>
 
       <div>
         <Button
-          className='bg-[#5819E0] hover:bg-[#5819F9] rounded-2xl mx-auto flex my-5'
-        >
+          className='bg-[#5819E0] hover:bg-[#5819F9] rounded-xl mx-auto flex my-5'
+          // log all the data : 
+
+          onClick={() => console.log({ fullName, age, phone,image, driverLicense, identityCard })}
+        >   
           Update
         </Button>
       </div>

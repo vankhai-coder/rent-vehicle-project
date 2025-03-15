@@ -57,6 +57,9 @@ const Header = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  // state for popup when click avatar : 
+  const [open, setOpen] = useState(false)
+
   // update password function : 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,8 +82,11 @@ const Header = () => {
       return;
     }
     // update password : 
-    dispatch(updatePassword({ currentPassword, newPassword }))
-
+    await dispatch(updatePassword({ currentPassword, newPassword }))
+    setOpen(prev=>!prev)
+    setCurrentPassword('')
+    setConfirmPassword('')
+    setNewPassword('')
   };
   // logout function : 
   const handleLogout = async () => {
@@ -148,9 +154,9 @@ const Header = () => {
       {/* login or avatar : */}
       <div className='flex items-center'>
         {!userId ? <Link to={'/login'} ><Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' >Log in</Button></Link> :
-          <Popover>
-            <PopoverTrigger>
-              <Avatar className='size-12'>
+          <Popover open={open} onOpenChange={setOpen}  >
+            <PopoverTrigger >
+              <Avatar className='size-12' >
                 <AvatarImage src={userImage ? userImage : './default_avt.jpg'} alt="Customer Avatar" />
                 <AvatarFallback>Customer Avatar</AvatarFallback>
               </Avatar>
@@ -163,20 +169,20 @@ const Header = () => {
                 </TabsList>
                 <TabsContent value="account">
                   <Card className={'flex gap-2 items-center'}>
-                    {role === 'user' ? <Button variant='outline' className='w-2/3'>Manage Rental</Button> : <></>}
-                    {role === 'user' ? <Button variant='outline' className='w-2/3'>Become Owner</Button> : <></>}
-                    {role === 'owner' ? <Button variant='outline' className='w-2/3'>Owner Dashboard</Button> : <></>}
-                    {role === 'admin' ? <Button variant='outline' className='w-2/3'>Admin Dashboard</Button> : <></>}
+                    {role === 'user' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Manage Rental</Button> : <></>}
+                    {role === 'user' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Become Owner</Button> : <></>}
+                    {role === 'owner' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Owner Dashboard</Button> : <></>}
+                    {role === 'admin' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Admin Dashboard</Button> : <></>}
 
-                    <Link to={'/update-profile'} >
-                      <Button variant='outline' className='w-2/3'>Update Profile</Button>
+                    <Link to={'/update-profile'} className='block w-2/3' >
+                      <Button variant='outline' className='w-full' onClick={() => setOpen((prev) => !prev)}>Update Profile</Button>
                     </Link>
                     <Button
                       variant='outline'
                       className='w-2/3 hover:cursor-pointer'
                       onClick={handleLogout}
                     >
-                     {loading ? <Loader className='animate-spin' /> : ' Logout'}
+                      {loading ? <Loader className='animate-spin' /> : ' Logout'}
                     </Button>
                   </Card>
                 </TabsContent>
@@ -228,9 +234,9 @@ const Header = () => {
                     <CardFooter>
                       <Button
                         onClick={handleSubmit}
-                        className={`${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`${loading ? 'opacity-50 cursor-not-allowed w-full' : ''}`}
                       >
-                        {loading ? 'Updating...' : ' Update password'}
+                        {loading ? <Loader className='animate-spin' /> : ' Update password'}
                       </Button>
                     </CardFooter>
                   </Card>

@@ -1,6 +1,7 @@
 import User from '../../models/userModel.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import cloudinary from '../../config/cloudinary.js'
 
 export const register = async (req, res) => {
     try {
@@ -141,5 +142,80 @@ export const checkAuth = (req, res, next) => {
     } catch (error) {
         console.log(error);
         return res.status(401).json({ error: true, message: 'Unauthorized' });
+    }
+};
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { fullName, age, phone, gender, address, commute, district, province, image, driverLicencs, identityCard } = req.body;
+
+        // Find user
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // Function to upload base64 images to Cloudinary
+        const uploadToCloudinary = async (base64, folder) => {
+            if (base64?.startsWith('data:image')) {
+                const result = await cloudinary.uploader.upload(base64, {
+                    folder,
+                    resource_type: "auto"
+                });
+                return result.secure_url;
+            }
+            return base64; // If it's already a URL, keep it
+        };
+
+        // Handle profile image upload
+        if (image) user.image = await uploadToCloudinary(image, "rent_moto_project/user_images");
+
+        // Handle Driver License uploads
+        if (driverLicencs) {
+            user.driverLicencs = {
+                before: await uploadToCloudinary(driverLicencs.before, "rent_moto_project/licenses"),
+                after: await uploadToCloudinary(driverLicencs.after, "rent_moto_project/licenses")
+            };
+        }
+
+        // Handle Identity Card uploads
+        if (identityCard) {
+            user.identityCard = {
+                before: await uploadToCloudinary(identityCard.before, "rent_moto_project/identity_cards"),
+                after: await uploadToCloudinary(identityCard.after, "rent_moto_project/identity_cards")
+            };
+        }
+
+        // Update other fields if provided
+        if (fullName) user.fullName = fullName;
+        if (age) user.age = age;
+        if (phone) user.phone = phone;
+        if (gender) user.gender = gender;
+        if (address) user.address = address;
+        if (commute) user.commute = commute;
+        if (district) user.district = district;
+        if (province) user.province = province;
+
+        // Save updated user
+        await user.save();
+
+        return res.status(200).json({ message: "Profile updated successfully", user });
+    } catch (error) {
+        return res.status(500).json({ message: "Error updating profile", error: error.message });
+    }
+};
+
+export const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId; // Get user ID from JWT
+
+        // Find user by ID and exclude sensitive fields (like password)
+        const user = await User.findById(userId).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ error: true, message: "User not found" });
+        }
+
+        return res.status(200).json({ message: "User profile fetched successfully", user });
+    } catch (error) {
+        return res.status(500).json({ error: true, message: "Error fetching profile" });
     }
 };

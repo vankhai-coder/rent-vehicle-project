@@ -1,5 +1,5 @@
 import express from 'express'
-import { checkAuth, login, register,logout, updatePassword } from '../../controllers/auth/auth.js'
+import { checkAuth, login, register,logout, updatePassword, getUserProfile } from '../../controllers/auth/auth.js'
 
 const router = express.Router()
 console.log(
@@ -22,5 +22,8 @@ router.post('/logout' , logout )
 
 // update password : 
 router.post('/update-password' , checkAuth , updatePassword )
+
+// get user profile : 
+router.get('/user-profile' , checkAuth , getUserProfile )
 
 export default router 
