@@ -8,7 +8,9 @@ const initialState = {
     error: null,
     errorMessage: '',
     userImage: '',
-    updatePasswordSuccess : false
+    updatePasswordSuccess : false,
+    fullName : '' , 
+    email : ''
 };
 
 // Async function for user login:
@@ -57,7 +59,9 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-
+        setUpdatePasswordFalse : (state)=> {
+            state.updatePasswordSuccess  = false 
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -77,6 +81,8 @@ const userSlice = createSlice({
                 state.error = false
                 state.errorMessage = ''
                 state.userImage = action.payload.user.userImage
+                state.fullName = action.payload.user.fullName
+                state.email = action.payload.user.email
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.userId = null
@@ -103,6 +109,8 @@ const userSlice = createSlice({
                 state.error = false;
                 state.errorMessage = '';
                 state.userImage = action.payload.user.userImage
+                state.fullName = action.payload.user.fullName
+                state.email = action.payload.user.email
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.userId = null;
@@ -126,7 +134,8 @@ const userSlice = createSlice({
                 state.error = false;
                 state.errorMessage = '';
                 state.userImage = ''
-
+                state.fullName = ''
+                state.email = ''
             })
             .addCase(logoutUser.rejected, (state, action) => {
                 state.loading = false;
@@ -158,5 +167,5 @@ const userSlice = createSlice({
     }
 })
 
-export const { } = userSlice.actions
+export const {setUpdatePasswordFalse } = userSlice.actions
 export default userSlice.reducer

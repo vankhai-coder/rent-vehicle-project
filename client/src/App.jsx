@@ -7,6 +7,7 @@ import Vehicle from "./pages/Vehicle"
 import MotobikeDetail from './pages/MotobikeDetail'
 import ForgotPassword from "./pages/ForgotPassword"
 import Register from "./pages/Register"
+import UpdateProfile from "./pages/UpdateProfile"
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           {/* customer */}
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/detail" element={<MotobikeDetail />} />
+          <Route path="/update-profile" element={<UpdateProfile />} />
 
           {/* owner */}
 

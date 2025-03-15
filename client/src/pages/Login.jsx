@@ -4,7 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { loginUser } from '@/redux/features/userSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-
+import { Loader } from 'lucide-react';
 
 const Login = () => {
     // function for redux to send login : 
@@ -33,7 +33,7 @@ const Login = () => {
     }
     useEffect(() => {
         // toast : 
-        if (userId) {
+        if (userId ) {
             toast.success('Login successfully!')
             navigate('/')
         } else {
@@ -126,7 +126,7 @@ const Login = () => {
                                     ${loading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
                                  `}
                             >
-                                {loading ? 'Logging in...' : ' Log in'}
+                                {loading ? <Loader className='animate-spin' /> : ' Log in'}
                             </button>
                         </div>
                     </form>

@@ -28,8 +28,10 @@ export const register = async (req, res) => {
             httpOnly: true,
             sameSite: 'Strict',
         })
+        // await for 3 second : 
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         // response
-        return res.status(201).json({ error: false, message: 'User register successfully!', user: { userId: newUser._id, role: newUser.role, userImage: newUser.image } })
+        return res.status(201).json({ error: false, message: 'User register successfully!', user: { email: newUser.email, fullName: newUser.fullName, userId: newUser._id, role: newUser.role, userImage: newUser.image } })
 
     } catch (error) {
         console.log(error);
@@ -66,8 +68,10 @@ export const login = async (req, res) => {
             httpOnly: true,
             sameSite: 'Strict',
         })
+        // await for 3 second : 
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         // response
-        return res.status(200).json({ error: false, message: 'Log in successfully!', user: { userId: user._id, role: user.role, userImage: user.image } })
+        return res.status(200).json({ error: false, message: 'Log in successfully!', user: { email: user.email, fullName: user.fullName, userId: user._id, role: user.role, userImage: user.image } })
     } catch (error) {
         console.log("error in login : ", error.message);
         return res.status(500).json({ error: true, message: 'Internal Server Error!' })
@@ -81,14 +85,15 @@ export const logout = async (req, res) => {
             httpOnly: true, // Ensures the cookie can't be accessed via JavaScript
             sameSite: 'strict' // Prevents cross-site request forgery
         });
-
+        // await for 3 second : 
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         // Send success response
-        res.status(200).json({ message: 'Logout successful' });
+        return res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
         console.log('Error during logout:', error);
 
         // Send error response
-        res.status(500).json({ message: 'Error during logout' });
+        return res.status(500).json({ message: 'Error during logout' });
     }
 };
 
@@ -114,6 +119,8 @@ export const updatePassword = async (req, res) => {
         user.password = newPassword
         // save : 
         await user.save()
+        // await for 3 second : 
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         // response : 
         return res.status(200).json({ error: false, message: "Update password successfully!" })
     } catch (error) {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Car } from 'lucide-react';
+import { Loader } from 'lucide-react';
 import {
   Avatar,
   AvatarFallback,
@@ -19,6 +20,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -30,7 +40,8 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { logoutUser, updatePassword } from '@/redux/features/userSlice';
+import { logoutUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/userSlice';
+import { store } from '@/redux/store/store';
 
 
 const Header = () => {
@@ -39,7 +50,7 @@ const Header = () => {
   const navigate = useNavigate()
   // redux state : 
   const dispatch = useDispatch()
-  const { role, userId, userImage, loading, error, errorMessage, updatePasswordSuccess } = useSelector(state => state.user)
+  const { role, userId, userImage, loading, error, errorMessage, updatePasswordSuccess, email, fullName } = useSelector(state => state.user)
 
   // state : 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -72,8 +83,12 @@ const Header = () => {
 
   };
   // logout function : 
-  const handleLogout = () => {
-    dispatch(logoutUser())
+  const handleLogout = async () => {
+    await dispatch(logoutUser())
+    if (!error) {
+      navigate('/login')
+      return
+    }
   }
   // toast error : 
   useEffect(() => {
@@ -83,7 +98,7 @@ const Header = () => {
     }
     if (!error && updatePasswordSuccess) {
       toast.success('Change password successfully!')
-      dispatch(logoutUser())
+      store.dispatch(setUpdatePasswordFalse())
       return
     }
 
@@ -125,6 +140,10 @@ const Header = () => {
       {role === 'admin' ? <div className='flex items-center'>
         <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Admin Dashboard</Button>
       </div> : <></>}
+      {/* fullName or email :  */}
+      <div className='flex items-center font-bold'>
+        {fullName ? fullName : email}
+      </div>
 
       {/* login or avatar : */}
       <div className='flex items-center'>
@@ -148,8 +167,17 @@ const Header = () => {
                     {role === 'user' ? <Button variant='outline' className='w-2/3'>Become Owner</Button> : <></>}
                     {role === 'owner' ? <Button variant='outline' className='w-2/3'>Owner Dashboard</Button> : <></>}
                     {role === 'admin' ? <Button variant='outline' className='w-2/3'>Admin Dashboard</Button> : <></>}
-                    <Button variant='outline' className='w-2/3'>Update Profile</Button>
-                    <Button variant='outline' className='w-2/3 hover:cursor-pointer' onClick={handleLogout} >Logout</Button>
+
+                    <Link to={'/update-profile'} >
+                      <Button variant='outline' className='w-2/3'>Update Profile</Button>
+                    </Link>
+                    <Button
+                      variant='outline'
+                      className='w-2/3 hover:cursor-pointer'
+                      onClick={handleLogout}
+                    >
+                     {loading ? <Loader className='animate-spin' /> : ' Logout'}
+                    </Button>
                   </Card>
                 </TabsContent>
                 <TabsContent value="password">
