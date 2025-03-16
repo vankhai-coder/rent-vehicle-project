@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
         image: { type: String }, 
         isBanned: { type: Boolean, default: false },
         role: { type: String, enum: ["customer", "admin", "owner"], required: true, default: 'customer' },
-        driverLicencs: {
+        driverLicense: {
             before: { type: String },
             after: { type: String }
         },

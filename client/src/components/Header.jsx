@@ -42,6 +42,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { logoutUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/userSlice';
 import { store } from '@/redux/store/store';
+import { get } from 'lodash';
+import { getUserProfile, resetUserProfile } from '@/redux/features/userProfile';
 
 
 const Header = () => {
@@ -50,8 +52,8 @@ const Header = () => {
   const navigate = useNavigate()
   // redux state : 
   const dispatch = useDispatch()
-  const { role, userId, userImage, loading, error, errorMessage, updatePasswordSuccess, email, fullName } = useSelector(state => state.user)
-
+  const { role, userId, loading, error, errorMessage, updatePasswordSuccess, email } = useSelector(state => state.user)
+  const { fullName, image } = useSelector(state => state.userProfile)
   // state : 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -83,15 +85,17 @@ const Header = () => {
     }
     // update password : 
     await dispatch(updatePassword({ currentPassword, newPassword }))
-    setOpen(prev=>!prev)
+
     setCurrentPassword('')
     setConfirmPassword('')
     setNewPassword('')
   };
   // logout function : 
   const handleLogout = async () => {
+    await dispatch(resetUserProfile())
     await dispatch(logoutUser())
-    if (!error) {
+    if (!error && !loading) {
+      setOpen(prev => !prev)
       navigate('/login')
       return
     }
@@ -104,11 +108,18 @@ const Header = () => {
     }
     if (!error && updatePasswordSuccess) {
       toast.success('Change password successfully!')
+      setOpen(prev => !prev)
       store.dispatch(setUpdatePasswordFalse())
       return
     }
 
   }, [error, errorMessage, updatePasswordSuccess])
+
+  // useEffect to get user profile :
+  useEffect(() => {
+    dispatch(getUserProfile())
+  }, [fullName, image])
+
   return (
     // header : 
     <div className='flex  justify-between bg-white py-3'>
@@ -157,7 +168,7 @@ const Header = () => {
           <Popover open={open} onOpenChange={setOpen}  >
             <PopoverTrigger >
               <Avatar className='size-12' >
-                <AvatarImage src={userImage ? userImage : './default_avt.jpg'} alt="Customer Avatar" />
+                <AvatarImage src={image ? image : './default_avt.jpg'} alt="Customer Avatar" />
                 <AvatarFallback>Customer Avatar</AvatarFallback>
               </Avatar>
             </PopoverTrigger>

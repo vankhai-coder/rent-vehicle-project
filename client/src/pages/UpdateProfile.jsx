@@ -1,23 +1,57 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from 'lucide-react';
+import { getUserProfile, updateUserProfile } from '@/redux/features/userProfile';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import _ from 'lodash';
 
 const UpdateProfile = () => {
 
-  const [fullName, setFullName] = React.useState('');
-  const [age, setAge] = React.useState('');
-  const [phone, setPhone] = React.useState('');
-  const [gender, setGender] = React.useState('');
-  const [address, setAddress] = React.useState('');
-  const [province, setProvince] = React.useState('');
-  const [district, setDistrict] = React.useState('');
-  const [commune, setCommune] = React.useState('');
-  const [image, setImage] = React.useState('');
-  const [driverLicense, setDriverLicense] = React.useState({ before: '', after: '' });
-  const [identityCard, setIdentityCard] = React.useState({ before: '', after: '' });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const { userImage } = useSelector(state => state.user)
+  // Get user profile data from Redux store:
+  const {
+    fullName, age, phone, gender, address, province, district, commune, image, driverLicense, identityCard, loading
+  } = useSelector(state => state.userProfile);
+
+  // Local state to store and manage user profile data:
+  const [fullNameU, setFullName] = React.useState('');
+  const [ageU, setAge] = React.useState('');
+  const [phoneU, setPhone] = React.useState('');
+  const [genderU, setGender] = React.useState('');
+  const [addressU, setAddress] = React.useState('');
+  const [provinceU, setProvince] = React.useState('');
+  const [districtU, setDistrict] = React.useState('');
+  const [communeU, setCommune] = React.useState('');
+  const [imageU, setImage] = React.useState('');
+  const [driverLicenseU, setDriverLicense] = React.useState({ before: '', after: '' });
+  const [identityCardU, setIdentityCard] = React.useState({ before: '', after: '' });
+
+  // Fetch user profile when the component mounts:
+  useEffect(() => {
+    dispatch(getUserProfile());
+  }, [dispatch]);
+
+  // Update local state when Redux store data changes:
+  useEffect(() => {
+    if (!loading) {
+      setFullName(fullName || '');
+      setAge(age || '');
+      setPhone(phone || '');
+      setGender(gender || '');
+      setAddress(address || '');
+      setProvince(province || '');
+      setDistrict(district || '');
+      setCommune(commune || '');
+      setImage(image || '');
+      setDriverLicense(driverLicense || { before: '', after: '' });
+      setIdentityCard(identityCard || { before: '', after: '' });
+    }
+  }, [fullName, age, phone, gender, address, province, district, commune, image, driverLicense, identityCard, loading]);
+
 
   // handle file change : 
   const handleFileChange = (event) => {
@@ -37,7 +71,7 @@ const UpdateProfile = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file); // Convert file to Base64
       reader.onloadend = () => {
-        setDriverLicense({ ...driverLicense, before: reader.result }); // Set Base64 string
+        setDriverLicense({ ...driverLicenseU, before: reader.result }); // Set Base64 string
       };
     }
   }
@@ -47,7 +81,7 @@ const UpdateProfile = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file); // Convert file to Base64
       reader.onloadend = () => {
-        setDriverLicense({ ...driverLicense, after: reader.result }); // Set Base64 string
+        setDriverLicense({ ...driverLicenseU, after: reader.result }); // Set Base64 string
       };
     }
   }
@@ -58,18 +92,50 @@ const UpdateProfile = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file); // Convert file to Base64
       reader.onloadend = () => {
-        setIdentityCard({ ...identityCard, before: reader.result }); // Set Base64 string
+        setIdentityCard({ ...identityCardU, before: reader.result }); // Set Base64 string
       };
     }
   }
+  // handle file change for identity card :
   const handleIdentityCardChangeAfter = (event) => {
     const file = event.target.files[0]; // Get the selected file
     if (file) {
       const reader = new FileReader();
       reader.readAsDataURL(file); // Convert file to Base64
       reader.onloadend = () => {
-        setIdentityCard({ ...identityCard, after: reader.result }); // Set Base64 string
+        setIdentityCard({ ...identityCardU, after: reader.result }); // Set Base64 string
       };
+    }
+  }
+  // handle update profile :
+  const handleUpdateProfile = async () => {
+
+    // Update profile - only send the fields that have been changed:
+    const updatedFields = {};
+
+    if (fullNameU !== fullName) updatedFields.fullName = fullNameU;
+    if (ageU !== age) updatedFields.age = ageU;
+    if (phoneU !== phone) updatedFields.phone = phoneU;
+    if (genderU !== gender) updatedFields.gender = genderU;
+    if (addressU !== address) updatedFields.address = addressU;
+    if (provinceU !== province) updatedFields.province = provinceU;
+    if (districtU !== district) updatedFields.district = districtU;
+    if (communeU !== commune) updatedFields.commune = communeU;
+    if (imageU !== image) updatedFields.image = imageU;
+    if (!_.isEqual(driverLicenseU, driverLicense)) updatedFields.driverLicense = driverLicenseU;
+    if (!_.isEqual(identityCardU, identityCard)) updatedFields.identityCard = identityCardU;
+
+    console.log('updatedFields', updatedFields);
+    // Update profile - only send the fields that have been changed:
+    if (Object.keys(updatedFields).length === 0) {
+      toast.error('No changes detected !');
+      return;
+    }
+
+    await dispatch(updateUserProfile(updatedFields));
+    if (!loading) {
+      toast.success('Update profile success !');
+      // navigate('/');
     }
   }
 
@@ -83,7 +149,7 @@ const UpdateProfile = () => {
         <div className="flex items-center">
           <div className="w-20 h-20 rounded-full overflow-hidden mr-4">
             <img
-              src={`${userImage || '/default_avt.jpg'}`} // Replace with actual avatar URL
+              src={`${imageU || '/default_avt.jpg'}`} // Replace with actual avatar URL
               alt="User Avatar"
               className="w-full h-full object-cover"
             />
@@ -115,7 +181,7 @@ const UpdateProfile = () => {
           <label className="block text-sm font-medium mb-2">Full Name</label>
           <input
             type="text"
-            value={fullName}
+            value={fullNameU}
             onChange={(e) => setFullName(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
@@ -124,7 +190,7 @@ const UpdateProfile = () => {
           <label className="block text-sm font-medium mb-2">Age</label>
           <input
             type="number"
-            value={age}
+            value={ageU}
             onChange={(e) => setAge(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
@@ -137,7 +203,7 @@ const UpdateProfile = () => {
           <label className="block text-sm font-medium mb-2">Phone</label>
           <input
             type="phone"
-            value={phone}
+            value={phoneU}
             onChange={(e) => setPhone(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
@@ -146,11 +212,12 @@ const UpdateProfile = () => {
           <label className="block text-sm font-medium mb-2">Gender</label>
           <select
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-            value={gender}
+            value={genderU}
             onChange={(e) => setGender(e.target.value)}
           >
-            <option value="male">Male</option>
-            <option value="female">Femail</option>
+            <option value="">Select</option>
+            <option value="male" selected={genderU === 'male'} >Male</option>
+            <option value="female" selected={genderU === 'female'} >Femail</option>
           </select>
         </div>
       </div>
@@ -195,8 +262,9 @@ const UpdateProfile = () => {
         <div>
           <label className="block text-sm font-medium mb-2">Address</label>
           <input
+            placeholder='ex : 76 Nguyen Hue'
             type="text"
-            value={address}
+            value={addressU}
             onChange={(e) => setAddress(e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
           />
@@ -215,8 +283,8 @@ const UpdateProfile = () => {
           />
           {/* preview image :  */}
           <div className='mt-1'>
-            {driverLicense.before && (
-              <img src={driverLicense.before} alt="Preview" className="size-20  ml-4 rounded" />
+            {driverLicenseU?.before && (
+              <img src={driverLicenseU?.before} alt="Preview" className="size-20  ml-4 rounded" />
             )}
           </div>
         </div>
@@ -230,8 +298,8 @@ const UpdateProfile = () => {
           />
           {/* preview image : */}
           <div className='mt-1'>
-            {driverLicense.after && (
-              <img src={driverLicense.after} alt="Preview" className="size-20  ml-4 rounded" />
+            {driverLicenseU?.after && (
+              <img src={driverLicenseU?.after} alt="Preview" className="size-20  ml-4 rounded" />
             )}
           </div>
         </div>
@@ -250,8 +318,8 @@ const UpdateProfile = () => {
           />
           {/* preview image :  */}
           <div className='mt-1'>
-            {identityCard.before && (
-              <img src={identityCard.before} alt="Preview" className="size-20  ml-4 rounded" />
+            {identityCardU?.before && (
+              <img src={identityCardU?.before} alt="Preview" className="size-20  ml-4 rounded" />
             )}
           </div>
         </div>
@@ -265,21 +333,22 @@ const UpdateProfile = () => {
           />
           {/* preview image : */}
           <div className='mt-1'>
-            {identityCard.after && (
-              <img src={identityCard.after} alt="Preview" className="size-20  ml-4 rounded" />
+            {identityCardU?.after && (
+              <img src={identityCardU?.after} alt="Preview" className="size-20  ml-4 rounded" />
             )}
           </div>
         </div>
       </div>
 
+      {/* Update button :  */}
       <div>
         <Button
-          className='bg-[#5819E0] hover:bg-[#5819F9] rounded-xl mx-auto flex my-5'
+          className='bg-[#5819E0] hover:bg-[#5819F9] rounded-xl mx-auto flex my-5 w-1/4'
           // log all the data : 
 
-          onClick={() => console.log({ fullName, age, phone,image, driverLicense, identityCard })}
-        >   
-          Update
+          onClick={handleUpdateProfile}
+        >
+          {loading ? <Loader className='animate-spin mx-auto' size={20} /> : 'Update Profile'}
         </Button>
       </div>
     </div>

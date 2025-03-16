@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -19,6 +19,8 @@ import MotobikeList from '@/components/MotobikeList'
 import FactsInNumbers from '@/components/FactInNumber'
 import DownloadApp from '@/components/DownLoadApp'
 import SearchDistrict from '@/components/SearchDistrict'
+import { useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 const Home = () => {
 
   const motobikes = [
@@ -75,6 +77,7 @@ const Home = () => {
       reviews: 10
     }
   ];
+
   return (
     <>
       {/* hero section :  */}

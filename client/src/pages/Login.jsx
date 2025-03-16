@@ -29,11 +29,12 @@ const Login = () => {
     // function for handle submit form : 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        dispatch(loginUser({ email, password }))
+        await dispatch(loginUser({ email, password }))
+        navigate('/')
     }
     useEffect(() => {
         // toast : 
-        if (userId ) {
+        if (userId) {
             toast.success('Login successfully!')
             navigate('/')
         } else {
@@ -41,7 +42,7 @@ const Login = () => {
                 toast.error(errorMessage || 'Login fail ,try again!')
             }
         }
-    }, [userId, error])
+    }, [])
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
