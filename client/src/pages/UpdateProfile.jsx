@@ -33,7 +33,7 @@ const UpdateProfile = () => {
   // Fetch user profile when the component mounts:
   useEffect(() => {
     dispatch(getUserProfile());
-  }, [dispatch]);
+  }, []);
 
   // Update local state when Redux store data changes:
   useEffect(() => {
@@ -41,7 +41,7 @@ const UpdateProfile = () => {
       setFullName(fullName || '');
       setAge(age || '');
       setPhone(phone || '');
-      setGender(gender || '');
+      setGender(gender || 'male');
       setAddress(address || '');
       setProvince(province || '');
       setDistrict(district || '');
@@ -215,7 +215,6 @@ const UpdateProfile = () => {
             value={genderU}
             onChange={(e) => setGender(e.target.value)}
           >
-            <option value="">Select</option>
             <option value="male" selected={genderU === 'male'} >Male</option>
             <option value="female" selected={genderU === 'female'} >Femail</option>
           </select>

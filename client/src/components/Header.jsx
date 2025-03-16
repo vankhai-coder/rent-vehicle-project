@@ -40,9 +40,8 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { logoutUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/userSlice';
+import { logoutUser, resetUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/userSlice';
 import { store } from '@/redux/store/store';
-import { get } from 'lodash';
 import { getUserProfile, resetUserProfile } from '@/redux/features/userProfile';
 
 
@@ -52,8 +51,8 @@ const Header = () => {
   const navigate = useNavigate()
   // redux state : 
   const dispatch = useDispatch()
-  const { role, userId, loading, error, errorMessage, updatePasswordSuccess, email } = useSelector(state => state.user)
   const { fullName, image } = useSelector(state => state.userProfile)
+  const { role, userId, loading, error, errorMessage, updatePasswordSuccess, email } = useSelector(state => state.user)
   // state : 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -92,8 +91,10 @@ const Header = () => {
   };
   // logout function : 
   const handleLogout = async () => {
-    await dispatch(resetUserProfile())
     await dispatch(logoutUser())
+    // await dispatch(resetUserProfile());
+    // await dispatch(resetUser())
+    // check error :
     if (!error && !loading) {
       setOpen(prev => !prev)
       navigate('/login')
@@ -118,7 +119,12 @@ const Header = () => {
   // useEffect to get user profile :
   useEffect(() => {
     dispatch(getUserProfile())
-  }, [fullName, image])
+    return 
+  }, [])
+
+  if(loading){
+    return <Loader className='animate-spin' />
+  }
 
   return (
     // header : 

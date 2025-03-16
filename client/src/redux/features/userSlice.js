@@ -1,5 +1,6 @@
 import axiosInstance from "@/utils/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { resetUserProfile } from "./userProfile";
 
 const initialState = {
     userId: null,
@@ -61,6 +62,17 @@ const userSlice = createSlice({
     reducers: {
         setUpdatePasswordFalse : (state)=> {
             state.updatePasswordSuccess  = false 
+        } ,
+        resetUser: (state) => {
+            state.userId = null
+            state.role = null
+            state.loading = false
+            state.error = null
+            state.errorMessage = ''
+            state.userImage = ''
+            state.updatePasswordSuccess = false
+            state.fullName = ''
+            state.email = ''
         }
     },
     extraReducers: (builder) => {
@@ -167,5 +179,5 @@ const userSlice = createSlice({
     }
 })
 
-export const {setUpdatePasswordFalse } = userSlice.actions
+export const {setUpdatePasswordFalse , resetUser} = userSlice.actions
 export default userSlice.reducer

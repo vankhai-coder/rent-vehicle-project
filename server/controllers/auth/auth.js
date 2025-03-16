@@ -163,8 +163,8 @@ export const updateProfile = async (req, res) => {
                 });
                 // delete old image :
                 if (public_id) {
-                    await cloudinary.uploader.destroy(public_id);
-                    console.log("Deleted old image : " , public_id);
+                    await cloudinary.uploader.destroy(`${folder}/${public_id}`);
+                    console.log("Deleted old image : ", public_id);
                 }
                 // return new image url :
                 return result.secure_url;
@@ -183,19 +183,19 @@ export const updateProfile = async (req, res) => {
         }
 
         // Handle Driver License uploads
-        if(driverLicense) {
+        if (driverLicense) {
             let public_id_driverLicense_before = null;
             let public_id_driverLicense_after = null;
             // Delete and upload driver license images :
             if (driverLicense?.before && driverLicense.before.startsWith('data:image')) {
                 public_id_driverLicense_before = user.driverLicense.before.split('/').pop().split('.')[0];
-                await uploadToCloudinary(driverLicense.before, "rent_moto_project/dl", public_id_driverLicense_before)
+                user.driverLicense.before = await uploadToCloudinary(driverLicense.before, "rent_moto_project/driver_licenses", public_id_driverLicense_before)
             }
             if (driverLicense?.after && driverLicense.after.startsWith('data:image')) {
                 public_id_driverLicense_after = user.driverLicense.after.split('/').pop().split('.')[0];
-                await uploadToCloudinary(driverLicense.after, "rent_moto_project/dl", public_id_driverLicense_after)
+                user.driverLicense.after = await uploadToCloudinary(driverLicense.after, "rent_moto_project/driver_licenses", public_id_driverLicense_after)
             }
-        }   
+        }
 
         // Handle Identity Card uploads
         if (identityCard) {
@@ -204,11 +204,11 @@ export const updateProfile = async (req, res) => {
             // Delete and upload identity card images :
             if (identityCard?.before && identityCard.before.startsWith('data:image')) {
                 public_id_identityCard_before = user.identityCard.before.split('/').pop().split('.')[0];
-                await uploadToCloudinary(identityCard.before, "rent_moto_project/ic", public_id_identityCard_before)
+                user.identityCard.before = await uploadToCloudinary(identityCard.before, "rent_moto_project/identiry_cards", public_id_identityCard_before)
             }
             if (identityCard?.after && identityCard.after.startsWith('data:image')) {
                 public_id_identityCard_after = user.identityCard.after.split('/').pop().split('.')[0];
-                await uploadToCloudinary(identityCard.after, "rent_moto_project/ic", public_id_identityCard_after)
+                user.identityCard.after = await uploadToCloudinary(identityCard.after, "rent_moto_project/identiry_cards", public_id_identityCard_after)
             }
         }
 
