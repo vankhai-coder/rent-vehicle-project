@@ -30,11 +30,13 @@ function App() {
 
           {/* customer */}
           <Route path="/vehicle" element={<Vehicle />} />
-          
+
           {/* Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["customer", "owner", "admin"]} />}>
             <Route path="/update-profile" element={<UpdateProfile />} />
           </Route>
+
+          <Route path="/detail" element={<MotobikeDetail />} />
 
           {/* owner */}
 

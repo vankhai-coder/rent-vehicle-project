@@ -5,6 +5,7 @@ import { loginUser } from '@/redux/features/userSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { Loader } from 'lucide-react';
+import { getUserProfile } from '@/redux/features/userProfile'
 
 const Login = () => {
     // function for redux to send login : 

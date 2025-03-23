@@ -92,8 +92,8 @@ const Header = () => {
   // logout function : 
   const handleLogout = async () => {
     await dispatch(logoutUser())
-    // await dispatch(resetUserProfile());
-    // await dispatch(resetUser())
+    await dispatch(resetUserProfile());
+    await dispatch(resetUser())
     // check error :
     if (!error && !loading) {
       setOpen(prev => !prev)

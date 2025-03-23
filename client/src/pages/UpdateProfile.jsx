@@ -17,6 +17,9 @@ const UpdateProfile = () => {
     fullName, age, phone, gender, address, province, district, commune, image, driverLicense, identityCard, loading
   } = useSelector(state => state.userProfile);
 
+  // state for province , district and commune :
+  
+
   // Local state to store and manage user profile data:
   const [fullNameU, setFullName] = React.useState('');
   const [ageU, setAge] = React.useState('');
@@ -51,7 +54,6 @@ const UpdateProfile = () => {
       setIdentityCard(identityCard || { before: '', after: '' });
     }
   }, [fullName, age, phone, gender, address, province, district, commune, image, driverLicense, identityCard, loading]);
-
 
   // handle file change : 
   const handleFileChange = (event) => {
