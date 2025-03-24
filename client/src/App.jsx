@@ -1,16 +1,17 @@
-import Header from "./components/Header"
-import Footer from "@/components/Footer"
+import Header from "./components/customer/Header"
+import Footer from "@/components/customer/Footer"
 import { Routes, Route } from "react-router-dom"
-import Home from '@/pages/Home'
-import Login from "./pages/Login"
-import Vehicle from "./pages/Vehicle"
-import MotobikeDetail from './pages/Detail'
-import ForgotPassword from "./pages/ForgotPassword"
-import Register from "./pages/Register"
-import UpdateProfile from "./pages/UpdateProfile"
-import ProtectedRoute from "./components/ProtectedRoute"
-import AboutUs from "./pages/AboutUs"
-import ContactUs from "./pages/ContactUs"
+import Home from '@/pages/customer/Home'
+import Login from "./pages/customer/Login"
+import Vehicle from "./pages/customer/Vehicle"
+import MotobikeDetail from './pages/customer/Detail'
+import ForgotPassword from "./pages/customer/ForgotPassword"
+import Register from "./pages/customer/Register"
+import UpdateProfile from "./pages/customer/UpdateProfile"
+import ProtectedRoute from "./components/customer/ProtectedRoute"
+import AboutUs from "./pages/customer/AboutUs"
+import ContactUs from "./pages/customer/ContactUs"
+import CustomerDashboard from "./components/customer/CustomerDashboard"
 
 function App() {
   return (
@@ -35,11 +36,17 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
 
-          {/* Protected Routes */}
+          {/* Protected Routes for update profile :  */}
           <Route element={<ProtectedRoute allowedRoles={["customer", "owner", "admin"]} />}>
             <Route path="/update-profile" element={<UpdateProfile />} />
           </Route>
 
+          {/* customer-dashboard */}
+          <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
+            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+          </Route>
+
+          {/* will disapear :  */}
           <Route path="/detail" element={<MotobikeDetail />} />
 
           {/* owner */}
