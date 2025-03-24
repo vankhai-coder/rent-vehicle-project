@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/customer/ProtectedRoute"
 import AboutUs from "./pages/customer/AboutUs"
 import ContactUs from "./pages/customer/ContactUs"
 import CustomerDashboard from "./pages/customer/CustomerDashboard"
+import OwnerDashboard from "./pages/owner/OwnerDashboard"
 
 function App() {
   return (
@@ -46,11 +47,10 @@ function App() {
             <Route path="/customer-dashboard/*" element={<CustomerDashboard />} />
           </Route>
 
-          {/* will disapear :  */}
-          <Route path="/detail" element={<MotobikeDetail />} />
-
           {/* owner */}
-
+          <Route element={<ProtectedRoute allowedRoles={["owner"]} />}>
+            <Route path="/owner-dashboard/*" element={<OwnerDashboard />} />
+          </Route>
 
           {/* admin */}
 

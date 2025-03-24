@@ -158,7 +158,9 @@ const Header = () => {
 
       {/* owner dashboard */}
       {role === 'owner' ? <div className='flex items-center'>
-        <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Owner Dashboard</Button>
+        <Link to={'/owner-dashboard'}>
+          <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Owner Dashboard</Button>
+        </Link>
       </div> : <></>}
 
       {/* admin dashboard */}
@@ -189,7 +191,7 @@ const Header = () => {
                 <TabsContent value="account">
                   <Card className={'flex gap-2 items-center'}>
                     {role === 'customer' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Become Owner</Button> : <></>}
-                    {role === 'owner' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Owner Dashboard</Button> : <></>}
+                    {role === 'owner' ? <Link className='w-2/3' to={'/owner-dashboard'}><Button variant='outline' className='' onClick={() => setOpen((prev) => !prev)}>Owner Dashboard</Button></Link> : <></>}
                     {role === 'admin' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Admin Dashboard</Button> : <></>}
 
                     <Link to={'/update-profile'} className='block w-2/3' >
