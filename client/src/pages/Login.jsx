@@ -5,12 +5,13 @@ import { loginUser } from '@/redux/features/userSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { Loader } from 'lucide-react';
-import { getUserProfile } from '@/redux/features/userProfile'
+import { getUserProfile } from '@/redux/features/userProfileSlice'
 
 const Login = () => {
     // function for redux to send login : 
     const dispatch = useDispatch()
     const { loading, error, userId, errorMessage } = useSelector(state => state.user)
+
 
     // get params : 
     const [searchParams] = useSearchParams();
@@ -31,6 +32,7 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         await dispatch(loginUser({ email, password }))
+        await dispatch(getUserProfile())
         navigate('/')
     }
     useEffect(() => {

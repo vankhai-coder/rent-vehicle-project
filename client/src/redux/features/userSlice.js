@@ -1,6 +1,6 @@
 import axiosInstance from "@/utils/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { resetUserProfile } from "./userProfile";
+import { resetUserProfile } from "./userProfileSlice";
 
 const initialState = {
     userId: null,

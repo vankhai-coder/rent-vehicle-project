@@ -42,7 +42,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { logoutUser, resetUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/userSlice';
 import { store } from '@/redux/store/store';
-import { getUserProfile, resetUserProfile } from '@/redux/features/userProfile';
+import { getUserProfile, resetUserProfile } from '@/redux/features/userProfileSlice';
 
 
 const Header = () => {
@@ -118,11 +118,13 @@ const Header = () => {
 
   // useEffect to get user profile :
   useEffect(() => {
-    dispatch(getUserProfile())
-    return 
+    if (userId) {
+      dispatch(getUserProfile())
+    }
+    return
   }, [])
 
-  if(loading){
+  if (loading) {
     return <Loader className='animate-spin' />
   }
 
@@ -150,8 +152,8 @@ const Header = () => {
         </Link>
         <Link to={'/vehicle'}><p className='font-medium text-sm'>Vehicle</p></Link>
         <Link to={'/detail'}><p className='font-medium text-sm'>Detail</p></Link>
-        <p className='font-medium text-sm'>About Us</p>
-        <p className='font-medium text-sm'>Contact Us</p>
+        <Link to={'/about-us'}> <p className='font-medium text-sm'>About Us</p></Link>
+        <Link to={'/contact-us'}> <p className='font-medium text-sm'>Contact Us</p></Link>
       </div>
 
       {/* owner dashboard */}

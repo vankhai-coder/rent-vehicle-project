@@ -9,6 +9,8 @@ import ForgotPassword from "./pages/ForgotPassword"
 import Register from "./pages/Register"
 import UpdateProfile from "./pages/UpdateProfile"
 import ProtectedRoute from "./components/ProtectedRoute"
+import AboutUs from "./pages/AboutUs"
+import ContactUs from "./pages/ContactUs"
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
 
           {/* customer */}
           <Route path="/vehicle" element={<Vehicle />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["customer", "owner", "admin"]} />}>

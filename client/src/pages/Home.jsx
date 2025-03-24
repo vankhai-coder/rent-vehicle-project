@@ -21,62 +21,20 @@ import DownloadApp from '@/components/DownLoadApp'
 import SearchDistrict from '@/components/SearchDistrict'
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchByDates } from '@/redux/features/motobikeSlice';
 const Home = () => {
 
-  const motobikes = [
-    {
-      image: "https://cdn.riderly.com/storage/media/img/bikes/Honda__Vision_110.png",
-      price: 4,
-      name: "Yamaha Exciter 135",
-      addOns: [
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
+  const { motobikes, isLoading, error, } = useSelector(state => state.motobike)
+  const dispatch = useDispatch()
+  
+  useEffect(() => {
+    dispatch(searchByDates({ dates: [["2025-3-18"]] }))
+  }, [])
 
-      ],
-      district: "Xuan Ha",
-      reviews: 10
-    },
-    {
-      image: "https://cdn.riderly.com/storage/media/img/bikes/Honda__Vision_110.png",
-      price: 4,
-      name: "Yamaha Exciter 135",
-      addOns: [
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-
-      ],
-      district: "Xuan Ha",
-      reviews: 10
-    }
-    , {
-      image: "https://cdn.riderly.com/storage/media/img/bikes/Honda__Vision_110.png",
-      price: 4,
-      name: "Yamaha Exciter 135",
-      addOns: [
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-
-      ],
-      district: "Xuan Ha",
-      reviews: 10
-    },
-    {
-      image: "https://cdn.riderly.com/storage/media/img/bikes/Honda__Vision_110.png",
-      price: 4,
-      name: "Yamaha Exciter 135",
-      addOns: [
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-        "https://cdn.riderly.com/storage/media/img/addons/extra_helmet.svg",
-
-      ],
-      district: "Xuan Ha",
-      reviews: 10
-    }
-  ];
+  if (isLoading) {
+    return null
+  }
 
   return (
     <>

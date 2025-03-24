@@ -17,6 +17,9 @@ export const searchMotoByListOfDates = async (req, res) => {
         // Extract dates from the request body
         const { dates } = req.body;
 
+        console.log('dates : ', dates);
+
+
         if (!dates || !Array.isArray(dates) || dates.length === 0) {
             return res.status(400).json({ message: "Invalid date list" });
         }
@@ -26,8 +29,6 @@ export const searchMotoByListOfDates = async (req, res) => {
         const normalizedDates = dates.map(date =>
             dayjs(date).tz(vietnamTimezone).startOf("day").utc().toDate()
         );
-
-        console.log('normalizedDates', normalizedDates);
 
         // Find motobike IDs that are already booked on the given dates
         const bookedMotobikeIds = await Booking.find({
@@ -71,7 +72,7 @@ export const searchMotoByListOfDates = async (req, res) => {
         // Convert the Map to an array for the final response
         const result = Array.from(uniqueMotobikes.values());
 
-        res.status(200).json({ error: false, data: result });
+        return res.status(200).json(result);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
@@ -119,7 +120,7 @@ export const searchMotoBikeByType = async (req, res) => {
 
         // Convert the Map to an array for the response
         const results = Array.from(uniqueMotobikes.values());
-        return res.status(200).json({ error: false, data: results });
+        return res.status(200).json(results);
     } catch (err) {
         console.error("Error searching motobike by type:", err.message);
         res.status(500).json({ error: err.message });
@@ -177,7 +178,7 @@ export const searchByDistrict = async (req, res) => {
         // Convert the Map's values to an array for the response
         const results = Array.from(uniqueMotobikeTypes.values());
 
-        res.status(200).json({ error: false, data: results });
+        res.status(200).json(results);
     } catch (error) {
         console.error("Error searching by district:", error.message);
         res.status(500).json({ error: true, error: error.message });
@@ -255,10 +256,7 @@ export const searchByDatesAndType = async (req, res) => {
         const results = Array.from(uniqueMotobikes.values());
 
         // Respond with formatted data
-        return res.status(200).json({
-            error: false,
-            data: results
-        });
+        return res.status(200).json(results);
     } catch (error) {
         console.error("Error in searchByDatesAndType: ", error.message);
         return res.status(500).json({ success: false, message: "Internal server error" });
@@ -331,10 +329,7 @@ export const searchByDatesAndDistrict = async (req, res) => {
         const results = Array.from(uniqueMotobikes.values());
 
         // Respond with formatted data
-        return res.status(200).json({
-            error: false,
-            data: results
-        });
+        return res.status(200).json(results);
     } catch (error) {
         console.error("Error in searchByDatesAndDistrict: ", error.message);
         return res.status(500).json({ success: false, message: "Internal server error" });
@@ -407,10 +402,7 @@ export const searchByTypeAndDistrict = async (req, res) => {
         const results = Array.from(uniqueMotobikes.values());
 
         // Respond with formatted data
-        return res.status(200).json({
-            error: false,
-            data: results
-        });
+        return res.status(200).json(results);
     } catch (error) {
         console.error("Error in searchByTypeAndDistrict: ", error.message);
         return res.status(500).json({ error: true, message: "Internal server error" });
@@ -495,10 +487,7 @@ export const searchByDistrictWithDatesAndType = async (req, res) => {
         const results = Array.from(uniqueMotobikes.values());
 
         // Respond with formatted data
-        return res.status(200).json({
-            error: false,
-            data: results
-        });
+        return res.status(200).json(results);
     } catch (error) {
         console.error("Error in searchByDistrictWithDatesAndType: ", error.message);
         return res.status(500).json({ error: true, message: "Internal server error" });

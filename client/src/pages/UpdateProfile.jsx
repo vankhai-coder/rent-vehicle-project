@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from 'lucide-react';
-import { getUserProfile, updateUserProfile } from '@/redux/features/userProfile';
+import { getUserProfile, updateUserProfile } from '@/redux/features/userProfileSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
