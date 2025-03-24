@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { searchByDatesTypeDistrict } from "@/redux/features/motobikeSlice"
+import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDatesTypeDistrict } from "@/redux/features/motobikeSlice"
 import { Loader } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -19,16 +19,15 @@ const Vehicle = () => {
 
   // redux : 
   const dispatch = useDispatch()
-  const { loading, error, motobikes } = useSelector(state => state.motobike)
+  const { loading, error, motobikes, districts, motobikeTypes } = useSelector(state => state.motobike)
 
   const [dates, setDates] = useState([])
-  const [district, setDistrict] = useState('Hoa Hai')
-  const [motobikeTypeName, setMotobikeTypeName] = useState('Yamaha Exciter 155')
+  const [district, setDistrict] = useState('')
+  const [motobikeTypeName, setMotobikeTypeName] = useState('')
 
   // dates select : 
   const handleDateChange = (newDate) => {
     setDates(newDate);
-    console.log("Selected Dates:", dates);
   };
   const generateDateArray = (dateRange) => {
     const months = {
@@ -62,7 +61,6 @@ const Vehicle = () => {
       if (dates.length === 0) {
         return
       }
-      console.log('generateDateArray(dates)', generateDateArray(dates));
     }
   })
   // district select : 
@@ -71,25 +69,32 @@ const Vehicle = () => {
 
   // function to search : 
   const handleSearchMotobike = async () => {
-    // if have all 3 catergory : 
-    if (dates && district && motobikeTypeName) {
-      console.log('search by 3 catergory : ', district, motobikeTypeName, generateDateArray(dates));
+    console.log('3 CATERGORIES : ', district, motobikeTypeName, generateDateArray(dates));
 
+    // if have all 3 catergory : 
+    if (dates && district !== 'none' && motobikeTypeName !== 'none') {
       await dispatch(searchByDatesTypeDistrict({ dates: generateDateArray(dates), district, motobikeTypeName }))
       return
     }
 
     // if have dates + district 
+    if (dates && district !== 'none') {
 
+    }
     // if have dates + motobikeTypeName
-    // if have dates  
+    if (dates && motobikeTypeName !== 'none') {
 
+    }
+    // if have only dates  
+    if (dates) {
+
+    }
   }
-
-    // get list of district that in db : 
-    useEffect(()=> {
-
-    } ,[])
+  // get list of district , types that in db : 
+  useEffect(() => {
+    dispatch(getUniqueMotobikeTypeNames())
+    dispatch(getUniqueDistricts())
+  }, [])
 
   return (
     <div>
@@ -106,34 +111,50 @@ const Vehicle = () => {
         {/* dates :  */}
         <DatePickerWithRange onDateChange={handleDateChange} />
         {/* district */}
-        <Select className='text-white'>
-          <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]   hover:bg-primary/90 h-10 px-4 py-2">
-            <SelectValue placeholder="Select District" className='text-white ' />
+        <Select
+          className='text-white'
+          value={district}
+          onValueChange={setDistrict}
+        >
+          <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0] hover:bg-primary/90 h-10 px-4 py-2">
+            <SelectValue placeholder="Select District" className='text-white' />
           </SelectTrigger>
-          <SelectContent >
-            <SelectGroup >
+          <SelectContent>
+            <SelectGroup>
               <SelectItem value="none">Select District</SelectItem>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
+              {loading ? (
+                <SelectItem value="loading" disabled>Loading...</SelectItem>
+              ) : (
+                districts.map((district, index) => (
+                  <SelectItem key={index} value={district}>
+                    {district}
+                  </SelectItem>
+                ))
+              )}
             </SelectGroup>
           </SelectContent>
         </Select>
         {/* type */}
-        <Select className='text-white'>
-          <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]  hover:bg-primary/90  h-10 px-4 py-2">
-            <SelectValue placeholder="Select Motbike" className='text-white' />
+        <Select
+          className='text-white'
+          value={motobikeTypeName}
+          onValueChange={setMotobikeTypeName}
+        >
+          <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0] hover:bg-primary/90 h-10 px-4 py-2">
+            <SelectValue placeholder="Select Motobike" className='text-white' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectItem value="none">Select Motobike</SelectItem>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
+              {loading ? (
+                <SelectItem value="loading" disabled>Loading...</SelectItem>
+              ) : (
+                motobikeTypes.map((type, index) => (
+                  <SelectItem key={index} value={type}>
+                    {type}
+                  </SelectItem>
+                ))
+              )}
             </SelectGroup>
           </SelectContent>
         </Select>

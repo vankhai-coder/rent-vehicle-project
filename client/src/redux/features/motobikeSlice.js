@@ -6,6 +6,8 @@ const initialState = {
     loading: false,
     error: null,
     errorMessage: "",
+    districts: [],
+    motobikeTypes: [],
 };
 
 // Async function for searching motobikes by booked dates:
@@ -52,6 +54,33 @@ export const searchByDatesTypeDistrict = createAsyncThunk('motorbike/searchByDat
         return rejectWithValue(error.response?.data?.message || 'Error when searching by dates, type, and district');
     }
 });
+// Async function to get unique districts
+export const getUniqueDistricts = createAsyncThunk(
+    'motorbike/getUniqueDistricts',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/api/customer/search/getUniqueDistricts');
+            return response.data;
+        } catch (error) {
+            console.log('Error fetching unique districts:', error);
+            return rejectWithValue(error.response?.data?.message || 'Error fetching unique districts');
+        }
+    }
+);
+
+// Async function to get unique motorbike type names
+export const getUniqueMotobikeTypeNames = createAsyncThunk(
+    'motorbike/getUniqueMotobikeTypeNames',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/api/customer/search/getUniqueMotobikeTypeNames');
+            return response.data;
+        } catch (error) {
+            console.log('Error fetching unique motorbike type names:', error);
+            return rejectWithValue(error.response?.data?.message || 'Error fetching unique motorbike type names');
+        }
+    }
+);
 
 const motobikeSlice = createSlice({
     name: 'motorbike',
@@ -123,6 +152,32 @@ const motobikeSlice = createSlice({
                 state.error = true;
                 state.errorMessage = action.payload;
             })
+            // Handle unique districts
+            .addCase(getUniqueDistricts.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getUniqueDistricts.fulfilled, (state, action) => {
+                state.districts = action.payload;
+                state.loading = false;
+            })
+            .addCase(getUniqueDistricts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = true;
+                state.errorMessage = action.payload;
+            })
+            // Handle unique motorbike type names
+            .addCase(getUniqueMotobikeTypeNames.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getUniqueMotobikeTypeNames.fulfilled, (state, action) => {
+                state.motobikeTypes = action.payload;
+                state.loading = false;
+            })
+            .addCase(getUniqueMotobikeTypeNames.rejected, (state, action) => {
+                state.loading = false;
+                state.error = true;
+                state.errorMessage = action.payload;
+            });
     }
 });
 

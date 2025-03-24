@@ -494,6 +494,37 @@ export const searchByDistrictWithDatesAndType = async (req, res) => {
     }
 };
 
+// get all district : 
+export const getUniqueDistricts = async (req, res) => {
+    try {
+        const districts = await StoreLocation.aggregate([
+            {
+                $group: {
+                    _id: "$district"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    district: "$_id"
+                }
+            }
+        ]);
+
+        return res.status(200).json(districts.map(d => d.district));
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+// get all motobike type : 
+export const getUniqueMotobikeTypeNames = async (req, res) => {
+    try {
+        const motobikeTypes = await MotobikeType.distinct("name");
+        res.status(200).json(motobikeTypes);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 
 

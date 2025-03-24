@@ -50,6 +50,9 @@ const MotobikeCard = ({ image, price, name, addOns, district, reviews }) => {
 };
 
 const MotobikeList = ({ motobikes }) => {
+  if (motobikes.length === 0) {
+    return <div>Cant find vehicle that match this filter!</div>
+  }
   return (
     <div className="grid grid-cols-3 gap-8">
       {motobikes.map((bike, index) => (

@@ -1,7 +1,7 @@
 
 import express from 'express'
 import { checkAuth } from '../../controllers/auth/auth.js'
-import { searchByDatesAndDistrict, searchByDatesAndType, searchByDistrict, searchByDistrictWithDatesAndType, searchByTypeAndDistrict, searchMotoBikeByType, searchMotoByListOfDates } from '../../controllers/customer/searchMotobike.js'
+import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDatesAndDistrict, searchByDatesAndType, searchByDistrict, searchByDistrictWithDatesAndType, searchByTypeAndDistrict, searchMotoBikeByType, searchMotoByListOfDates } from '../../controllers/customer/searchMotobike.js'
 import {} from '../../controllers/customer/searchMotobike.js'
 
 const router = express.Router()
@@ -33,4 +33,9 @@ router.post('/type-district' , searchByTypeAndDistrict )
 // search by 3 catergories : district , dates , typeOfMotobike : 
 router.post('/district-dates-motobike-type' , searchByDistrictWithDatesAndType )
 
+// getUniqueDistricts : 
+router.get('/getUniqueDistricts' , getUniqueDistricts )
+
+// getUniqueMotobikeTypeNames
+router.get('/getUniqueMotobikeTypeNames' , getUniqueMotobikeTypeNames)
 export default router 
