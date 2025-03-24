@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     image: "",
@@ -32,6 +32,30 @@ const bookingSlice = createSlice({
         },
     },
 });
+
+// Tạo hành động bất đồng bộ để xóa booking
+export const deleteBooking = createAsyncThunk('booking/deleteBooking', async (bookingId, { rejectWithValue }) => {
+    try {
+        const response = await axios.delete(`/api/bookings/${bookingId}`);
+        return response.data;
+    } catch (error) {
+        console.log('error when deleting booking:', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when deleting booking');
+    }
+});
+
+// Tạo hành động bất đồng bộ để lấy danh sách booking
+export const getBookings = createAsyncThunk('booking/getBookings', async (_, { rejectWithValue }) => {
+    try {
+        const response = await axios.get('/api/bookings');
+        return response.data;
+    } catch (error) {
+        console.log('error when fetching bookings:', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when fetching bookings');
+    }
+});
+
+
 
 export const { setBookedDate, createBooking } = bookingSlice.actions;
 export default bookingSlice.reducer;

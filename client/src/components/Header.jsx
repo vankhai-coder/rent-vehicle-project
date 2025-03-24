@@ -57,6 +57,10 @@ const Header = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const handleAdminDashboardClick = () => {
+    navigate('/admin-dashboard');
+};
+
 
   // state for popup when click avatar : 
   const [open, setOpen] = useState(false)
@@ -164,7 +168,13 @@ const Header = () => {
 
       {/* admin dashboard */}
       {role === 'admin' ? <div className='flex items-center'>
-        <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Admin Dashboard</Button>
+        <Button 
+                variant={''} 
+                className='bg-[#5937E0] rounded-2xl px-8' 
+                onClick={handleAdminDashboardClick}
+            >
+                Admin Dashboard
+            </Button>
       </div> : <></>}
       {/* fullName or email :  */}
       <div className='flex items-center font-bold'>

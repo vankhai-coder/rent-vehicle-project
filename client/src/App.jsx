@@ -11,6 +11,7 @@ import UpdateProfile from "./pages/UpdateProfile"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AboutUs from "./pages/AboutUs"
 import ContactUs from "./pages/ContactUs"
+import AdminDashboard from "./pages/AdminDashboard"
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["customer", "owner", "admin"]} />}>
@@ -46,7 +48,7 @@ function App() {
 
 
           {/* admin */}
-
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Routes>
 
         {/* Footer :  */}

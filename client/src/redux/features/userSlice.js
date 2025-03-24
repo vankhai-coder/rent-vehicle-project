@@ -11,7 +11,8 @@ const initialState = {
     userImage: '',
     updatePasswordSuccess : false,
     fullName : '' , 
-    email : ''
+    email : '',
+    users: [] // Thêm mảng users vào initialState
 };
 
 // Async function for user login:
@@ -54,6 +55,30 @@ export const updatePassword = createAsyncThunk('user/updatePassword', async ({ c
         return rejectWithValue(error.response?.data?.message || 'Error when updating password');
     }
 });
+
+// Async function for banning a user:
+export const banUser = createAsyncThunk('user/banUser', async (userId, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.put(`/api/users/ban/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.log('error when banning user:', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when banning user');
+    }
+});
+
+// Async function for getting users
+export const getUsers = createAsyncThunk('user/getUsers', async (_, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.get('/api/admin/users');
+        return response.data.data; // Truy cập vào thuộc tính data của đối tượng JSON
+    } catch (error) {
+        console.log('error when fetching users:', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when fetching users');
+    }
+});
+
+
 
 
 const userSlice = createSlice({
@@ -174,6 +199,19 @@ const userSlice = createSlice({
                 state.errorMessage = action.payload;
                 state.updatePasswordSuccess = false  
 
+            })
+             //get users:
+             .addCase(getUsers.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getUsers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.users = action.payload; // Cập nhật state.users với dữ liệu từ API
+            })
+            .addCase(getUsers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
 
     }

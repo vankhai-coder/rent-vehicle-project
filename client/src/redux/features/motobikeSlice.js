@@ -82,6 +82,28 @@ export const getUniqueMotobikeTypeNames = createAsyncThunk(
     }
 );
 
+// Async function to delete a motobike
+export const deleteMotobike = createAsyncThunk('motorbike/deleteMotobike', async (motobikeId, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.delete(`/api/motobikes/${motobikeId}`);
+        return response.data;
+    } catch (error) {
+        console.log('error when deleting motobike:', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when deleting motobike');
+    }
+});
+
+// Async function to get all motobikes
+export const getMotobikes = createAsyncThunk('motorbike/getMotobikes', async (_, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.get('/api/motobikes');
+        return response.data;
+    } catch (error) {
+        console.log('error when fetching motobikes:', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when fetching motobikes');
+    }
+});
+
 const motobikeSlice = createSlice({
     name: 'motorbike',
     initialState,
