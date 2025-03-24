@@ -1,4 +1,4 @@
-import { createBooking } from "@/redux/features/bookingSlice";
+import { createBooking } from "@/redux/features/customer/bookingSlice";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";

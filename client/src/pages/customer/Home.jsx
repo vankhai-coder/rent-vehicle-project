@@ -22,7 +22,7 @@ import SearchDistrict from '@/components/customer/SearchDistrict'
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchByDates } from '@/redux/features/motobikeSlice';
+import { searchByDates } from '@/redux/features/customer/motobikeSlice';
 const Home = () => {
 
   const { motobikes, isLoading, error, } = useSelector(state => state.motobike)

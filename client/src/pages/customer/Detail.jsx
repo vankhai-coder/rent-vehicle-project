@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from '../../components/ui/button';
 import { useEffect, useState } from "react";
-import { clearBooking, reserveBooking, setBookedDate } from "@/redux/features/bookingSlice";
+import { clearBooking, reserveBooking, setBookedDate } from "@/redux/features/customer/bookingSlice";
 import { useStepContext } from "@mui/material";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";

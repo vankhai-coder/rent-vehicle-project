@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setBookedDate } from "@/redux/features/bookingSlice"
-import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDates, searchByDatesAndDistrict, searchByDatesAndType, searchByDatesTypeDistrict, sortByPrice } from "@/redux/features/motobikeSlice"
+import { setBookedDate } from "@/redux/features/customer/bookingSlice"
+import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDates, searchByDatesAndDistrict, searchByDatesAndType, searchByDatesTypeDistrict, sortByPrice } from "@/redux/features/customer/motobikeSlice"
 import { Loader } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"

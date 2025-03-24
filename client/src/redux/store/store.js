@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from '../features/userSlice'
-import userProfileReducer from '../features/userProfileSlice'
-import motobikeReducer from '../features/motobikeSlice'
-import bookingReducer from '../features/bookingSlice'
+import userReducer from '../features/customer/userSlice'
+import userProfileReducer from '../features/customer/userProfileSlice'
+import motobikeReducer from '../features/customer/motobikeSlice'
+import bookingReducer from '../features/customer/bookingSlice'
+import billReducer from '../features/customer/billSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,7 +11,8 @@ export const store = configureStore({
     user: userReducer,
     userProfile: userProfileReducer,
     motobike : motobikeReducer ,
-    booking : bookingReducer 
+    booking : bookingReducer ,
+    bill : billReducer
     // for other : 
   },
 });

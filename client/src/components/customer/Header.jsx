@@ -40,9 +40,9 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { logoutUser, resetUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/userSlice';
+import { logoutUser, resetUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/customer/userSlice';
 import { store } from '@/redux/store/store';
-import { getUserProfile, resetUserProfile } from '@/redux/features/userProfileSlice';
+import { getUserProfile, resetUserProfile } from '@/redux/features/customer/userProfileSlice';
 
 
 const Header = () => {

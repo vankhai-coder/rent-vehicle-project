@@ -11,7 +11,7 @@ import UpdateProfile from "./pages/customer/UpdateProfile"
 import ProtectedRoute from "./components/customer/ProtectedRoute"
 import AboutUs from "./pages/customer/AboutUs"
 import ContactUs from "./pages/customer/ContactUs"
-import CustomerDashboard from "./components/customer/CustomerDashboard"
+import CustomerDashboard from "./pages/customer/CustomerDashboard"
 
 function App() {
   return (
@@ -43,7 +43,7 @@ function App() {
 
           {/* customer-dashboard */}
           <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
-            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+            <Route path="/customer-dashboard/*" element={<CustomerDashboard />} />
           </Route>
 
           {/* will disapear :  */}
