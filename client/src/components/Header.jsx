@@ -97,6 +97,7 @@ const Header = () => {
     // check error :
     if (!error && !loading) {
       setOpen(prev => !prev)
+      window.scrollTo(0, 0);
       navigate('/login')
       return
     }

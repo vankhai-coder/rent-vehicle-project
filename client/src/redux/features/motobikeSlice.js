@@ -85,7 +85,16 @@ export const getUniqueMotobikeTypeNames = createAsyncThunk(
 const motobikeSlice = createSlice({
     name: 'motorbike',
     initialState,
-    reducers: {},
+    reducers: {
+        sortByPrice(state, action) {
+            const { payload } = action; // 'lowest' or 'highest'
+            console.log('payload : ' , payload);
+            
+            state.motobikes.sort((a, b) =>
+                payload === "lowest" ? a.price - b.price : b.price - a.price
+            );
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(searchByDates.pending, (state) => {
@@ -180,5 +189,7 @@ const motobikeSlice = createSlice({
             });
     }
 });
+
+export const { sortByPrice } = motobikeSlice.actions
 
 export default motobikeSlice.reducer;

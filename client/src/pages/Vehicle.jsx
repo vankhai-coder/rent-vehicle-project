@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDatesTypeDistrict } from "@/redux/features/motobikeSlice"
+import { setBookedDate } from "@/redux/features/bookingSlice"
+import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDates, searchByDatesAndDistrict, searchByDatesAndType, searchByDatesTypeDistrict, sortByPrice } from "@/redux/features/motobikeSlice"
 import { Loader } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -22,8 +23,9 @@ const Vehicle = () => {
   const { loading, error, motobikes, districts, motobikeTypes } = useSelector(state => state.motobike)
 
   const [dates, setDates] = useState([])
-  const [district, setDistrict] = useState('')
-  const [motobikeTypeName, setMotobikeTypeName] = useState('')
+  const [district, setDistrict] = useState('none')
+  const [motobikeTypeName, setMotobikeTypeName] = useState('none')
+  const [price, setPrice] = useState('none')
 
   // dates select : 
   const handleDateChange = (newDate) => {
@@ -63,31 +65,33 @@ const Vehicle = () => {
       }
     }
   })
-  // district select : 
-
-  // type select : 
-
   // function to search : 
   const handleSearchMotobike = async () => {
-    console.log('3 CATERGORIES : ', district, motobikeTypeName, generateDateArray(dates));
-
+    console.log('4 CATERGORIES : ', district, motobikeTypeName, dates, generateDateArray(dates), price);
     // if have all 3 catergory : 
     if (dates && district !== 'none' && motobikeTypeName !== 'none') {
       await dispatch(searchByDatesTypeDistrict({ dates: generateDateArray(dates), district, motobikeTypeName }))
+
       return
     }
 
     // if have dates + district 
     if (dates && district !== 'none') {
+      dispatch(searchByDatesAndDistrict({ dates: generateDateArray(dates), district }))
 
+      return
     }
     // if have dates + motobikeTypeName
     if (dates && motobikeTypeName !== 'none') {
+      dispatch(searchByDatesAndType({ dates: generateDateArray(dates), motobikeTypeName }))
 
+      return
     }
     // if have only dates  
     if (dates) {
+      dispatch(searchByDates({ dates: generateDateArray(dates) }))
 
+      return
     }
   }
   // get list of district , types that in db : 
@@ -95,6 +99,17 @@ const Vehicle = () => {
     dispatch(getUniqueMotobikeTypeNames())
     dispatch(getUniqueDistricts())
   }, [])
+
+  useEffect(() => {
+    if (price !== "none" && motobikes.length > 0) {
+      dispatch(sortByPrice(price));
+    }
+  }, [price, motobikes, dispatch]);
+
+  // set selectedDates : 
+  useEffect(() => {
+    dispatch(setBookedDate(dates))
+  }, [dates])
 
   return (
     <div>
@@ -159,14 +174,19 @@ const Vehicle = () => {
           </SelectContent>
         </Select>
         {/* price */}
-        <Select className='text-white'>
+        <Select
+          className='text-white'
+          value={price}
+          onValueChange={setPrice}
+        >
           <SelectTrigger className="inline-flex items-center justify-center !text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#5937E0]  hover:bg-primary/90 h-10 px-4 py-2">
             <SelectValue placeholder="Select Price" className='text-white' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="apple">Lowest</SelectItem>
-              <SelectItem value="pineapple">Highest</SelectItem>
+              <SelectItem value="none">Select Price</SelectItem>
+              <SelectItem value="lowest">Lowest</SelectItem>
+              <SelectItem value="highest">Highest</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

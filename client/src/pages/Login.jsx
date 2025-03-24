@@ -33,6 +33,8 @@ const Login = () => {
         event.preventDefault()
         await dispatch(loginUser({ email, password }))
         await dispatch(getUserProfile())
+        window.scrollTo(0, 0);
+
         navigate('/')
     }
     useEffect(() => {

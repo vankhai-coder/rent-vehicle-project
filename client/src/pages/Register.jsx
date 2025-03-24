@@ -32,6 +32,8 @@ const Register = () => {
         // toast : 
         if (userId) {
             toast.success('Register successfully!')
+        window.scrollTo(0, 0);
+
             navigate('/')
         } else {
             if (error) {

@@ -1,8 +1,23 @@
+import { createBooking } from "@/redux/features/bookingSlice";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-const MotobikeCard = ({ image, price, name, addOns, district, reviews }) => {
+const MotobikeCard = ({ image, price, name, addOns, district, reviews, motobike, ownerId, height, weight }) => {
+
+  const navigate = useNavigate()
+  // redux : 
+  const dispatch = useDispatch()
+
   return (
-    <div className="w-full border border-gray-300 rounded-lg p-4 font-sans shadow-md">
+    <div className="w-full border border-gray-300 rounded-lg p-4 font-sans shadow-md hover:opacity-70"
+      // navigate to detail page : 
+      onClick={() => {
+        window.scrollTo(0, 0);
+        navigate('/detail')
+        dispatch(createBooking({ image, price, name, district, ownerId, motobike, height, weight}))
+      }}
+    >
       {/* Image */}
       <div className="text-center mt-4 relative">
         <img src={image} alt={name} className="w-64 h-auto" />

@@ -4,14 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from 'lucide-react';
 import { getUserProfile, updateUserProfile } from '@/redux/features/userProfileSlice';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 
 const UpdateProfile = () => {
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   // Get user profile data from Redux store:
   const {
     fullName, age, phone, gender, address, province, district, commune, image, driverLicense, identityCard, loading
