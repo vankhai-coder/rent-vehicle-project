@@ -2,7 +2,8 @@ import OwnerProfile from "@/components/OwnerProfileCard";
 import ReviewSection from "@/components/ReviewSection";
 import Booking from '@/components/Booking'
 
-function CarDetails() {
+function Details() {
+    
     const ownerData = {
         name: 'Kevin Francis',
         image: 'URL_TO_YOUR_IMAGE', // Replace with your image URL
@@ -215,4 +216,4 @@ function CarDetails() {
     );
 }
 
-export default CarDetails;
+export default Details;

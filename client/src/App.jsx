@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom"
 import Home from '@/pages/Home'
 import Login from "./pages/Login"
 import Vehicle from "./pages/Vehicle"
-import MotobikeDetail from './pages/MotobikeDetail'
+import MotobikeDetail from './pages/Detail'
 import ForgotPassword from "./pages/ForgotPassword"
 import Register from "./pages/Register"
 import UpdateProfile from "./pages/UpdateProfile"
