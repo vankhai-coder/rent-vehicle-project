@@ -1,5 +1,5 @@
 import express from 'express'
-import { createStoreLocation, getAllStoreLocationsOfEachOwner } from '../../controllers/owner/storeLocationController.js'
+import { createStoreLocation, getAllStoreLocations } from '../../controllers/owner/storeLocationController.js'
 import { checkAuth } from '../../controllers/auth/auth.js'
 
 const router = express.Router()
@@ -8,6 +8,6 @@ const router = express.Router()
 router.post('/', checkAuth, createStoreLocation)
 
 // get all store locations : 
-router.get('/:ownerId', checkAuth, getAllStoreLocationsOfEachOwner)
+router.get('/', checkAuth, getAllStoreLocations)
 
 export default router

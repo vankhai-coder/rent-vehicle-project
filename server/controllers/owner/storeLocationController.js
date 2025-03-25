@@ -41,41 +41,52 @@ export const createStoreLocation = async (req, res) => {
             address,
         });
 
-        return res.status(201).json({
-            error: false,
-            message: "Store location created successfully!",
-            data: newStoreLocation,
-        });
+        return res.status(201).json(newStoreLocation);
     } catch (error) {
         console.error("Error creating store location:", error);
         return res.status(500).json({ error: true, message: "Server error while creating store location!" });
     }
 };
 
-export const getAllStoreLocationsOfEachOwner = async (req, res) => {
+export const getAllStoreLocations = async (req, res) => {
     try {
-        let filter = {};
+        // Extract userId from the request
+        const { userId } = req.user; 
 
-        if (req.user.role === "owner") {
-            // Owners can only retrieve their own store locations
-            filter.owner = req.user.userId;
-        } else if (req.user.role === "admin") {
-            // Admins can retrieve store locations of any owner (by ownerId from request params)
-            if (!req.params.ownerId) {
-                return res.status(400).json({ error: true, message: "Owner ID is required" });
-            }
-            filter.owner = req.params.ownerId;
-        } else {
-            return res.status(401).json({ error: true, message: "Unauthorized to access this route!" });
+        // Find the user by ID to determine their role
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
         }
 
-        // Retrieve store locations based on the filter
-        const storeLocations = await StoreLocation.find(filter);
+        let storeLocations;
 
-        return res.status(200).json({ success: true, data: storeLocations });
+        // Fetch store locations based on user role
+        if (user.role === "owner") {
+            // If the user is an owner, retrieve their own store locations
+            storeLocations = await StoreLocation.find({ owner: userId }).populate("owner", "fullName email");
+        } else if (user.role === "admin") {
+            // If the user is an admin, retrieve all store locations
+            storeLocations = await StoreLocation.find().populate("owner", "fullName email");
+        } else {
+            return res.status(403).json({ message: "Access denied. Only owners and admins can view store locations." });
+        }
+
+        // Format the response
+        const formattedLocations = storeLocations.map(location => ({
+            ownerId: location.owner._id,
+            ownerName: location.owner.fullName || location.owner.email,
+            province: location.province,
+            district: location.district,
+            commune: location.commune,
+            address: location.address
+        }));
+
+        // Send the formatted response
+        res.status(200).json(formattedLocations);
     } catch (error) {
-        console.error("Error in getAllStoreLocationsOfEachOwner:", error);
-        return res.status(500).json({ error: true, message: "Server Error" });
+        console.error("Error fetching store locations: ", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
 

@@ -44,11 +44,7 @@ export const createMotobikeType = async (req, res) => {
         // Save to the database
         await newMotobikeType.save();
 
-        return res.status(201).json({
-            error: false,
-            message: "Motobike type created successfully!",
-            data: newMotobikeType,
-        });
+        return res.status(201).json(newMotobikeType);
     } catch (error) {
         console.error("Error creating motobike type:", error);
         return res.status(500).json({ error: true, message: "Server error while creating motobike type!" });
@@ -58,9 +54,9 @@ export const createMotobikeType = async (req, res) => {
 export const getAllMotobikeTypes = async (req, res) => {
     try {
         // Retrieve all motorbike types from the database
-        const motobikeTypes = await MotobikeType.find();
+        const motobikeTypes = await MotobikeType.find().sort({createdAt : -1});
 
-        return res.status(200).json({ error : false , data: motobikeTypes });
+        return res.status(200).json(motobikeTypes);
     } catch (error) {
         console.error("Error in getAllMotobikeTypes:", error);
         return res.status(500).json({ error: true, message: "Server Error" });

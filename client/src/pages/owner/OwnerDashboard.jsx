@@ -1,4 +1,6 @@
 import CreateAddOn from "@/components/owner/CreateAddOn";
+import CreateMotobikeType from "@/components/owner/CreateMotobikeType";
+import CreateStoreLocation from '@/components/owner/CreateStoreLocation'
 import { Loader } from "lucide-react";
 import { Routes, Route, Link } from "react-router-dom";
 
@@ -87,12 +89,17 @@ const OwnerDashboard = () => {
             </aside>
 
             {/* right before sidebar for routes :  */}
-            <div>
+            <div className="w-full">
                 <Routes>
                     {/* index page  :*/}
                     <Route path="/" element={<>index page</>} />
                     {/* create addon :  */}
-                    <Route path="create-addon" element={<CreateAddOn />} />
+                    <Route path="/create-addon" element={<CreateAddOn />} />
+                    {/* create motobike type  : */}
+                    <Route path="/create-type" element={<CreateMotobikeType />} />
+                    {/* create store location :  */}
+                    <Route path="/create-store" element={<CreateStoreLocation />} />
+
                     {/* other : */}
                 </Routes>
             </div>
