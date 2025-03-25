@@ -14,6 +14,7 @@ const initialState = {
     loading: false,
     error: false,
     success: false,
+    bookings: [], // Add bookings array to store fetched bookings
 };
 
 export const reserveBooking = createAsyncThunk(
@@ -33,7 +34,7 @@ export const reserveBooking = createAsyncThunk(
 // Tạo hành động bất đồng bộ để xóa booking
 export const deleteBooking = createAsyncThunk('booking/deleteBooking', async (bookingId, { rejectWithValue }) => {
     try {
-        const response = await axios.delete(`/api/bookings/${bookingId}`);
+        const response = await axiosInstance.delete(`/api/customer/booking/${bookingId}`);
         return response.data;
     } catch (error) {
         console.log('error when deleting booking:', error);
@@ -44,7 +45,7 @@ export const deleteBooking = createAsyncThunk('booking/deleteBooking', async (bo
 // Tạo hành động bất đồng bộ để lấy danh sách booking
 export const getBookings = createAsyncThunk('booking/getBookings', async (_, { rejectWithValue }) => {
     try {
-        const response = await axios.get('/api/bookings');
+        const response = await axiosInstance.get('/api/customer/booking');
         return response.data;
     } catch (error) {
         console.log('error when fetching bookings:', error);
@@ -86,6 +87,7 @@ const bookingSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // Handle reserve booking
             .addCase(reserveBooking.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -96,10 +98,36 @@ const bookingSlice = createSlice({
             .addCase(reserveBooking.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            // Handle get bookings
+            .addCase(getBookings.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getBookings.fulfilled, (state, action) => {
+                state.loading = false;
+                state.bookings = action.payload;
+            })
+            .addCase(getBookings.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Handle delete booking
+            .addCase(deleteBooking.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteBooking.fulfilled, (state, action) => {
+                state.loading = false;
+                state.bookings = state.bookings.filter(booking => booking._id !== action.meta.arg);
+            })
+            .addCase(deleteBooking.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 
 });
 
-export const { setBookedDate, createBooking ,clearBooking } = bookingSlice.actions;
+export const { setBookedDate, createBooking, clearBooking } = bookingSlice.actions;
 export default bookingSlice.reducer;

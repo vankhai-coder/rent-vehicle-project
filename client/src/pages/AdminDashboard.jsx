@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUsers, banUser } from '@/redux/features/customer/userSlice';
+import { getUsers, banUser, deleteUser } from '@/redux/features/customer/userSlice';
 import { getBookings, deleteBooking } from '@/redux/features/customer/bookingSlice';
 import { getMotobikes, deleteMotobike } from '@/redux/features/customer/motobikeSlice';
 import { toast } from 'react-toastify';
@@ -12,6 +12,8 @@ const AdminDashboard = () => {
     const { motobikes, loading: motobikesLoading } = useSelector(state => state.motobike);
 
     const [activeTab, setActiveTab] = useState('users');
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
 
     useEffect(() => {
         dispatch(getUsers());
@@ -20,8 +22,43 @@ const AdminDashboard = () => {
     }, [dispatch]);
 
     const handleBanUser = (userId) => {
-        dispatch(banUser(userId));
-        toast.success('User banned successfully');
+        dispatch(banUser(userId))
+            .unwrap()
+            .then((response) => {
+                toast.success(response.message || 'User status updated successfully');
+                // Refresh the users list
+                dispatch(getUsers());
+            })
+            .catch((error) => {
+                toast.error(error || 'Error updating user status');
+            });
+    };
+
+    const openDeleteConfirmation = (user) => {
+        setUserToDelete(user);
+        setShowConfirmDialog(true);
+    };
+
+    const confirmDeleteUser = () => {
+        if (!userToDelete) return;
+        
+        dispatch(deleteUser(userToDelete._id))
+            .unwrap()
+            .then((response) => {
+                toast.success('User deleted successfully');
+                setShowConfirmDialog(false);
+                setUserToDelete(null);
+            })
+            .catch((error) => {
+                toast.error(error || 'Error deleting user');
+                setShowConfirmDialog(false);
+                setUserToDelete(null);
+            });
+    };
+
+    const cancelDeleteUser = () => {
+        setShowConfirmDialog(false);
+        setUserToDelete(null);
     };
 
     const handleDeleteBooking = (bookingId) => {
@@ -128,8 +165,13 @@ const AdminDashboard = () => {
                                                             <td className="px-6 py-4 text-right text-sm">
                                                                 <button 
                                                                     onClick={() => handleBanUser(user._id)}
-                                                                    className="text-red-600 hover:text-red-900 font-medium">
+                                                                    className="text-red-600 hover:text-red-900 font-medium mr-4">
                                                                     {user.isBanned ? 'Unban' : 'Ban'}
+                                                                </button>
+                                                                <button 
+                                                                    onClick={() => openDeleteConfirmation(user)}
+                                                                    className="text-red-600 hover:text-red-900 font-medium">
+                                                                    Delete
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -165,17 +207,21 @@ const AdminDashboard = () => {
                                                     <tr>
                                                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Customer</th>
                                                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Owner</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Motobike</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Date</th>
                                                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Total Price</th>
                                                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Status</th>
                                                         <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-gray-200">
-                                                    {bookings.map(booking => (
-                                                        <tr key={booking._id} className="hover:bg-gray-50">
-                                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.customerId.fullName}</td>
-                                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.ownerId.fullName}</td>
-                                                            <td className="px-6 py-4 text-sm text-gray-700">${booking.totalPrice}</td>
+                                                    {bookings.map((booking, index) => (
+                                                        <tr key={index} className="hover:bg-gray-50">
+                                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.customerName}</td>
+                                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.ownerName}</td>
+                                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.motobikeName}</td>
+                                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.date}</td>
+                                                            <td className="px-6 py-4 text-sm text-gray-700">${booking.total}</td>
                                                             <td className="px-6 py-4 text-sm">
                                                                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                                     {booking.status}
@@ -254,6 +300,32 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             </div>
+            {/* Confirmation Dialog */}
+            {showConfirmDialog && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                        <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
+                        <p className="mb-6">
+                            Are you sure you want to delete the user <span className="font-bold">{userToDelete?.email}</span>? 
+                            This action cannot be undone.
+                        </p>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                onClick={cancelDeleteUser}
+                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDeleteUser}
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

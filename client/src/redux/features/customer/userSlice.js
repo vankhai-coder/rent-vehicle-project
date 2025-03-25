@@ -58,11 +58,22 @@ export const updatePassword = createAsyncThunk('user/updatePassword', async ({ c
 // Async function for banning a user:
 export const banUser = createAsyncThunk('user/banUser', async (userId, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.put(`/api/users/ban/${userId}`);
+        const response = await axiosInstance.put(`/api/admin/users/ban/${userId}`);
         return response.data;
     } catch (error) {
         console.log('error when banning user:', error);
         return rejectWithValue(error.response?.data?.message || 'Error when banning user');
+    }
+});
+
+// Async function for deleting a user:
+export const deleteUser = createAsyncThunk('user/deleteUser', async (userId, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.delete(`/api/admin/users/${userId}`);
+        return { userId, ...response.data };
+    } catch (error) {
+        console.log('error when deleting user:', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when deleting user');
     }
 });
 
@@ -209,6 +220,39 @@ const userSlice = createSlice({
                 state.users = action.payload; // Cập nhật state.users với dữ liệu từ API
             })
             .addCase(getUsers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Ban user:
+            .addCase(banUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(banUser.fulfilled, (state, action) => {
+                state.loading = false;
+                // Update the user's banned status in the users array
+                if (state.users.length > 0) {
+                    const userIndex = state.users.findIndex(user => user._id === action.meta.arg);
+                    if (userIndex !== -1) {
+                        state.users[userIndex].isBanned = action.payload.isBanned;
+                    }
+                }
+            })
+            .addCase(banUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Delete user:
+            .addCase(deleteUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteUser.fulfilled, (state, action) => {
+                state.loading = false;
+                // Remove the deleted user from the users array
+                state.users = state.users.filter(user => user._id !== action.meta.arg);
+            })
+            .addCase(deleteUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
