@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
+import { formatNumberWithCommas } from "@/utils/formatFunction";
 
 function Details() {
 
@@ -79,9 +80,7 @@ function Details() {
 
         return dates.length === 1 ? 1 : differenceInCalendarDays(dates[1], dates[0]) + 1;
     }
-    function formatNumberWithCommas(number) {
-        return number.toLocaleString("en-US");
-    }
+   
     const generateDateArray = (dateRange) => {
         const months = {
             Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,

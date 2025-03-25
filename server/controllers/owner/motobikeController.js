@@ -1,4 +1,7 @@
 import Motobike from "../../models/motobikeModel.js";
+import User from '../../models/userModel.js'
+import MotobikeType from '../../models/motobikeTypeModel.js'
+import StoreLocation from '../../models/storeLocationModel.js'
 import mongoose from 'mongoose';
 
 export const createMotobike = async (req, res) => {
@@ -62,5 +65,44 @@ export const createMotobike = async (req, res) => {
     } catch (error) {
         console.error("Error creating motobike:", error);
         return res.status(500).json({ error: true, message: "Server error while creating motobike!" });
+    }
+};
+
+// get all motobike for owner and admin : 
+export const getAllMotobikes = async (req, res) => {
+    try {
+        // only owner and admin : 
+        if (req.user.role !== 'owner' && req.user.role !== 'admin') {
+            return res.status(401).json({ error: true, message: "Unauthorized, cannot access this route!" });
+        }
+        let motobikes;
+        const userRole = req.user.role;
+
+        if (userRole === 'owner') {
+            motobikes = await Motobike.find({ owner: req.user.userId })
+                .populate('owner', 'fullName email') // Fetch owner's fullName and email
+                .populate('motobikeType', 'name')   // Fetch motobikeType name
+                .populate('storeLocation', 'address commune district province'); // Fetch storeLocation fields
+        } else if (userRole === 'admin') {
+            motobikes = await Motobike.find({})
+                .populate('owner', 'fullName email') // Fetch owner's fullName and email
+                .populate('motobikeType', 'name')   // Fetch motobikeType name
+                .populate('storeLocation', 'address commune district province'); // Fetch storeLocation fields
+        } else {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        const formattedMotobikes = motobikes.map((bike) => ({
+            ownerName: bike.owner.fullName || bike.owner.email,
+            motobikeName: bike.motobikeType.name,
+            vehicleNumber: bike.vehicleNumber,
+            pricePerDay: bike.pricePerDay,
+            storeLocation: `${bike.storeLocation.address}, ${bike.storeLocation.commune}, ${bike.storeLocation.district}, ${bike.storeLocation.province}`,
+        }));
+
+        res.status(200).json(formattedMotobikes);
+    } catch (error) {
+        console.error('Error fetching motobikes: ', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };

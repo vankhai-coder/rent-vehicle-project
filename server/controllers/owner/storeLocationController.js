@@ -51,7 +51,7 @@ export const createStoreLocation = async (req, res) => {
 export const getAllStoreLocations = async (req, res) => {
     try {
         // Extract userId from the request
-        const { userId } = req.user; 
+        const { userId } = req.user;
 
         // Find the user by ID to determine their role
         const user = await User.findById(userId);
@@ -64,10 +64,10 @@ export const getAllStoreLocations = async (req, res) => {
         // Fetch store locations based on user role
         if (user.role === "owner") {
             // If the user is an owner, retrieve their own store locations
-            storeLocations = await StoreLocation.find({ owner: userId }).populate("owner", "fullName email");
+            storeLocations = await StoreLocation.find({ owner: userId }).populate("owner", "fullName email").sort({ createdAt: -1 });
         } else if (user.role === "admin") {
             // If the user is an admin, retrieve all store locations
-            storeLocations = await StoreLocation.find().populate("owner", "fullName email");
+            storeLocations = await StoreLocation.find().populate("owner", "fullName email").sort({ createdAt: -1 });
         } else {
             return res.status(403).json({ message: "Access denied. Only owners and admins can view store locations." });
         }

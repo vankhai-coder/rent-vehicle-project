@@ -74,7 +74,6 @@ const storeLocationSlice = createSlice({
             })
             .addCase(createStoreLocation.fulfilled, (state, action) => {
                 state.loading = false;
-                state.storeLocations.unshift(action.payload);
                 state.success = true;
             })
             .addCase(createStoreLocation.rejected, (state, action) => {
