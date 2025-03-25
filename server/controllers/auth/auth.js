@@ -148,7 +148,7 @@ export const checkAuth = (req, res, next) => {
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.user.userId;
-        const { fullName, age, phone, gender, address, commute, district, province, image, driverLicense, identityCard } = req.body;
+        const { fullName, age, phone, gender, address, commune, district, province, image, driverLicense, identityCard } = req.body;
 
         // Find user
         const user = await User.findById(userId);
@@ -218,7 +218,7 @@ export const updateProfile = async (req, res) => {
         if (phone) user.phone = phone;
         if (gender) user.gender = gender;
         if (address) user.address = address;
-        if (commute) user.commute = commute;
+        if (commune) user.commune = commune;
         if (district) user.district = district;
         if (province) user.province = province;
 
