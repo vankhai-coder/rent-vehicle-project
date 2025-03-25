@@ -1,5 +1,5 @@
-import { DatePickerWithRange } from "@/components/DatePickerWithRange"
-import MotobikeList from "@/components/MotobikeList"
+import { DatePickerWithRange } from "@/components/customer/DatePickerWithRange"
+import MotobikeList from "@/components/customer/MotobikeList"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setBookedDate } from "@/redux/features/bookingSlice"
-import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDates, searchByDatesAndDistrict, searchByDatesAndType, searchByDatesTypeDistrict, sortByPrice } from "@/redux/features/motobikeSlice"
+import { setBookedDate } from "@/redux/features/customer/bookingSlice"
+import { getUniqueDistricts, getUniqueMotobikeTypeNames, searchByDates, searchByDatesAndDistrict, searchByDatesAndType, searchByDatesTypeDistrict, sortByPrice } from "@/redux/features/customer/motobikeSlice"
 import { Loader } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -99,7 +99,8 @@ const Vehicle = () => {
     dispatch(getUniqueMotobikeTypeNames())
     dispatch(getUniqueDistricts())
   }, [])
-
+  
+  // price sort : 
   useEffect(() => {
     if (price !== "none" && motobikes.length > 0) {
       dispatch(sortByPrice(price));

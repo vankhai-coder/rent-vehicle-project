@@ -15,14 +15,14 @@ import LooksTwoOutlinedIcon from '@mui/icons-material/LooksTwoOutlined';
 import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
 import Looks4OutlinedIcon from '@mui/icons-material/Looks4Outlined';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import MotobikeList from '@/components/MotobikeList'
-import FactsInNumbers from '@/components/FactInNumber'
-import DownloadApp from '@/components/DownLoadApp'
-import SearchDistrict from '@/components/SearchDistrict'
+import MotobikeList from '@/components/customer/MotobikeList'
+import FactsInNumbers from '@/components/customer/FactInNumber'
+import DownloadApp from '@/components/customer/DownLoadApp'
+import SearchDistrict from '@/components/customer/SearchDistrict'
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchByDates } from '@/redux/features/motobikeSlice';
+import { searchByDates } from '@/redux/features/customer/motobikeSlice';
 const Home = () => {
 
   const { motobikes, isLoading, error, } = useSelector(state => state.motobike)

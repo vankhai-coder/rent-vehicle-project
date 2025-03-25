@@ -110,8 +110,8 @@ const motobikeSlice = createSlice({
     reducers: {
         sortByPrice(state, action) {
             const { payload } = action; // 'lowest' or 'highest'
-            console.log('payload : ' , payload);
-            
+            console.log('payload : ', payload);
+
             state.motobikes.sort((a, b) =>
                 payload === "lowest" ? a.price - b.price : b.price - a.price
             );
@@ -131,6 +131,7 @@ const motobikeSlice = createSlice({
                 state.errorMessage = "";
             })
             .addCase(searchByDates.rejected, (state, action) => {
+                state.motobikes = []
                 state.loading = false;
                 state.error = true;
                 state.errorMessage = action.payload;
@@ -147,6 +148,8 @@ const motobikeSlice = createSlice({
                 state.errorMessage = "";
             })
             .addCase(searchByDatesAndDistrict.rejected, (state, action) => {
+                state.motobikes = []
+
                 state.loading = false;
                 state.error = true;
                 state.errorMessage = action.payload;
@@ -163,6 +166,8 @@ const motobikeSlice = createSlice({
                 state.errorMessage = "";
             })
             .addCase(searchByDatesAndType.rejected, (state, action) => {
+                state.motobikes = []
+
                 state.loading = false;
                 state.error = true;
                 state.errorMessage = action.payload;
@@ -179,6 +184,8 @@ const motobikeSlice = createSlice({
                 state.errorMessage = "";
             })
             .addCase(searchByDatesTypeDistrict.rejected, (state, action) => {
+                state.motobikes = []
+
                 state.loading = false;
                 state.error = true;
                 state.errorMessage = action.payload;

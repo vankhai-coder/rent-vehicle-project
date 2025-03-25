@@ -3,10 +3,13 @@ import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import Booking from "../../models/bookingModel.js";
 import Motobike from "../../models/motobikeModel.js";
+import User from '../../models/userModel.js'
+import MotobikeType from '../../models/motobikeTypeModel.js'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// book : 
 export const bookMotobike = async (req, res) => {
     try {
         // Only customers are allowed to book
@@ -87,6 +90,62 @@ export const bookMotobike = async (req, res) => {
     } catch (error) {
         console.error("Error booking motobike:", error.message);
         return res.status(500).json({ success: false, error: error.message }); // Return error details
+    }
+};
+
+// get all booking of : customer || owner || admin : 
+export const getAllBookings = async (req, res) => {
+    try {
+        const { userId } = req.user;
+
+        // Fetch user to determine role
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        let bookings;
+
+        // Fetch bookings based on role
+        if (user.role === 'customer') {
+            bookings = await Booking.find({ customerId: userId }).populate('motobike').populate('customerId').populate('ownerId').sort({ createdAt: -1 });
+        } else if (user.role === 'owner') {
+            bookings = await Booking.find({ ownerId: userId }).populate('motobike').populate('customerId').populate('ownerId').sort({ createdAt: -1 });
+        } else if (user.role === 'admin') {
+            bookings = await Booking.find().populate('motobike').populate('customerId').populate('ownerId').sort({ createdAt: -1 });
+        } else {
+            return res.status(400).json({ message: 'Invalid user role' });
+        }
+
+        // Format the response
+        const formattedBookings = await Promise.all(bookings.map(async (booking) => {
+            const motobikeNames = await Promise.all(
+                booking.motobike.map(async (motobikeId) => {
+                    const motobikeType = await MotobikeType.findById(motobikeId.motobikeType);
+                    return motobikeType ? motobikeType.name : 'Unknown';
+                })
+            );
+
+            return {
+                customerName: booking.customerId.fullName || booking.customerId.email,
+                ownerName: booking.ownerId.fullName || booking.ownerId.email,
+                motobikeName: motobikeNames.join(', '),
+                date: booking.bookedDate.map(date => date.toISOString().split('T')[0]).join(', '),
+                total: booking.totalPrice,
+                amount: booking.amountMotobike,
+                pickup: booking.pickUpLocation,
+                dropoff: booking.dropOffLocation,
+                status: booking.status,
+                ownerId: booking.ownerId._id,
+                customerId: booking.customerId._id,
+            };
+        }));
+
+        // Respond with the formatted data
+        return res.status(200).json(formattedBookings);
+    } catch (error) {
+        console.error('Error fetching bookings:', error.message);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
 

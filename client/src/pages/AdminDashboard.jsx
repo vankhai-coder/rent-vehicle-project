@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUsers, banUser } from '@/redux/features/userSlice';
-import { getBookings, deleteBooking } from '@/redux/features/bookingSlice';
-import { getMotobikes, deleteMotobike } from '@/redux/features/motobikeSlice';
+import { getUsers, banUser } from '@/redux/features/customer/userSlice';
+import { getBookings, deleteBooking } from '@/redux/features/customer/bookingSlice';
+import { getMotobikes, deleteMotobike } from '@/redux/features/customer/motobikeSlice';
 import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useSearchParams } from 'react-router-dom'
-import { loginUser } from '@/redux/features/userSlice'
+import { loginUser } from '@/redux/features/customer/userSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { Loader } from 'lucide-react';
-import { getUserProfile } from '@/redux/features/userProfileSlice'
+import { getUserProfile } from '@/redux/features/customer/userProfileSlice'
 
 const Login = () => {
     // function for redux to send login : 

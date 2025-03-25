@@ -3,8 +3,8 @@ import cloudinary from '../../config/cloudinary.js';
 
 export const createAddOn = async (req, res) => {
     try {
-         // only admin and owner can create : 
-         if(req.user.role !=='admin' && req.user.role !=='owner'){
+        // only admin and owner can create : 
+        if (req.user.role !== 'admin' && req.user.role !== 'owner') {
             return res.status(401).json({ error: true, message: "Unauthorizied , can not access this route!" });
         }
         const { name, image } = req.body;
@@ -35,11 +35,7 @@ export const createAddOn = async (req, res) => {
         const newAddOn = await AddOn.create({ name, image: result.secure_url });
 
         // Respond with created add-on
-        return res.status(201).json({
-            error: false,
-            message: 'Add-On created successfully!',
-            data: newAddOn
-        });
+        return res.status(201).json(newAddOn);
     } catch (error) {
         console.error('Error creating Add-On:', error);
         return res.status(500).json({ error: true, message: 'Server error while creating Add-On!' });
@@ -48,19 +44,15 @@ export const createAddOn = async (req, res) => {
 
 export const getAllAddOns = async (req, res) => {
     try {
-         // only admin and owner get all add on  : 
-         if(req.user.role !=='admin' && req.user.role !=='owner'){
+        // only admin and owner get all add on  : 
+        if (req.user.role !== 'admin' && req.user.role !== 'owner') {
             return res.status(401).json({ error: true, message: "Unauthorizied , can not access this route!" });
         }
         // Fetch all add-ons from the database
         const addOns = await AddOn.find().sort({ createdAt: -1 });
 
         // Send response
-        return res.status(200).json({
-            error: false,
-            message: 'Add-Ons retrieved successfully!',
-            data: addOns
-        });
+        return res.status(200).json(addOns);
     } catch (error) {
         console.error('Error fetching Add-Ons:', error);
         return res.status(500).json({ error: true, message: 'Server error while fetching Add-Ons!' });

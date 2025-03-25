@@ -40,9 +40,9 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { logoutUser, resetUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/userSlice';
+import { logoutUser, resetUser, setUpdatePasswordFalse, updatePassword } from '@/redux/features/customer/userSlice';
 import { store } from '@/redux/store/store';
-import { getUserProfile, resetUserProfile } from '@/redux/features/userProfileSlice';
+import { getUserProfile, resetUserProfile } from '@/redux/features/customer/userProfileSlice';
 
 
 const Header = () => {
@@ -156,14 +156,15 @@ const Header = () => {
           <p className='font-bold text-sm'>Home</p>
         </Link>
         <Link to={'/vehicle'}><p className='font-medium text-sm'>Vehicle</p></Link>
-        <Link to={'/detail'}><p className='font-medium text-sm'>Detail</p></Link>
         <Link to={'/about-us'}> <p className='font-medium text-sm'>About Us</p></Link>
         <Link to={'/contact-us'}> <p className='font-medium text-sm'>Contact Us</p></Link>
       </div>
 
       {/* owner dashboard */}
       {role === 'owner' ? <div className='flex items-center'>
-        <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Owner Dashboard</Button>
+        <Link to={'/owner-dashboard'}>
+          <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Owner Dashboard</Button>
+        </Link>
       </div> : <></>}
 
       {/* admin dashboard */}
@@ -199,14 +200,17 @@ const Header = () => {
                 </TabsList>
                 <TabsContent value="account">
                   <Card className={'flex gap-2 items-center'}>
-                    {role === 'user' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Manage Rental</Button> : <></>}
-                    {role === 'user' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Become Owner</Button> : <></>}
-                    {role === 'owner' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Owner Dashboard</Button> : <></>}
+                    {role === 'customer' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Become Owner</Button> : <></>}
+                    {role === 'owner' ? <Link className='w-2/3' to={'/owner-dashboard'}><Button variant='outline' className='' onClick={() => setOpen((prev) => !prev)}>Owner Dashboard</Button></Link> : <></>}
                     {role === 'admin' ? <Button variant='outline' className='w-2/3' onClick={() => setOpen((prev) => !prev)}>Admin Dashboard</Button> : <></>}
 
                     <Link to={'/update-profile'} className='block w-2/3' >
                       <Button variant='outline' className='w-full' onClick={() => setOpen((prev) => !prev)}>Update Profile</Button>
                     </Link>
+                    {/* manage booking :  */}
+                    {role === 'customer' ? <Link to={'/customer-dashboard'} className='block w-2/3' >
+                      <Button variant='outline' className='w-full' onClick={() => setOpen((prev) => !prev)}>Manage Booking</Button>
+                    </Link> : <></>}
                     <Button
                       variant='outline'
                       className='w-2/3 hover:cursor-pointer'
