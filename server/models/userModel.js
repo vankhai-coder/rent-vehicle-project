@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
         password: { type: String, required: true },
         gender: { type: String, enum: ["male", "female"] },
         address: { type: String },
-        commute: { type: String },
+        commune: { type: String },
         district: { type: String },
         province: { type: String },
         image: { type: String }, 

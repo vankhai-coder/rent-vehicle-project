@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from 'lucide-react';
 import { getUserProfile, updateUserProfile } from '@/redux/features/customer/userProfileSlice';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
+import axios from 'axios';
 
 const UpdateProfile = () => {
 
@@ -15,8 +16,40 @@ const UpdateProfile = () => {
   } = useSelector(state => state.userProfile);
 
   // state for province , district and commune :
-  
 
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [communes, setCommunes] = useState([]);
+  const [formData, setFormData] = useState({
+    province: "",
+    district: "",
+    commune: "",
+    address: ""
+  });
+
+  useEffect(() => {
+    // Fetch provinces
+    axios.get("https://esgoo.net/api-tinhthanh/1/0.htm").then(response => {
+      setProvinces(response.data.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (formData.province) {
+      axios.get(`https://esgoo.net/api-tinhthanh/2/${formData.province}.htm`).then(response => {
+        setDistricts(response.data.data);
+        setCommunes([]); // Reset communes when province changes
+      });
+    }
+  }, [formData.province]);
+
+  useEffect(() => {
+    if (formData.district) {
+      axios.get(`https://esgoo.net/api-tinhthanh/3/${formData.district}.htm`).then(response => {
+        setCommunes(response.data.data);
+      });
+    }
+  }, [formData.district]);
   // Local state to store and manage user profile data:
   const [fullNameU, setFullName] = React.useState('');
   const [ageU, setAge] = React.useState('');
@@ -124,17 +157,67 @@ const UpdateProfile = () => {
     if (!_.isEqual(driverLicenseU, driverLicense)) updatedFields.driverLicense = driverLicenseU;
     if (!_.isEqual(identityCardU, identityCard)) updatedFields.identityCard = identityCardU;
 
+    updatedFields.province = await getProvinceNameById(formData.province)
+    updatedFields.district = await getDistrictNameById(formData.district)
+    updatedFields.commune = await getCommuneNameById(formData.commune)
     console.log('updatedFields', updatedFields);
     // Update profile - only send the fields that have been changed:
     if (Object.keys(updatedFields).length === 0) {
       toast.error('No changes detected !');
       return;
     }
+    setFormData({
+      province: "",
+      district: "",
+      commune: "",
+      address: ""
+    })
 
     await dispatch(updateUserProfile(updatedFields));
     if (!loading) {
       toast.success('Update profile success !');
       // navigate('/');
+    }
+  }
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  // get province name : 
+  const getProvinceNameById = async (provinceId) => {
+    try {
+      const response = await axios.get('https://esgoo.net/api-tinhthanh/1/0.htm')
+      const listProvince = response.data?.data
+      const province = listProvince.find(p => p.id === provinceId)
+      return province.name_en
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
+  // get district name : 
+  const getDistrictNameById = async (districtId) => {
+    try {
+      const response = await axios.get(`https://esgoo.net/api-tinhthanh/2/${formData.province}.htm`)
+      const listDistrict = response.data?.data
+      const district = listDistrict.find(d => d.id === districtId)
+      return district.name_en
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
+
+  // get comnune name : 
+  const getCommuneNameById = async (districtId) => {
+    try {
+      const response = await axios.get(`https://esgoo.net/api-tinhthanh/3/${formData.district}.htm`)
+      const listDistrict = response.data?.data
+      const district = listDistrict.find(d => d.id === districtId)
+      return district.name_en
+    } catch (error) {
+      console.log(error);
+
     }
   }
 
@@ -224,37 +307,33 @@ const UpdateProfile = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium mb-2">Province</label>
-          <select
-            className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-            value="Verified" // Replace with actual value
-          >
-            <option value="Verified">Verified</option>
-            <option value="Unverified">Unverified</option>
-            {/* Add more options as needed */}
+          <select name="province" value={formData.province} onChange={handleChange} className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            <option value="">{province ? province : 'Select Province'}</option>
+            {provinces.map(province => (
+              <option key={province.id} value={province.id} className=''>{province.name}</option>
+            ))}
           </select>
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">District</label>
-          <select
-            className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-            value="Verified" // Replace with actual value
-          >
-            <option value="Verified">Verified</option>
-            <option value="Unverified">Unverified</option>
+          <select name="district" value={formData.district} onChange={handleChange} className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            <option value="">{district ? district : 'Select District'}</option>
+            {districts.map(district => (
+              <option key={district.id} value={district.id}>{district.name}</option>
+            ))}
           </select>
         </div>
       </div>
-
       {/* Commune and address */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium mb-2">Commune</label>
-          <select
-            className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-            value="Verified" // Replace with actual value
-          >
-            <option value="Verified">Verified</option>
-            <option value="Unverified">Unverified</option>
+          <select name="commune" value={formData.commune} onChange={handleChange} className="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            <option value="">{commune ? commune : 'Select Commune'}</option>
+
+            {communes.map(commune => (
+              <option key={commune.id} value={commune.id}>{commune.name}</option>
+            ))}
           </select>
         </div>
         <div>
