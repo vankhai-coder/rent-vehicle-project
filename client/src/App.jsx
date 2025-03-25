@@ -13,6 +13,7 @@ import AboutUs from "./pages/customer/AboutUs"
 import ContactUs from "./pages/customer/ContactUs"
 import CustomerDashboard from "./pages/customer/CustomerDashboard"
 import OwnerDashboard from "./pages/owner/OwnerDashboard"
+import Details from "./pages/customer/Detail"
 
 function App() {
   return (
@@ -41,6 +42,8 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={["customer", "owner", "admin"]} />}>
             <Route path="/update-profile" element={<UpdateProfile />} />
           </Route>
+
+          <Route path="/detail" element={<Details />}></Route>
 
           {/* customer-dashboard */}
           <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
