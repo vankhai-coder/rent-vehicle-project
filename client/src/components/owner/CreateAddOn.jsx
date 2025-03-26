@@ -29,10 +29,10 @@ const CreateAddOn = () => {
             // Convert the image file to base64
             const reader = new FileReader();
             reader.readAsDataURL(image);
-            reader.onload = () => {
+            reader.onload =async () => {
                 const base64Image = reader.result; // Get the base64 string
                 // Dispatch the action with name and base64 image
-                dispatch(createAddon({ name, image: base64Image }));
+               await dispatch(createAddon({ name, image: base64Image }));
 
                 // Reset form inputs
                 setName(''); // Reset name input

@@ -10,6 +10,8 @@ import ownerStoreLocationReducer from '../features/owner/storeLocationSlice'
 import ownerMotobikeReducer from '../features/owner/motobikeSlice'
 import ownerViewAllBookingReducer from '../features/owner/bookingSlice'
 import ownerCreateMotobikeReducer from '../features/owner/createMotobikeSlice'
+import customerAccountReducer from '../features/admin/customerSlice'
+import ownerAccountReducer from '../features/admin/ownerSlice'
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +28,10 @@ export const store = configureStore({
     owner_store: ownerStoreLocationReducer,
     owner_motobike: ownerMotobikeReducer,
     owner_booking: ownerViewAllBookingReducer,
-    owner_create_motobike : ownerCreateMotobikeReducer
+    owner_create_motobike : ownerCreateMotobikeReducer,
+
+    // admin : 
+    admin_account_customer : customerAccountReducer,
+    admin_account_owner : ownerAccountReducer,
   },
 });

@@ -56,7 +56,7 @@ const CreateMotobikeForm = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit =async (e) => {
         e.preventDefault();
 
         console.log('create value : ', {
@@ -68,7 +68,7 @@ const CreateMotobikeForm = () => {
         });
 
         // Dispatch createMotobike with the selected state values
-        dispatch(
+      await  dispatch(
             createMotobike({
                 vehicleNumber: formData.vehicleNumber,
                 pricePerDay: formData.pricePerDay,

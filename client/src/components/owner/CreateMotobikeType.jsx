@@ -35,9 +35,9 @@ export default function MotobikeTypeForm() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit =async (e) => {
         e.preventDefault();
-        dispatch(createMotobikeType(formData));
+     await   dispatch(createMotobikeType(formData));
         setFormData({ name: "", image: "", color: "", description: "", height: "", weight: "" });
     };
 

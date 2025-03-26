@@ -165,7 +165,9 @@ const Header = () => {
 
       {/* admin dashboard */}
       {role === 'admin' ? <div className='flex items-center'>
-        <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Admin Dashboard</Button>
+        <Link to={'/admin-dashboard'}>
+          <Button variant={''} className='bg-[#5937E0] rounded-2xl px-8' > Admin Dashboard</Button>
+        </Link>
       </div> : <></>}
       {/* fullName or email :  */}
       <div className='flex items-center font-bold'>

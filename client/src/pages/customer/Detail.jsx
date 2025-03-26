@@ -109,7 +109,7 @@ function Details() {
         return result;
     };
     // handleReserve :
-    const handleReserve = () => {
+    const handleReserve =async () => {
         // if not login : 
         if (!userId) {
             toast.error('You must login to reserve!')
@@ -128,9 +128,9 @@ function Details() {
         // booking : 
         // console.log({ ownerId, motobike, totalPrice: price * calculateDays(bookedDate) , bookedDate : generateDateArray(bookedDate) , amountMotobike : 1 , pickUpLocation , dropOffLocation });
 
-        dispatch(reserveBooking({ ownerId, motobike: [motobike], totalPrice: price * calculateDays(bookedDate), bookedDate: generateDateArray(bookedDate), amountMotobike: 1, pickUpLocation, dropOffLocation }))
+       await dispatch(reserveBooking({ ownerId, motobike: [motobike], totalPrice: price * calculateDays(bookedDate), bookedDate: generateDateArray(bookedDate), amountMotobike: 1, pickUpLocation, dropOffLocation }))
         // return to home page :
-        dispatch(clearBooking())
+       await dispatch(clearBooking())
         window.scrollTo(0, 0);
         toast.success('Reserve Successfully!')
         navigate('/')

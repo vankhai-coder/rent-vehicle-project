@@ -4,7 +4,6 @@ import { Routes, Route } from "react-router-dom"
 import Home from '@/pages/customer/Home'
 import Login from "./pages/customer/Login"
 import Vehicle from "./pages/customer/Vehicle"
-import MotobikeDetail from './pages/customer/Detail'
 import ForgotPassword from "./pages/customer/ForgotPassword"
 import Register from "./pages/customer/Register"
 import UpdateProfile from "./pages/customer/UpdateProfile"
@@ -12,6 +11,7 @@ import ProtectedRoute from "./components/customer/ProtectedRoute"
 import AboutUs from "./pages/customer/AboutUs"
 import ContactUs from "./pages/customer/ContactUs"
 import CustomerDashboard from "./pages/customer/CustomerDashboard"
+import AdminDashboard from './pages/admin/AdminDashboard'
 import OwnerDashboard from "./pages/owner/OwnerDashboard"
 import Details from "./pages/customer/Detail"
 
@@ -56,6 +56,9 @@ function App() {
           </Route>
 
           {/* admin */}
+          <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+            <Route path="/admin-dashboard/*" element={<AdminDashboard />} />
+          </Route>
 
         </Routes>
 

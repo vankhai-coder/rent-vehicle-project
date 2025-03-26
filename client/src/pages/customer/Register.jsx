@@ -26,7 +26,7 @@ const Register = () => {
             toast.error('Confirm password is incorrect!')
             return
         }
-        dispatch(registerUser({ email, password }))
+       await dispatch(registerUser({ email, password }))
     }
     useEffect(() => {
         // toast : 

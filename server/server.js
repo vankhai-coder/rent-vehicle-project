@@ -10,6 +10,9 @@ import { connectDB } from './config/db.js'
 
 // import routes : 
 import authRoutes from './routes/auth/authRoute.js'
+// admin routes : 
+import adminRoutes from './routes/admin/adminRoute.js'
+
 // owner routes : 
 import addOnRoutes from './routes/owner/addOnRoute.js'
 import storeLocationRoutes from './routes/owner/storeLocationRoute.js'
@@ -65,3 +68,6 @@ app.use('/api/owner/motobike', motobikeRoutes)
 // CUSTOMER ROUTES : 
 app.use('/api/customer/search' , customerSearchRoutes )
 app.use('/api/customer/booking' , customerBookingRoutes )
+
+// ADMIN ROUTES : 
+app.use('/api/admin/view' , adminRoutes  )
