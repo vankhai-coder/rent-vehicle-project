@@ -74,6 +74,7 @@ export const getAllStoreLocations = async (req, res) => {
 
         // Format the response
         const formattedLocations = storeLocations.map(location => ({
+            storeLocationId : location._id , 
             ownerId: location.owner._id,
             ownerName: location.owner.fullName || location.owner.email,
             province: location.province,

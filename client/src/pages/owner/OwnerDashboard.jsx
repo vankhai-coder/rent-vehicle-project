@@ -1,4 +1,5 @@
 import CreateAddOn from "@/components/owner/CreateAddOn";
+import CreateMotobike from "@/components/owner/CreateMotobike";
 import CreateMotobikeType from "@/components/owner/CreateMotobikeType";
 import CreateStoreLocation from '@/components/owner/CreateStoreLocation'
 import ViewAllBooking from "@/components/owner/ViewAllBooking";
@@ -11,11 +12,11 @@ const OwnerDashboard = () => {
     return (
         <div className="flex">
             {/* side bar */}
-            <aside className="bg-white shadow-md rounded-lg p-4 mr-6 w-1/2">
+            <aside className="bg-white shadow-md rounded-lg p-2 mr-2 w-9/24">
                 <h2 className="text-xl font-semibold mb-6 text-center">Owner Dashboard</h2>
                 <nav>
-                    <button className="flex items-center bg-gray-800 text-white py-2 px-4 rounded-md w-full mb-2">
-                        <svg className="mr-6 size-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button className="flex items-center bg-gray-800 text-white py-2 px-1 rounded-md w-full mb-2">
+                        <svg className="mr-9 size-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h7v9H3V3zm0 13h7v5H3v-5zm11-13h7v5h-7V3zm0 8h7v9h-7v-9z" />
                         </svg>
                         Dashboard
@@ -73,7 +74,7 @@ const OwnerDashboard = () => {
                     </Link>
                     <p className="text-xl font-semibold mb-2">Revenue</p>
                     <Link to={'/owner-dashboard/view-revenue'}>
-                        <button className="flex items-center justify-between text-gray-700 py-2 px-4 rounded-md w-full hover:bg-gray-100">
+                        <button className="flex items-center  text-gray-700 py-2 px-4 rounded-md w-full hover:bg-gray-100">
                             <svg className="mr-6 size-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hand-coins"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>
                             View All Revenue
                         </button>
@@ -86,6 +87,8 @@ const OwnerDashboard = () => {
                 <Routes>
                     {/* index page  :*/}
                     <Route path="/" element={<>index page</>} />
+                    {/* crete motobike :  */}
+                    <Route path="/create-motobike" element={<CreateMotobike />} />
                     {/* create addon :  */}
                     <Route path="/create-addon" element={<CreateAddOn />} />
                     {/* create motobike type  : */}

@@ -57,11 +57,7 @@ export const createMotobike = async (req, res) => {
             pricePerDay
         });
 
-        return res.status(201).json({
-            error: false,
-            message: "Motobike created successfully!",
-            data: newMotobike
-        });
+        return res.status(201).json(newMotobike);
     } catch (error) {
         console.error("Error creating motobike:", error);
         return res.status(500).json({ error: true, message: "Server error while creating motobike!" });
@@ -79,12 +75,12 @@ export const getAllMotobikes = async (req, res) => {
         const userRole = req.user.role;
 
         if (userRole === 'owner') {
-            motobikes = await Motobike.find({ owner: req.user.userId })
+            motobikes = await Motobike.find({ owner: req.user.userId }).sort({createdAt : -1})
                 .populate('owner', 'fullName email') // Fetch owner's fullName and email
                 .populate('motobikeType', 'name')   // Fetch motobikeType name
                 .populate('storeLocation', 'address commune district province'); // Fetch storeLocation fields
         } else if (userRole === 'admin') {
-            motobikes = await Motobike.find({})
+            motobikes = await Motobike.find({}).sort({createdAt : -1})
                 .populate('owner', 'fullName email') // Fetch owner's fullName and email
                 .populate('motobikeType', 'name')   // Fetch motobikeType name
                 .populate('storeLocation', 'address commune district province'); // Fetch storeLocation fields

@@ -2,6 +2,7 @@ import { fetchCustomerBookings } from "@/redux/features/customer/billSlice"
 import { Loader } from "lucide-react"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import {formatNumberWithCommas} from '@/utils/formatFunction'
 
 const ManageBooking = () => {
 
@@ -46,7 +47,7 @@ const ManageBooking = () => {
                   <td className="px-4 py-2 border">{booking.ownerName}</td>
                   <td className="px-4 py-2 border">{booking.motobikeName}</td>
                   <td className="px-4 py-2 border">{booking.date}</td>
-                  <td className="px-4 py-2 border">{booking.total}</td>
+                  <td className="px-4 py-2 border">{formatNumberWithCommas(booking.total)}</td>
                   <td className="px-4 py-2 border">{booking.amount}</td>
                   <td className="px-4 py-2 border">{booking.pickup}</td>
                   <td className="px-4 py-2 border">{booking.dropoff}</td>
