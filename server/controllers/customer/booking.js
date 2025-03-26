@@ -127,6 +127,7 @@ export const getAllBookings = async (req, res) => {
             );
 
             return {
+                _id: booking._id,
                 customerName: booking.customerId.fullName || booking.customerId.email,
                 ownerName: booking.ownerId.fullName || booking.ownerId.email,
                 motobikeName: motobikeNames.join(', '),
@@ -146,6 +147,61 @@ export const getAllBookings = async (req, res) => {
     } catch (error) {
         console.error('Error fetching bookings:', error.message);
         return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+// Delete booking
+export const deleteBooking = async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: true, message: 'Only admin can delete bookings!' });
+        }
+
+        const { id } = req.params;
+
+        // Validate ID
+        if (!id) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Booking ID is required' 
+            });
+        }
+
+        // Find the booking
+        const booking = await Booking.findById(id);
+        if (!booking) {
+            return res.status(404).json({ 
+                success: false,
+                error: true, 
+                message: 'Booking not found' 
+            });
+        }
+
+        // Remove booked dates from motobikes
+        await Promise.all(
+            booking.motobike.map(motobikeId =>
+                Motobike.findByIdAndUpdate(
+                    motobikeId,
+                    { $pull: { bookedDate: { $in: booking.bookedDate } } },
+                    { new: true }
+                )
+            )
+        );
+
+        // Delete the booking
+        await Booking.findByIdAndDelete(id);
+
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Booking deleted successfully' 
+        });
+    } catch (error) {
+        console.error('Error deleting booking:', error.message);
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
     }
 };
 

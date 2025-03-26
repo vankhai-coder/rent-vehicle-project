@@ -88,9 +88,6 @@ export const getUsers = createAsyncThunk('user/getUsers', async (_, { rejectWith
     }
 });
 
-
-
-
 const userSlice = createSlice({
     name: 'user',
     initialState,

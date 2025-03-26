@@ -14,12 +14,30 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('users');
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    
+    // Add pagination state for motobikes
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
+    // Calculate pagination for motobikes
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentMotobikes = motobikes.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(motobikes.length / itemsPerPage);
+
+    // Debug logs for motobikes state
     useEffect(() => {
         dispatch(getUsers());
         dispatch(getBookings());
         dispatch(getMotobikes());
     }, [dispatch]);
+
+    // Separate useEffect for motobikes tab
+    useEffect(() => {
+        if (activeTab === 'motobikes') {
+            dispatch(getMotobikes());
+        }
+    }, [activeTab, dispatch]);
 
     const handleBanUser = (userId) => {
         dispatch(banUser(userId))
@@ -62,13 +80,59 @@ const AdminDashboard = () => {
     };
 
     const handleDeleteBooking = (bookingId) => {
-        dispatch(deleteBooking(bookingId));
-        toast.success('Booking deleted successfully');
+        if (!bookingId) {
+            toast.error('Invalid booking ID');
+            return;
+        }
+        
+        dispatch(deleteBooking(bookingId))
+            .unwrap()
+            .then((response) => {
+                toast.success(response.message || 'Booking deleted successfully');
+                // Refresh the bookings list
+                dispatch(getBookings());
+            })
+            .catch((error) => {
+                toast.error(error || 'Error deleting booking');
+            });
     };
 
     const handleDeleteMotobike = (motobikeId) => {
-        dispatch(deleteMotobike(motobikeId));
-        toast.success('Motobike deleted successfully');
+        dispatch(deleteMotobike(motobikeId))
+            .unwrap()
+            .then((response) => {
+                toast.success('Motobike deleted successfully');
+                // Refresh the motobikes list
+                dispatch(getMotobikes());
+            })
+            .catch((error) => {
+                toast.error(error || 'Error deleting motobike');
+            });
+    };
+
+    // Add pagination controls component
+    const Pagination = () => {
+        return (
+            <div className="flex justify-center mt-4 space-x-2">
+                <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                >
+                    Previous
+                </button>
+                <span className="px-3 py-1">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                >
+                    Next
+                </button>
+            </div>
+        );
     };
 
    return (
@@ -143,7 +207,7 @@ const AdminDashboard = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-gray-200">
-                                                    {users.map(user => (
+                                                    {users.map((user) => (
                                                         <tr key={user._id} className="hover:bg-gray-50">
                                                             <td className="px-6 py-4 text-sm text-gray-700">{user.email}</td>
                                                             <td className="px-6 py-4 text-sm text-gray-700">
@@ -215,8 +279,8 @@ const AdminDashboard = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-gray-200">
-                                                    {bookings.map((booking, index) => (
-                                                        <tr key={index} className="hover:bg-gray-50">
+                                                    {bookings.map((booking) => (
+                                                        <tr key={booking._id} className="hover:bg-gray-50">
                                                             <td className="px-6 py-4 text-sm text-gray-700">{booking.customerName}</td>
                                                             <td className="px-6 py-4 text-sm text-gray-700">{booking.ownerName}</td>
                                                             <td className="px-6 py-4 text-sm text-gray-700">{booking.motobikeName}</td>
@@ -260,35 +324,65 @@ const AdminDashboard = () => {
                                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                                             <p className="mt-4">Loading motobikes...</p>
                                         </div>
-                                    ) : motobikes && motobikes.length > 0 ? (
-                                        <div className="overflow-x-auto rounded-lg border border-gray-200">
-                                            <table className="w-full">
-                                                <thead className="bg-gray-50">
-                                                    <tr>
-                                                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Name</th>
-                                                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Price</th>
-                                                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Owner</th>
-                                                        <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="divide-y divide-gray-200">
-                                                    {motobikes.map(motobike => (
-                                                        <tr key={motobike._id} className="hover:bg-gray-50">
-                                                            <td className="px-6 py-4 text-sm text-gray-700 font-medium">{motobike.name}</td>
-                                                            <td className="px-6 py-4 text-sm text-gray-700">${motobike.price}/day</td>
-                                                            <td className="px-6 py-4 text-sm text-gray-700">{motobike.ownerId.fullName}</td>
-                                                            <td className="px-6 py-4 text-right text-sm">
-                                                                <button 
-                                                                    onClick={() => handleDeleteMotobike(motobike._id)}
-                                                                    className="text-red-600 hover:text-red-900 font-medium">
-                                                                    Delete
-                                                                </button>
-                                                            </td>
+                                    ) : currentMotobikes && currentMotobikes.length > 0 ? (
+                                        <>
+                                            <div className="overflow-x-auto rounded-lg border border-gray-200">
+                                                <table className="w-full">
+                                                    <thead className="bg-gray-50">
+                                                        <tr>
+                                                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Vehicle Number</th>
+                                                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Type</th>
+                                                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Price/Day</th>
+                                                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Owner</th>
+                                                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Location</th>
+                                                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Status</th>
+                                                            <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">Actions</th>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-gray-200">
+                                                        {currentMotobikes.map((motobike) => (
+                                                            <tr key={motobike._id} className="hover:bg-gray-50">
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                                    {motobike.vehicleNumber || 'N/A'}
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                                    {motobike.motobikeType?.name || 'N/A'}
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                                    {motobike.pricePerDay ? `$${Number(motobike.pricePerDay).toLocaleString()}` : 'N/A'}
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                                    {(motobike.owner?.fullName || motobike.owner?.email) || 'N/A'}
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                                    {motobike.storeLocation ? 
+                                                                        `${motobike.storeLocation.district || ''} ${motobike.storeLocation.commune ? `, ${motobike.storeLocation.commune}` : ''}`
+                                                                        : 'N/A'
+                                                                    }
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm">
+                                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                                                        motobike.isAvailable 
+                                                                            ? 'bg-green-100 text-green-800'
+                                                                            : 'bg-red-100 text-red-800'
+                                                                    }`}>
+                                                                        {motobike.isAvailable ? 'Available' : 'Not Available'}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-right text-sm">
+                                                                    <button 
+                                                                        onClick={() => handleDeleteMotobike(motobike._id)}
+                                                                        className="text-red-600 hover:text-red-900 font-medium">
+                                                                        Delete
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <Pagination />
+                                        </>
                                     ) : (
                                         <div className="text-center py-12 text-gray-500">
                                             <p className="text-lg">No motobikes found</p>

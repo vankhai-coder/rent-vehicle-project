@@ -85,7 +85,7 @@ export const getUniqueMotobikeTypeNames = createAsyncThunk(
 // Async function to delete a motobike
 export const deleteMotobike = createAsyncThunk('motorbike/deleteMotobike', async (motobikeId, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.delete(`/api/motobikes/${motobikeId}`);
+        const response = await axiosInstance.delete(`/api/admin/moto/${motobikeId}`);
         return response.data;
     } catch (error) {
         console.log('error when deleting motobike:', error);
@@ -96,10 +96,14 @@ export const deleteMotobike = createAsyncThunk('motorbike/deleteMotobike', async
 // Async function to get all motobikes
 export const getMotobikes = createAsyncThunk('motorbike/getMotobikes', async (_, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.get('/api/motobikes');
+        console.log('Fetching motobikes from API...');
+        const response = await axiosInstance.get('/api/admin/moto');
+        console.log('API Response:', response);
+        console.log('Motobikes data:', response.data);
         return response.data;
     } catch (error) {
-        console.log('error when fetching motobikes:', error);
+        console.error('Error details:', error);
+        console.error('Response data:', error.response?.data);
         return rejectWithValue(error.response?.data?.message || 'Error when fetching motobikes');
     }
 });
@@ -212,6 +216,42 @@ const motobikeSlice = createSlice({
                 state.loading = false;
             })
             .addCase(getUniqueMotobikeTypeNames.rejected, (state, action) => {
+                state.loading = false;
+                state.error = true;
+                state.errorMessage = action.payload;
+            })
+            .addCase(getMotobikes.pending, (state) => {
+                console.log('getMotobikes.pending');
+                state.loading = true;
+                state.error = false;
+                state.errorMessage = "";
+            })
+            .addCase(getMotobikes.fulfilled, (state, action) => {
+                console.log('getMotobikes.fulfilled with payload:', action.payload);
+                state.motobikes = action.payload;
+                state.loading = false;
+                state.error = false;
+                state.errorMessage = "";
+            })
+            .addCase(getMotobikes.rejected, (state, action) => {
+                console.log('getMotobikes.rejected with error:', action.payload);
+                state.motobikes = [];
+                state.loading = false;
+                state.error = true;
+                state.errorMessage = action.payload;
+            })
+            .addCase(deleteMotobike.pending, (state) => {
+                state.loading = true;
+                state.error = false;
+                state.errorMessage = "";
+            })
+            .addCase(deleteMotobike.fulfilled, (state, action) => {
+                state.motobikes = state.motobikes.filter(moto => moto._id !== action.meta.arg);
+                state.loading = false;
+                state.error = false;
+                state.errorMessage = "";
+            })
+            .addCase(deleteMotobike.rejected, (state, action) => {
                 state.loading = false;
                 state.error = true;
                 state.errorMessage = action.payload;

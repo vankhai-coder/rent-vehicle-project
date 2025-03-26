@@ -35,12 +35,12 @@ const MotobikeCard = ({ image, price, name, addOns, district, reviews, motobike,
         </div>
         {/* Icons */}
         <div className="flex justify-around mt-4 absolute right-0 left-0 bottom-0">
-          {addOns.slice(0, 5).map((icon, index) => (
+          {addOns && addOns.slice(0, 5).map((icon, index) => (
             <div key={index} className="w-7 h-7 bg-gray-100 rounded-full flex justify-center items-center">
               <img src={icon.image} alt="addon" className="w-5 h-5" />
             </div>
           ))}
-          {addOns.length > 5 && <div className="text-xs text-gray-600 self-center">+ {addOns.length - 5} more</div>}
+          {addOns && addOns.length > 5 && <div className="text-xs text-gray-600 self-center">+ {addOns.length - 5} more</div>}
         </div>
       </div>
       {/* Title and Type */}

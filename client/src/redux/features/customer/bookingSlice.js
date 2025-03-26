@@ -35,7 +35,11 @@ export const reserveBooking = createAsyncThunk(
 export const deleteBooking = createAsyncThunk('booking/deleteBooking', async (bookingId, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.delete(`/api/customer/booking/${bookingId}`);
-        return response.data;
+        return {
+            success: response.data.success,
+            message: response.data.message,
+            bookingId: bookingId // Thêm bookingId để có thể xóa khỏi state
+        };
     } catch (error) {
         console.log('error when deleting booking:', error);
         return rejectWithValue(error.response?.data?.message || 'Error when deleting booking');

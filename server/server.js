@@ -20,6 +20,7 @@ import motobikeRoutes from './routes/owner/motobikeRoutes.js'
 import customerSearchRoutes from './routes/customer/customerSearchRoutes.js'
 import customerBookingRoutes from './routes/customer/bookingRoutes.js'
 import adminRoutes from './routes/admin/userRoutes.js'
+import adminMotobikeRoutes from './routes/admin/motoBikeRoutes.js'
 // init app : 
 const app = express()
 
@@ -67,3 +68,4 @@ app.use('/api/owner/motobike', motobikeRoutes)
 app.use('/api/customer/search' , customerSearchRoutes )
 app.use('/api/customer/booking' , customerBookingRoutes )
 app.use('/api/admin' , adminRoutes )
+app.use('/api/admin/moto', adminMotobikeRoutes)
