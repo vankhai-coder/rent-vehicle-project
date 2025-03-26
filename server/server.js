@@ -2,7 +2,7 @@ import express, { urlencoded } from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
 import cors from 'cors'
-
+import path from 'path'
 import cookieParser from 'cookie-parser'
 
 // connect to DB : 
@@ -25,6 +25,8 @@ import customerBookingRoutes from './routes/customer/bookingRoutes.js'
 // init app : 
 const app = express()
 
+const __dirname = path.resolve()
+
 // middleware : 
 app.use(express.json({ limit: '50mb' }))
 app.use(urlencoded({ extended: true  , limit: '50mb' }))
@@ -42,14 +44,7 @@ app.use((req, res, next) => {
     next()
 })
 
-// port : 
-const PORT = process.env.PORT || 5001
-// listen port : 
-app.listen(PORT, (req, res) => {
-    console.log(`App running on http://localhost:${PORT}`);
-    // connect to db : 
-    connectDB()
-})
+
 
 // home page route : 
 app.get('/api', (req, res) => {
@@ -71,3 +66,21 @@ app.use('/api/customer/booking' , customerBookingRoutes )
 
 // ADMIN ROUTES : 
 app.use('/api/admin/view' , adminRoutes  )
+
+// 
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static(path.join(__dirname , '/client/dist')))
+    app.get('*' , (req ,res )=> {
+        res.sendFile(path.resolve(__dirname  , 'client' , 'dist' , 'index.html'))
+    })
+}
+
+
+// port : 
+const PORT = process.env.PORT || 5001
+// listen port : 
+app.listen(PORT, (req, res) => {
+    console.log(`App running on http://localhost:${PORT}`);
+    // connect to db : 
+    connectDB()
+})
