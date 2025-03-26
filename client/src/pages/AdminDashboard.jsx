@@ -33,46 +33,55 @@ const AdminDashboard = () => {
         dispatch(deleteMotobike(motobikeId));
         toast.success('Motobike deleted successfully');
     };
+    const handleApproveRejectUser = async (userId, status) => {
+        try {
+            await dispatch(updateUserRegistered({ userId, registered: status }));
+            toast.success(`User ${status ? "true" : "false"} successfully!`);
+            dispatch(getUsers()); // Load lại danh sách user
+        } catch (error) {
+            toast.error("Failed to update user status.");
+        }
+    };
 
-   return (
+    return (
         <div className="admin-dashboard min-h-screen bg-gray-50">
             <div className="flex">
                 {/* Sidebar Navigation */}
                 <div className="w-64 bg-white h-screen shadow-xl p-4 border-r border-gray-200">
                     <h1 className="text-2xl font-bold mb-8 text-gray-800 pl-3">Admin Panel</h1>
                     <nav className="space-y-1">
-                        <button 
+                        <button
                             onClick={() => setActiveTab('users')}
                             className={`w-full text-left px-4 py-3 rounded-md transition-all duration-200 flex items-center
-                                ${activeTab === 'users' 
-                                    ? 'bg-blue-600 text-white shadow-md' 
+                                ${activeTab === 'users'
+                                    ? 'bg-blue-600 text-white shadow-md'
                                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'}`}>
                             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             Users
                         </button>
-                        
-                        <button 
+
+                        <button
                             onClick={() => setActiveTab('bookings')}
                             className={`w-full text-left px-4 py-3 rounded-md transition-all duration-200 flex items-center
-                                ${activeTab === 'bookings' 
-                                    ? 'bg-blue-600 text-white shadow-md' 
+                                ${activeTab === 'bookings'
+                                    ? 'bg-blue-600 text-white shadow-md'
                                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'}`}>
                             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             Bookings
                         </button>
-                        
-                        <button 
+
+                        <button
                             onClick={() => setActiveTab('motobikes')}
                             className={`w-full text-left px-4 py-3 rounded-md transition-all duration-200 flex items-center
-                                ${activeTab === 'motobikes' 
-                                    ? 'bg-blue-600 text-white shadow-md' 
+                                ${activeTab === 'motobikes'
+                                    ? 'bg-blue-600 text-white shadow-md'
                                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'}`}>
                             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
                             Motobikes
                         </button>
@@ -102,6 +111,7 @@ const AdminDashboard = () => {
                                                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Email</th>
                                                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Role</th>
                                                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Status</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Registered</th> {/* Cột mới */}
                                                         <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -125,8 +135,41 @@ const AdminDashboard = () => {
                                                                     </span>
                                                                 )}
                                                             </td>
+                                                            {/* Cột mới hiển thị trạng thái Registered */}
+                                                            <td className="px-6 py-4 text-sm">
+                                                                {user.registered === "pending" ? (
+                                                                    <div>
+                                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                                            Pending
+                                                                        </span>
+                                                                        <div className="mt-2 flex space-x-2">
+                                                                            <button
+                                                                                onClick={() => handleApproveRejectUser(user._id, "true")}
+                                                                                className="bg-green-500 hover:bg-green-600 text-white text-xs font-medium py-1 px-3 rounded-lg"
+                                                                            >
+                                                                                Approve
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() => handleApproveRejectUser(user._id, "false")}
+                                                                                className="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-3 rounded-lg"
+                                                                            >
+                                                                                Reject
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : user.registered === "approved" ? (
+                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                        Approved
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                                        Not Registered
+                                                                    </span>
+                                                                )}
+                                                            </td>
+
                                                             <td className="px-6 py-4 text-right text-sm">
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleBanUser(user._id)}
                                                                     className="text-red-600 hover:text-red-900 font-medium">
                                                                     {user.isBanned ? 'Unban' : 'Ban'}
@@ -182,7 +225,7 @@ const AdminDashboard = () => {
                                                                 </span>
                                                             </td>
                                                             <td className="px-6 py-4 text-right text-sm">
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleDeleteBooking(booking._id)}
                                                                     className="text-red-600 hover:text-red-900 font-medium">
                                                                     Delete
@@ -232,7 +275,7 @@ const AdminDashboard = () => {
                                                             <td className="px-6 py-4 text-sm text-gray-700">${motobike.price}/day</td>
                                                             <td className="px-6 py-4 text-sm text-gray-700">{motobike.ownerId.fullName}</td>
                                                             <td className="px-6 py-4 text-right text-sm">
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleDeleteMotobike(motobike._id)}
                                                                     className="text-red-600 hover:text-red-900 font-medium">
                                                                     Delete

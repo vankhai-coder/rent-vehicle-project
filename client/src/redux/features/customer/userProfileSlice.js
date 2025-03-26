@@ -13,6 +13,8 @@ const initialState = {
     image: '',
     driverLicense: '',
     identityCard: '',
+    role: '',
+    registered: "",
     loading: false,
     error: null,
     errorMessage: '',
@@ -48,6 +50,19 @@ export const updateUserProfile = createAsyncThunk(
             return rejectWithValue(
                 error.response?.data?.message || 'Error when updating user profile'
             );
+        }
+    }
+);
+
+// Thêm action mới để cập nhật registered thành "pending"
+export const registerAsOwner = createAsyncThunk(
+    'user/registerAsOwner',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.patch('/api/auth/user-profile', { registered: "pending" });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Error registering as owner');
         }
     }
 );
@@ -91,6 +106,8 @@ const userProfileSlice = createSlice({
                 state.image = payload.user.image;
                 state.driverLicense = payload.user.driverLicense;
                 state.identityCard = payload.user.identityCard;
+                state.role = payload.user.role;
+                state.registered = payload.user.registered;
             })
             .addCase(getUserProfile.rejected, (state, { payload }) => {
                 state.loading = false;
@@ -113,8 +130,22 @@ const userProfileSlice = createSlice({
                 state.image = payload.user.image;
                 state.driverLicense = payload.user.driverLicense;
                 state.identityCard = payload.user.identityCard;
+                state.role = payload.user.role;
+
             })
             .addCase(updateUserProfile.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = true;
+                state.errorMessage = payload;
+            })
+            .addCase(registerAsOwner.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(registerAsOwner.fulfilled, (state) => {
+                state.loading = false;
+                state.registered = "pending"; // Cập nhật registered khi nhấn nút
+            })
+            .addCase(registerAsOwner.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = true;
                 state.errorMessage = payload;

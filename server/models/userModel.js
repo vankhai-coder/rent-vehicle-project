@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
         image: { type: String }, 
         isBanned: { type: Boolean, default: false },
         role: { type: String, enum: ["customer", "admin", "owner"], required: true, default: 'customer' },
+        registered: { type: String, enum: ["false", "pending", "true"], default: "false" }, // Thêm thuộc tính
         driverLicense: {
             before: { type: String },
             after: { type: String }
@@ -27,6 +28,7 @@ const userSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
 
 // middleware  : 
 // hash password before save (use for new or update password) :

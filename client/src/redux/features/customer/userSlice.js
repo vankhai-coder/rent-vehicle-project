@@ -11,6 +11,7 @@ const initialState = {
     updatePasswordSuccess : false,
     fullName : '' , 
     email : '',
+    registered: "",
     users: [] // Thêm mảng users vào initialState
 };
 
@@ -76,6 +77,19 @@ export const getUsers = createAsyncThunk('user/getUsers', async (_, { rejectWith
         return rejectWithValue(error.response?.data?.message || 'Error when fetching users');
     }
 });
+
+// Async function for updating the registered status of a user
+export const updateUserRegistered = createAsyncThunk(
+    'user/updateUserRegistered',
+    async ({ userId, registered }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.patch(`/api/users/${userId}/update-registered`, { registered });
+            return { userId, registered }; // Trả về userId và trạng thái mới
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Error updating registered status');
+        }
+    }
+);
 
 
 
@@ -211,10 +225,23 @@ const userSlice = createSlice({
             .addCase(getUsers.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            .addCase(updateUserRegistered.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateUserRegistered.fulfilled, (state, action) => {
+                state.loading = false;
+                const { userId, registered } = action.payload;
+                state.users = state.users.map(user =>
+                    user._id === userId ? { ...user, registered } : user
+                );
+            })
+            .addCase(updateUserRegistered.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
-
     }
-})
+});
 
 export const {setUpdatePasswordFalse , resetUser} = userSlice.actions
 export default userSlice.reducer
