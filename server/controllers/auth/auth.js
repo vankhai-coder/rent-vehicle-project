@@ -69,8 +69,7 @@ export const login = async (req, res) => {
             httpOnly: true,
             sameSite: 'Strict',
         })
-        // await for 3 second : 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      
         // response
         return res.status(200).json({ error: false, message: 'Log in successfully!', user: { email: user.email, fullName: user.fullName, userId: user._id, role: user.role, userImage: user.image } })
     } catch (error) {
@@ -120,8 +119,7 @@ export const updatePassword = async (req, res) => {
         user.password = newPassword
         // save : 
         await user.save()
-        // await for 3 second : 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+       
         // response : 
         return res.status(200).json({ error: false, message: "Update password successfully!" })
     } catch (error) {
@@ -224,8 +222,7 @@ export const updateProfile = async (req, res) => {
 
         // Save updated user
         await user.save();
-        // await for 1 second :
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+       
 
         // Return updated user
         return res.status(200).json({ message: "Profile updated successfully", user });
