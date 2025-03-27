@@ -3,7 +3,7 @@ import React from 'react';
 function OwnerProfile({ name, image, bio, reviews, joinDate, numberOfStores }) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-lg ml-0">
-      <h2 className="text-xl font-semibold mb-4">Car Owner</h2>
+      <h2 className="text-xl font-semibold mb-4">Motobile Owner</h2>
       <div className="flex items-center mb-4">
         <img
           src={image}

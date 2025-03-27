@@ -4,23 +4,23 @@ const AboutUs = () => {
   const faqData = [
     {
       question: 'How does it works?',
-      answer: 'Imperdiet ut tristique viverra nunc. Ultrices orci vel auctor cursus turpis nibh placerat massa. Fermentum urna ut at et in. Turpis aliquet cras hendrerit enim condimentum. Condimentum interdum risus bibendum urna. Augue aliquet varius faucibus ut integer tristique ut. Pellentesque id nibh sed nulla non nulla.',
+      answer: 'You search your vehicle type and location and select the vehicle you want to rent.',
     },
     {
-      question: 'Can I rent a car without a credit card?',
-      answer: 'Yes, some car rental companies allow you to rent a car without a credit card. However, you will likely need to provide a debit card or cash deposit and meet certain age and residency requirements.',
+      question: 'Can I rent a motoblie without a credit card?',
+      answer: ' Yes, you can rent a motorcycle without a credit card as long as you have a valid driver\'s license.',
     },
     {
-      question: 'What are the requirements for renting a car?',
-      answer: 'Generally, you need a valid driver\'s license, be at least 21 years old (or 25 in some cases), and have a credit or debit card. Some companies may also require proof of insurance.',
+      question: 'What are the requirements for renting a motobile?',
+      answer: 'You must be at least 18 years old and have a valid driver\'s license.',
     },
     {
-      question: 'Does Car Rental allow me to tow with or attach a hitch to the rental vehicle?',
-      answer: 'Most car rental companies do not allow towing or attaching hitches to their vehicles due to liability and safety concerns. It\'s best to check with the specific company you are renting from.',
+      question: 'Does Motobile Rental allow me to tow with or attach a hitch to the rental vehicle?',
+      answer: 'Yes, most car rental companies allow towing or attaching a hitch to the rental vehicle, depending on the specific company you are renting from.',
     },
     {
-      question: 'Does Car Rental offer coverage products for purchase with my rental?',
-      answer: 'Yes, most car rental companies offer various coverage products, such as Loss Damage Waiver (LDW), Liability Protection, and Personal Accident Insurance. These products can provide additional protection during your rental period.',
+      question: 'Does Motobile Rental offer coverage products for purchase with my rental?',
+      answer: 'Yes, most car rental companies offer coverage products for purchase with your rental.',
     },
   ];
 
@@ -37,13 +37,13 @@ const AboutUs = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">About Us</h2>
-            <p className="text-gray-600 text-sm">Home / About Us</p>
+            
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1 flex items-center justify-center">
               <h3 className="text-4xl font-bold text-gray-800 text-center md:text-left">
-                Where every drive feels extraordinary
+              where every experience is best
               </h3>
             </div>
 
@@ -51,28 +51,28 @@ const AboutUs = () => {
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Variety Brands</h4>
                 <p className="text-gray-600">
-                  Platea non auctor fermentum sollicitudin. Eget adipiscing augue sit quam natoque ornare cursus viverra odio.
+                We offer you the best variety of vehicles. You can choose from a wide range of vehicles to suit your needs. Whether you are looking for a car, motorcycle, or RV, we have got you covered.
                 </p>
               </div>
 
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Awesome Support</h4>
                 <p className="text-gray-600">
-                  Eget adipiscing augue sit quam natoque ornare cursus viverra odio. Diam quam gravida ultricies velit.
+                  If you have any queston tell to us. We are here to help you 24/7.
                 </p>
               </div>
 
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Maximum Freedom</h4>
                 <p className="text-gray-600">
-                  Diam quam gravida ultricies velit duis consequat integer. Est aliquam posuere vel rhoncus massa volutpat in.
+                  Rent vehickes you want , go to every where you want.
                 </p>
               </div>
 
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Flexibility On The Go</h4>
                 <p className="text-gray-600">
-                  Vitae pretium nulla sed quam id nisi semper. Vel non in proin egestas dis. faucibus rhoncus, iaculis dignissim aenean pellentesque nisi.
+                  Rent a vehicle from us and make your trip unforgettable, we are here to help you.
                 </p>
               </div>
             </div>
@@ -114,7 +114,7 @@ const AboutUs = () => {
           <div className="text-left">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Unlock unforgettable memories on the road</h2>
             <p className="text-gray-600 mb-6">
-              Mliquam adipiscing velit semper modi. Parus nan eu cursus porttitor laique et gravida. Quis nunc. Mandare gravida ultrices carper.
+              Let us take you on a journey to explore the world. We offer a wide range of vehicles to suit your needs. Whether you are looking for a car, motorcycle, or RV, we have got you covered. Our vehicles are well-maintained and ready to hit the road. Rent a vehicle from us and make your trip unforgettable.
             </p>
 
             <ul className="space-y-4">
@@ -122,25 +122,25 @@ const AboutUs = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <p className="text-gray-700">Velit semper modi. Parus nan eu cursus porttitor laique et gravida...</p>
+                <p className="text-gray-700">With a wide range of vehicles to choose from.</p>
               </li>
               <li className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <p className="text-gray-700">Parus nan eu cursus porttitor laique et gravida. Quis nunc.</p>
+                <p className="text-gray-700">We offer a wide range of vehicles to choose from.</p>
               </li>
               <li className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <p className="text-gray-700">Mliquam adipiscing velit semper modi. Nunc nan eu cursus porttitor.</p>
+                <p className="text-gray-700">Give you the best experience.</p>
               </li>
               <li className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <p className="text-gray-700">Quis nunc ultrices gravida ullamcorper.</p>
+                <p className="text-gray-700">We have got you covered.</p>
               </li>
             </ul>
           </div>
@@ -167,15 +167,15 @@ const AboutUs = () => {
               <div className="p-8">
                 <p className="text-4xl text-gray-400 mb-4">“</p>
                 <p className="text-gray-700 mb-6">
-                  Et aliquet netus at sapien pellentesque mollis nec dignissim maecenas. Amet erat volutpat quisque odio purus feugiat. In gravida neque.
+                  This is the best vehicle rental service I have ever used. The staff is friendly and the vehicles are in great condition. I highly recommend this service to anyone looking for a reliable vehicle rental service.
                 </p>
                 <div className="flex justify-center">
                   <div className="w-16 h-16 rounded-full bg-gray-200  bg-cover " style={{ backgroundImage: "url('/default_avt.jpg')" }}></div> {/* Blurred Profile Image */}
                 </div>
               </div>
               <div className="bg-purple-100 p-4 text-center">
-                <p className="text-sm text-gray-600">Kuphal LLC</p>
-                <p className="font-semibold text-purple-600">Emanuel Boyle</p>
+                <p className="text-sm text-gray-600">RV FC</p>
+                <p className="font-semibold text-purple-600">Van Khai</p>
               </div>
             </div>
 
@@ -184,15 +184,15 @@ const AboutUs = () => {
               <div className="p-8">
                 <p className="text-4xl text-gray-400 mb-4">“</p>
                 <p className="text-gray-700 mb-6">
-                  Quam neque odio urna euismod felis. Sit egestas magna in quisque famesdapibus quis sapien magna. Nisl non eget sit pellentesque tristique et.
+                This is the best vehicle rental service I have ever used. The staff is friendly and the vehicles are in great condition. I highly recommend this service to anyone looking for a reliable vehicle rental service.
                 </p>
                 <div className="flex justify-center">
                   <div className="w-16 h-16 rounded-full bg-gray-200 blur-lg"></div> {/* Blurred Profile Image */}
                 </div>
               </div>
               <div className="bg-purple-100 p-4 text-center">
-                <p className="text-sm text-gray-600">Haag LLC</p>
-                <p className="font-semibold text-purple-600">Ryder Malone</p>
+                <p className="text-sm text-gray-600">RV FC</p>
+                <p className="font-semibold text-purple-600">Thai Bao</p>
               </div>
             </div>
 
@@ -201,15 +201,15 @@ const AboutUs = () => {
               <div className="p-8">
                 <p className="text-4xl text-gray-400 mb-4">“</p>
                 <p className="text-gray-700 mb-6">
-                  Quam neque odio urna euismod felis. Sit egestas magna in quisque famesdapibus quis sapien magna. Nisl non eget sit pellentesque tristique et.
+                This is the best vehicle rental service I have ever used. The staff is friendly and the vehicles are in great condition. I highly recommend this service to anyone looking for a reliable vehicle rental service.
                 </p>
                 <div className="flex justify-center">
                   <div className="w-16 h-16 rounded-full bg-gray-200 blur-lg"></div> {/* Blurred Profile Image */}
                 </div>
               </div>
               <div className="bg-purple-100 p-4 text-center">
-                <p className="text-sm text-gray-600">Haag LLC</p>
-                <p className="font-semibold text-purple-600">Ryder Malone</p>
+                <p className="text-sm text-gray-600">RV FC</p>
+                <p className="font-semibold text-purple-600">Son Tung</p>
               </div>
             </div>
 
@@ -219,7 +219,7 @@ const AboutUs = () => {
       {/* question and answer part :  */}
       <div className="bg-white py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Top Car Rental Questions</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Top Vehicle Rental Questions</h2>
 
           <div className="space-y-4">
             {faqData.map((item, index) => (
@@ -262,10 +262,10 @@ const AboutUs = () => {
       {/* Replace '/car-image.jpg' with your car image */}
 
       <div className="relative z-10 p-8 text-white text-center md:text-left">
-        <h2 className="text-3xl font-bold mb-4">Looking for a car?</h2>
-        <p className="text-xl mb-6">+537 547-6401</p>
+        <h2 className="text-3xl font-bold mb-4">Looking for a vehicle?</h2>
+        <p className="text-xl mb-6">+84 697 260 78</p>
         <p className="mb-6 text-sm">
-          Amet cras hac orci lacus. Faucibus ipsum arcu lectus nibh sapien bibendum ullamcorper in...
+         Contact with us to get the best vehicle for your trip.
         </p>
         <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-6 rounded-full">
           Book now
