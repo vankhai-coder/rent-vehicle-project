@@ -7,13 +7,13 @@ const userSchema = new mongoose.Schema(
         age: { type: Number },
         phone: { type: String },
         email: { type: String, unique: true },
-        password: { type: String, required: true },
+        password: { type: String},
         gender: { type: String, enum: ["male", "female"] },
         address: { type: String },
         commune: { type: String },
         district: { type: String },
         province: { type: String },
-        image: { type: String }, 
+        image: { type: String },
         isBanned: { type: Boolean, default: false },
         role: { type: String, enum: ["customer", "admin", "owner"], required: true, default: 'customer' },
         driverLicense: {
@@ -23,6 +23,18 @@ const userSchema = new mongoose.Schema(
         identityCard: {
             before: { type: String },
             after: { type: String }
+        },
+        // field for oauth : 
+        authMethod: {
+            type: String,
+            enum: ['mail', 'oauth']
+        },
+        provider: {
+            type: String,
+            enum: ['google', 'facebook', 'github'], 
+        },
+        providerId: {
+            type: String,
         }
     },
     { timestamps: true }
