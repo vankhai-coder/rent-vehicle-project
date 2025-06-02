@@ -67,7 +67,7 @@ app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "em
 app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/", session: false }), (req, res) => sendJWT(req, res));
 
 // Login with Facebook
-app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["public_profile", "email"] }));
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["public_profile","email"] }));
 app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/", session: false }), (req, res) => sendJWT(req, res));
 
 // Login with GitHub
