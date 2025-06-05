@@ -5,6 +5,7 @@ import cors from 'cors'
 import path from 'path'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
+import jwt from 'jsonwebtoken'
 
 // load passport config : 
 import './config/passport.js'
@@ -63,21 +64,55 @@ app.use('/api/auth', authRoutes)
 // authentication routes for OAUTH :
 
 // Login with Google
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/", session: false }), (req, res) => sendJWT(req, res));
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"], prompt: 'consent' }));
+app.get("/auth/google/callback", (req, res, next) => {
+    passport.authenticate("google", { session: false }, (err, user, info) => {
+        if (err || !user) {
+            if (req.query.error === "access_denied") {
+                return res.status(403).json({ success: false, message: "User denied access to Google OAuth." });
+            }
+            return res.status(401).json({ success: false, message: "Authentication failed." });
+        }
+        // Generate JWT & Send as Cookie : 
+        sendJWT(user ,res);
+    })(req, res, next);
+});
 
 // Login with Facebook
-app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["public_profile","email"] }));
-app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/", session: false }), (req, res) => sendJWT(req, res));
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["public_profile", "email"], prompt: 'consent' }));
+app.get("/auth/facebook/callback", (req, res, next) => {
+    passport.authenticate("facebook", { session: false }, (err, user, info) => {
+        if (err || !user) {
+            if (req.query.error === "access_denied") {
+                return res.status(403).json({ success: false, message: "User denied access to Facebook OAuth." });
+            }
+            return res.status(401).json({ success: false, message: "Authentication failed." });
+        }
+        // Generate JWT & Send as Cookie : 
+        sendJWT(user , res);
+    })(req, res, next);
+});
 
 // Login with GitHub
-app.get("/auth/github", passport.authenticate("github", { scope: ["repo", "user", "user:email"] }),);
-app.get("/auth/github/callback", passport.authenticate("github", { failureRedirect: "/", session: false }), (req, res) => sendJWT(req, res));
+app.get("/auth/github", passport.authenticate("github", { scope: ["user:email", 'public_profile'], prompt: 'consent' }),);
+app.get("/auth/github/callback", (req, res, next) => {
+    passport.authenticate("github", { session: false }, (err, user, info) => {
+        if (err || !user) {
+            if (req.query.error === "access_denied") {
+                return res.status(403).json({ success: false, message: "User denied access to Github OAuth." });
+            }
+            return res.status(401).json({ success: false, message: "Authentication failed." });
+        }
+        // Generate JWT & Send as Cookie : 
+        sendJWT(user , res);
+    })(req, res, next);
+});
 
 // Generate JWT & Send as Cookie
-function sendJWT(req, res) {
+function sendJWT(user , res) {
     // get token that create in Strategy callback : 
-    const { token } = req.user;
+    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
+
     // set cookie : 
     res.cookie('jwt_token', token, {
         maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day , 

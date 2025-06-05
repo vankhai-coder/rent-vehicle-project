@@ -14,6 +14,7 @@ import CustomerDashboard from "./pages/customer/CustomerDashboard"
 import AdminDashboard from './pages/admin/AdminDashboard'
 import OwnerDashboard from "./pages/owner/OwnerDashboard"
 import Details from "./pages/customer/Detail"
+import { RejectOauth } from "./pages/customer/RejectOauth"
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* reject-oauth :  */}
+          <Route path="/reject-oauth" element={<RejectOauth />} />
 
           {/* customer */}
           <Route path="/vehicle" element={<Vehicle />} />

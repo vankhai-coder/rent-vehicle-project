@@ -4,30 +4,33 @@ import { Strategy as FacebookStrategy } from 'passport-facebook'
 import { Strategy as GitHubStrategy } from 'passport-github'
 import User from '../models/userModel.js'
 import dotenv from 'dotenv'
-import jwt from 'jsonwebtoken'
 dotenv.config()
 
 
 // Common OAuth Callback Function
 async function handleOAuthCallback(accessToken, refreshToken, profile, done, provider) {
-    let user = await User.findOne({ providerId: profile.id });
+    try {
+        let user = await User.findOne({ providerId: profile.id, provider });
 
-    if (!user) {
-        user = new User({
-            provider,
-            providerId: profile.id,
-            email: profile.emails?.[0]?.value || "",
-            fullName: profile.displayName,
-            image: profile.photos?.[0]?.value || "",
-            role: 'customer'
-        });
-        await user.save();
+        if (!user) {
+            user = new User({
+                provider,
+                providerId: profile.id,
+                email: profile.emails?.[0]?.value || "",
+                fullName: profile.displayName,
+                image: profile.photos?.[0]?.value || "",
+                role: 'customer',
+                authMethod: 'oauth'
+
+            });
+            await user.save();
+        }
+        return done(null, user);
+    } catch (error) {
+        console.log('error when handle OAuth callback : ', error);
+        
+        return done(error, null);
     }
-
-    // Generate JWT with user role
-    const token = jwt.sign({ userId: user.id, role: user.role}, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
-
-    done(null, { user, token });
 }
 
 // Google OAuth Strategy

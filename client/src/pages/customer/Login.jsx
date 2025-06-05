@@ -49,6 +49,12 @@ const Login = () => {
         }
     }, [])
 
+    // handle login by oauth : 
+    const handleLoginByOauth = (provider) => {
+        window.location.href = `/auth/${provider}`
+        
+    }
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -151,25 +157,28 @@ const Login = () => {
 
                         <div className="mt-6 grid grid-cols-3 gap-3">
                             <div>
-                                <a href="#"
+                                <button
+                                    onClick={() => { handleLoginByOauth('facebook') }}
                                     className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                                     <img className="h-5 w-5" src="https://www.svgrepo.com/show/512120/facebook-176.svg"
                                         alt="" />
-                                </a>
+                                </button>
                             </div>
                             <div>
-                                <a href="#"
+                                <button
+                                    onClick={() => { handleLoginByOauth('github') }}
                                     className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                    <img className="h-5 w-5" src="https://www.svgrepo.com/show/513008/twitter-154.svg"
+                                    <img className="h-5 w-5" src="https://www.svgrepo.com/show/512317/github-142.svg"
                                         alt="" />
-                                </a>
+                                </button>
                             </div>
                             <div>
-                                <a href="#"
+                                <button
+                                    onClick={() => { handleLoginByOauth('google') }}
                                     className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                                     <img className="h-6 w-6" src="https://www.svgrepo.com/show/506498/google.svg"
                                         alt="" />
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>

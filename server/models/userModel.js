@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
         fullName: { type: String },
         age: { type: Number },
         phone: { type: String },
-        email: { type: String, unique: true },
+        email: { type: String }, 
         password: { type: String},
         gender: { type: String, enum: ["male", "female"] },
         address: { type: String },
@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema(
         },
         identityCard: {
             before: { type: String },
-            after: { type: String }
-        },
+            after: { type: String } 
+        }, 
         // field for oauth : 
         authMethod: {
             type: String,
@@ -39,32 +39,6 @@ const userSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-
-// middleware  : 
-// hash password before save (use for new or update password) :
-userSchema.pre('save', async function (next) {
-    try {
-        // if password is not change : 
-        if (!this.isModified('password')) return next()
-        // hash password if it is new or change :
-        this.password = await bcrypt.hash(this.password, 10)
-        next()
-    } catch (error) {
-        console.log('Error when hashpassword : ', error.message);
-        next()
-    }
-})
-
-// instance method for compare password : 
-userSchema.methods.isPasswordCorrect = async function (enteredPassword) {
-    try {
-        return await bcrypt.compare(enteredPassword, this.password);
-    } catch (error) {
-        console.error("Error comparing password: ", error);
-        return false;
-    }
-};
-
 
 // create model : 
 const User = mongoose.model("User", userSchema);
