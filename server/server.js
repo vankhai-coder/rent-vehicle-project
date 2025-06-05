@@ -37,8 +37,7 @@ app.use(express.json({ limit: '50mb' }))
 app.use(urlencoded({ extended: true, limit: '50mb' }))
 app.use(cookieParser())
 app.use(cors({
-    // origin : 'https://rent-vehicle-project.onrender.com' ,
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_ORIGIN,
     methods: 'GET,POST,PUT,DELETE,PATCH',
     allowedHeaders: "Content-Type,Authorization",
     credentials: true
@@ -74,7 +73,7 @@ app.get("/auth/google/callback", (req, res, next) => {
             return res.status(401).json({ success: false, message: "Authentication failed." });
         }
         // Generate JWT & Send as Cookie : 
-        sendJWT(user ,res);
+        sendJWT(user, res);
     })(req, res, next);
 });
 
@@ -89,7 +88,7 @@ app.get("/auth/facebook/callback", (req, res, next) => {
             return res.status(401).json({ success: false, message: "Authentication failed." });
         }
         // Generate JWT & Send as Cookie : 
-        sendJWT(user , res);
+        sendJWT(user, res);
     })(req, res, next);
 });
 
@@ -104,12 +103,12 @@ app.get("/auth/github/callback", (req, res, next) => {
             return res.status(401).json({ success: false, message: "Authentication failed." });
         }
         // Generate JWT & Send as Cookie : 
-        sendJWT(user , res);
+        sendJWT(user, res);
     })(req, res, next);
 });
 
 // Generate JWT & Send as Cookie
-function sendJWT(user , res) {
+function sendJWT(user, res) {
     // get token that create in Strategy callback : 
     const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
 
@@ -119,8 +118,9 @@ function sendJWT(user , res) {
         httpOnly: true,
         sameSite: 'Strict',
     })
-    // return to homepage : 
-    return res.status(200).json({ message: 'authenticated with oauth successfully!' })
+    // return to  login with param oauth=success : 
+    // return res.status(200).json({ message: 'authenticated with oauth successfully!', user: { email: user.email, fullName: user.fullName, userId: user._id, role: user.role, userImage: user.image } })
+    return res.redirect(`${process.env.CLIENT_ORIGIN}/login?oauth=success`)
 }
 
 

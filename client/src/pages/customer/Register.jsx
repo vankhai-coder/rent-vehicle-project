@@ -26,13 +26,18 @@ const Register = () => {
             toast.error('Confirm password is incorrect!')
             return
         }
-       await dispatch(registerUser({ email, password }))
+        await dispatch(registerUser({ email, password }))
+    }
+
+    // handle login by oauth : 
+    const handleLoginByOauth = (provider) => {
+        window.location.href = `http://localhost:5000/auth/${provider}`
     }
     useEffect(() => {
         // toast : 
         if (userId) {
             toast.success('Register successfully!')
-        window.scrollTo(0, 0);
+            window.scrollTo(0, 0);
 
             navigate('/')
         } else {
@@ -64,7 +69,7 @@ const Register = () => {
                                 Email address
                             </label>
                             <div className="mt-1">
-                                <input id="email" name="email" type=""  required
+                                <input id="email" name="email" type="" required
                                     className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                     placeholder="Enter your email address"
                                     value={email}
@@ -122,8 +127,8 @@ const Register = () => {
                                  border-transparent text-sm font-medium rounded-md text-white bg-indigo-600
                                   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2
                                    focus:ring-indigo-500"
-                                   >
-                               {loading ? <Loader className='animate-spin' /> : "Register"}
+                            >
+                                {loading ? <Loader className='animate-spin' /> : "Register"}
                             </button>
                         </div>
                     </form>
@@ -142,25 +147,34 @@ const Register = () => {
 
                         <div className="mt-6 grid grid-cols-3 gap-3">
                             <div>
-                                <a href="#"
+                                <button
+                                    onClick={() => {
+                                        handleLoginByOauth('facebook')
+                                    }}
                                     className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                                     <img className="h-5 w-5" src="https://www.svgrepo.com/show/512120/facebook-176.svg"
                                         alt="" />
-                                </a>
+                                </button>
                             </div>
                             <div>
-                                <a href="#"
+                                <button
+                                    onClick={() => {
+                                        handleLoginByOauth('github')
+                                    }}
                                     className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                    <img className="h-5 w-5" src="https://www.svgrepo.com/show/513008/twitter-154.svg"
+                                    <img className="h-5 w-5" src="https://www.svgrepo.com/show/512317/github-142.svg"
                                         alt="" />
-                                </a>
+                                </button>
                             </div>
                             <div>
-                                <a href="#"
+                                <button
+                                    onClick={() => {
+                                        handleLoginByOauth('google')
+                                    }}
                                     className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                                     <img className="h-6 w-6" src="https://www.svgrepo.com/show/506498/google.svg"
                                         alt="" />
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>

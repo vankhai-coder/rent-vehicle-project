@@ -69,12 +69,26 @@ export const login = async (req, res) => {
             httpOnly: true,
             sameSite: 'Strict',
         })
-      
+
         // response
         return res.status(200).json({ error: false, message: 'Log in successfully!', user: { email: user.email, fullName: user.fullName, userId: user._id, role: user.role, userImage: user.image } })
     } catch (error) {
         console.log("error in login : ", error.message);
         return res.status(500).json({ error: true, message: 'Internal Server Error!' })
+    }
+}
+
+export const getUser = async (req, res) => {
+    const { userId } = req.user
+    try {
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(400).json({ message: 'can not find this user!' })
+        }
+        return res.status(200).json({ user: { email: user.email, fullName: user.fullName, userId: user._id, role: user.role, userImage: user.image } })
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal server error!' })
     }
 }
 
@@ -119,7 +133,7 @@ export const updatePassword = async (req, res) => {
         user.password = newPassword
         // save : 
         await user.save()
-       
+
         // response : 
         return res.status(200).json({ error: false, message: "Update password successfully!" })
     } catch (error) {
@@ -222,7 +236,7 @@ export const updateProfile = async (req, res) => {
 
         // Save updated user
         await user.save();
-       
+
 
         // Return updated user
         return res.status(200).json({ message: "Profile updated successfully", user });

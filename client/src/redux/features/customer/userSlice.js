@@ -8,19 +8,29 @@ const initialState = {
     error: null,
     errorMessage: '',
     userImage: '',
-    updatePasswordSuccess : false,
-    fullName : '' , 
-    email : ''
+    updatePasswordSuccess: false,
+    fullName: '',
+    email: ''
 };
 
 // Async function for user login:
-export const loginUser = createAsyncThunk('user/loginUser', async ({ email, password }, { rejectWithValue }) => {
+export const loginUserByEmail = createAsyncThunk('user/loginUserByEmail', async ({ email, password }, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.post('/api/auth/login', { email, password })
         return response.data
     } catch (error) {
-        console.log('error when login user : ', error);
-        return rejectWithValue(error.response?.data?.message || 'Error when login')
+        console.log('error when login user by email: ', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when login user by email')
+    }
+})
+// Async function for get user : 
+export const getUser = createAsyncThunk('user/login/getUser', async (_, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.get('/api/auth/getUser')
+        return response.data
+    } catch (error) {
+        console.log('error when get user : ', error);
+        return rejectWithValue(error.response?.data?.message || 'Error when get user')
     }
 })
 // Async function for user registration:
@@ -59,9 +69,9 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setUpdatePasswordFalse : (state)=> {
-            state.updatePasswordSuccess  = false 
-        } ,
+        setUpdatePasswordFalse: (state) => {
+            state.updatePasswordSuccess = false
+        },
         resetUser: (state) => {
             state.userId = null
             state.role = null
@@ -76,8 +86,8 @@ const userSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // login : 
-            .addCase(loginUser.pending, (state) => {
+            // login with email: 
+            .addCase(loginUserByEmail.pending, (state) => {
                 state.userId = null
                 state.role = null
                 state.loading = true
@@ -85,7 +95,7 @@ const userSlice = createSlice({
                 state.errorMessage = ''
                 state.userImage = ''
             })
-            .addCase(loginUser.fulfilled, (state, action) => {
+            .addCase(loginUserByEmail.fulfilled, (state, action) => {
                 state.userId = action.payload.user.userId
                 state.role = action.payload.user.role
                 state.loading = false
@@ -95,7 +105,34 @@ const userSlice = createSlice({
                 state.fullName = action.payload.user.fullName
                 state.email = action.payload.user.email
             })
-            .addCase(loginUser.rejected, (state, action) => {
+            .addCase(loginUserByEmail.rejected, (state, action) => {
+                state.userId = null
+                state.role = null
+                state.loading = false
+                state.error = true
+                state.errorMessage = action.payload
+                state.userImage = ''
+            })
+            // get user : 
+            .addCase(getUser.pending, (state) => {
+                state.userId = null
+                state.role = null
+                state.loading = true
+                state.error = false
+                state.errorMessage = ''
+                state.userImage = ''
+            })
+            .addCase(getUser.fulfilled, (state, action) => {
+                state.userId = action.payload.user.userId
+                state.role = action.payload.user.role
+                state.loading = false
+                state.error = false
+                state.errorMessage = ''
+                state.userImage = action.payload.user.userImage
+                state.fullName = action.payload.user.fullName
+                state.email = action.payload.user.email
+            })
+            .addCase(getUser.rejected, (state, action) => {
                 state.userId = null
                 state.role = null
                 state.loading = false
@@ -158,25 +195,25 @@ const userSlice = createSlice({
                 state.loading = true;
                 state.error = false;
                 state.errorMessage = '';
-                state.updatePasswordSuccess = false  
+                state.updatePasswordSuccess = false
 
             })
             .addCase(updatePassword.fulfilled, (state) => {
                 state.loading = false;
                 state.error = false;
                 state.errorMessage = '';
-                state.updatePasswordSuccess = true 
+                state.updatePasswordSuccess = true
             })
             .addCase(updatePassword.rejected, (state, action) => {
                 state.loading = false;
                 state.error = true;
                 state.errorMessage = action.payload;
-                state.updatePasswordSuccess = false  
+                state.updatePasswordSuccess = false
 
             });
 
     }
 })
 
-export const {setUpdatePasswordFalse , resetUser} = userSlice.actions
+export const { setUpdatePasswordFalse, resetUser } = userSlice.actions
 export default userSlice.reducer
