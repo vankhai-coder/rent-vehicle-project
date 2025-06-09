@@ -2,6 +2,10 @@ import User from '../../models/userModel.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import cloudinary from '../../config/cloudinary.js'
+import crypto from 'crypto'
+import { sendEmail } from '../../config/email.js'
+import dotenv from 'dotenv'
+dotenv.config({ path: '../../../.env' })
 
 export const register = async (req, res) => {
     try {
@@ -11,28 +15,26 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: true, message: 'All fields required!' })
         }
         // check if user exist : 
-        const existUser = await User.findOne({ email })
+        const existUser = await User.findOne({ email, authMethod: 'mail' })
         if (existUser) {
-            return res.status(400).json({ error: true, message: 'email already exist!' })
+            return res.status(400).json({ error: true, message: 'This email using login with email already in use!' })
         }
         // if email is ok : 
-        const newUser = await User.create({ email, password })
+        // hash password : 
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        // create verify token for this email : 
+        const verifyToken = crypto.randomBytes(32).toString('hex')
+
+        // create new user : 
+        const newUser = await User.create({ email, password: hashedPassword, authMethod: 'mail', verifyToken })
         if (!newUser) {
             return res.status(400).json({ error: true, message: 'Error when create new user!' })
         }
-        // if create success : 
-        // generate jwt : 
-        const token = jwt.sign({ userId: newUser._id, role: newUser.role }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" })
-        // set cookie : 
-        res.cookie('jwt_token', token, {
-            maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day , 
-            httpOnly: true,
-            sameSite: 'Strict',
-        })
-        // await for 3 second : 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // send email : 
+        await sendEmail(email, 'Verify email for rent-motobike', `Click <a href="${process.env.CLIENT_ORIGIN}/register?userId=${newUser.id}&verifyToken=${verifyToken}">here</a> to verify your account!`)
         // response
-        return res.status(201).json({ error: false, message: 'User register successfully!', user: { email: newUser.email, fullName: newUser.fullName, userId: newUser._id, role: newUser.role, userImage: newUser.image } })
+        return res.status(201).json({ message: 'Send verify email successfully!', userId: newUser.id })
 
     } catch (error) {
         console.log(error);
@@ -48,19 +50,24 @@ export const login = async (req, res) => {
             return res.status(400).json({ error: true, message: "All fields required!" })
         }
         // check email exist : 
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ email, authMethod: 'mail' })
         if (!user) {
             return res.status(400).json({ error: true, message: "Invalid credential!" })
+        }
+        // check if account is verified : 
+        if (!user.isVerifyAccount) {
+            return res.status(400).json({ message: 'Account is not verified!', unverify: true })
         }
         // check if user is banned : 
         if (user.isBanned) {
             return res.status(400).json({ error: true, message: "Account is banned!" })
         }
         // check if password correct : 
-        const passwordCorrect = await user.isPasswordCorrect(password)
-        if (!passwordCorrect) {
-            return res.status(400).json({ error: true, message: "Invalid credential!" })
+        const isPasswordCorrect = await bcrypt.compare(password, user.password)
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: 'Unauthorizied! Try again!' })
         }
+
         // generate jwt : 
         const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" })
         // set cookie : 
@@ -261,3 +268,67 @@ export const getUserProfile = async (req, res) => {
         return res.status(500).json({ error: true, message: "Error fetching profile" });
     }
 };
+
+export const verifyAccount = async (req, res) => {
+    try {
+        const { userId, verifyToken } = req.body
+        if (!userId || !verifyToken) {
+            return res.status(400).json({ error: true, message: "userId,verifyToken fields required!" })
+        }
+        // find user with that id : 
+        const user = await User.findById(userId)
+
+        // if dont have user : 
+        if (!user) {
+            return res.status(400).json({ message: 'Can not verify this account , because can not find this user in database!' })
+        }
+        // if this user already verify : 
+        if (user.isVerifyAccount) {
+            return res.status(400).json({ message: 'This account already verify!' })
+        }
+        // check match token : 
+        const isMatchToken = verifyToken === user.verifyToken ? true : false
+        if (!isMatchToken) {
+            return res.status(400).json({ message: 'Can not verify this account because verify token is not match' })
+        }
+        // verify account : 
+        user.verifyToken = ''
+        user.isVerifyAccount = true
+        // save to db : 
+        await user.save()
+        // return 
+        return res.status(200).json({ message: 'Verify account successfully!', user: { email: user.email, fullName: user.fullName, userId: user._id, role: user.role, userImage: user.image } })
+    } catch (error) {
+        console.log('error when register user : ', error.message);
+        return res.status(500).json({ message: 'Internal server error!' })
+    }
+}
+
+export const resendVerifyEmail = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (!email) {
+            return res.status(400).json({ message: 'Email field is required!' })
+        }
+        // find user with this email : 
+        const user = await User.findOne({ email, authMethod: 'mail' })
+        if (!user) {
+            return res.status(400).json({ message: 'Can not find user with this email!' })
+        }
+        // if user already verify : 
+        if (user.isVerifyAccount) {
+            return res.status(400).json({ message: 'Account already verify!' })
+        }
+        // reset some fields in user document : 
+        const verifyToken = crypto.randomBytes(32).toString('hex')
+        user.verifyToken = verifyToken
+        // resend email : 
+        await sendEmail(email, 'Verify email for rent-motobike', `Click <a href="${process.env.CLIENT_ORIGIN}/register?userId=${user.id}&verifyToken=${verifyToken}">here</a> to verify your account!`)
+        // response : 
+        return res.status(200).json({ message: 'Resend successfully!' })
+
+    } catch (error) {
+        console.log('error when resend verify account email: ', error.message);
+        return res.status(500).json({ message: 'Internal server error!' })
+    }
+}

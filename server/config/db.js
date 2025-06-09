@@ -10,6 +10,6 @@ const connectDB = async () => {
         console.log(`Error when connect to db : ${error.message}`);
         process.exit(1)
     }
-}
+} 
 
 export { connectDB }

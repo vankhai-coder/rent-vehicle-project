@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useSearchParams } from 'react-router-dom'
-import { getUser, loginUserByEmail } from '@/redux/features/customer/userSlice'
+import { getUser, loginUserByEmail, resendVerifyAccount } from '@/redux/features/customer/userSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { Loader } from 'lucide-react';
@@ -10,8 +10,7 @@ import { getUserProfile } from '@/redux/features/customer/userProfileSlice'
 const Login = () => {
     // function for redux to send login : 
     const dispatch = useDispatch()
-    const { loading, error, userId, errorMessage } = useSelector(state => state.user)
-
+    const { loading, error, userId, errorMessage , verifyAccountFail } = useSelector(state => state.user)
 
     // get params : 
     const [searchParams] = useSearchParams();
@@ -35,7 +34,6 @@ const Login = () => {
         fetchData();
     }, []);
 
-
     // navigate : 
     const navigate = useNavigate()
 
@@ -47,10 +45,18 @@ const Login = () => {
         event.preventDefault()
         await dispatch(loginUserByEmail({ email, password }))
         await dispatch(getUserProfile())
-        window.scrollTo(0, 0);
 
+        window.scrollTo(0, 0);
         navigate('/')
     }
+      // resend verify email : 
+        const resendVerifyEmail = async () => {
+            if (!email) {
+                console.log('Dont have email for resend verify email!');
+                return
+            }
+            await dispatch(resendVerifyAccount({ email }))
+        }
     useEffect(() => {
         // toast : 
         if (userId) {
@@ -65,9 +71,8 @@ const Login = () => {
 
     // handle login by oauth : 
     const handleLoginByOauth = (provider) => {
-        // window.location.href = `http://localhost:5000/auth/${provider}`
-        window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
-       
+        window.location.href = `http://localhost:5000/auth/${provider}`
+        // window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
     }
 
     return (
@@ -128,12 +133,14 @@ const Login = () => {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between ">
                             <div className="flex items-center">
-                                <input id="remember_me" name="remember_me" type="checkbox"
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
-                                <label htmlFor="remember_me" className="ml-2 block text-sm text-gray-900">
-                                    Remember me
+                                <label htmlFor="remember_me" className="ml-2 block text-sm text-red-500">
+                                   {verifyAccountFail && <button 
+                                    onClick={()=> {
+                                        resendVerifyEmail()
+                                    }}
+                                   >Unverify Account, resend verify email here!</button>}
                                 </label>
                             </div>
 

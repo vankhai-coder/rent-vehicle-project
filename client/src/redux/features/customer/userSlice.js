@@ -10,7 +10,9 @@ const initialState = {
     userImage: '',
     updatePasswordSuccess: false,
     fullName: '',
-    email: ''
+    email: '',
+    verifyAccountFail: '' ,
+    resendEmailSuccess : ''
 };
 
 // Async function for user login:
@@ -43,6 +45,27 @@ export const registerUser = createAsyncThunk('user/registerUser', async ({ email
         return rejectWithValue(error.response?.data?.message || 'Error when registering');
     }
 });
+// Async funtion for verify account : 
+export const verifyAccount = createAsyncThunk('user/verify-account', async ({ userId, verifyToken }, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post('/api/auth/verify-account', { userId, verifyToken })
+        return response.data
+    } catch (error) {
+        console.log('error when verify account : ', error.message);
+        return rejectWithValue('Error when verify account!')
+    }
+})
+
+// Async function for resend verify account : 
+export const resendVerifyAccount = createAsyncThunk('user/resend-verify-account', async ({ email }, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post('/api/auth/resend-verify-email', { email })
+        return response.data
+    } catch (error) {
+        console.log('error when resend verify account email : ', error.message);
+        return rejectWithValue(error?.response?.data?.message || 'Error when resend verify account email')
+    }
+})
 // Async function for logout:
 export const logoutUser = createAsyncThunk('user/logoutUser', async (_, { rejectWithValue }) => {
     try {
@@ -112,6 +135,7 @@ const userSlice = createSlice({
                 state.error = true
                 state.errorMessage = action.payload
                 state.userImage = ''
+                state.verifyAccountFail = action.payload.unverify
             })
             // get user : 
             .addCase(getUser.pending, (state) => {
@@ -151,14 +175,15 @@ const userSlice = createSlice({
 
             })
             .addCase(registerUser.fulfilled, (state, action) => {
-                state.userId = action.payload.user.userId;
-                state.role = action.payload.user.role;
+                state.userId = action.payload.userId
+                state.role = '';
                 state.loading = false;
                 state.error = false;
                 state.errorMessage = '';
-                state.userImage = action.payload.user.userImage
-                state.fullName = action.payload.user.fullName
-                state.email = action.payload.user.email
+                state.userImage = ''
+                state.fullName = ''
+                state.email = ''
+                state.verifyAccountFail = false
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.userId = null;
@@ -167,6 +192,65 @@ const userSlice = createSlice({
                 state.error = true;
                 state.errorMessage = action.payload;
                 state.userImage = ''
+                state.verifyAccountFail = true
+            })
+            // verify account : 
+            .addCase(verifyAccount.pending, (state) => {
+                state.userId = null;
+                state.role = null;
+                state.loading = true;
+                state.error = false;
+                state.errorMessage = ''
+                state.userImage = ''
+                state.verifyAccountFail = false
+            })
+            .addCase(verifyAccount.fulfilled, (state, action) => {
+                state.userId = action.payload.user.userId
+                state.role = action.payload.user.role
+                state.loading = false
+                state.error = false
+                state.errorMessage = ''
+                state.userImage = action.payload.user.userImage
+                state.fullName = action.payload.user.fullName
+                state.email = action.payload.user.email
+                state.verifyAccountFail = true
+            })
+            .addCase(verifyAccount.rejected, (state, action) => {
+                state.userId = null;
+                state.role = null;
+                state.loading = false;
+                state.error = true;
+                state.errorMessage = action.payload;
+                state.userImage = ''
+                state.verifyAccountFail = false
+            })
+            // resend verify email : 
+            .addCase(resendVerifyAccount.pending, (state) => {
+                state.userId = null;
+                state.role = null;
+                state.loading = true;
+                state.error = false;
+                state.errorMessage = ''
+                state.userImage = ''
+                state.verifyAccountFail = false
+                state.resendEmailSuccess = false
+            })
+            .addCase(resendVerifyAccount.fulfilled, (state, action) => {
+                state.loading = false
+                state.error = false
+                state.errorMessage = ''
+                 state.verifyAccountFail = true
+                state.resendEmailSuccess = true 
+            })
+            .addCase(resendVerifyAccount.rejected, (state, action) => {
+                state.userId = null;
+                state.role = null;
+                state.loading = false;
+                state.error = true;
+                state.errorMessage = action.payload;
+                state.userImage = ''
+                state.verifyAccountFail = false
+                state.resendEmailSuccess = false 
             })
             // logout:
             .addCase(logoutUser.pending, (state) => {

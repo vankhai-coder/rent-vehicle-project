@@ -1,23 +1,26 @@
-import { registerUser } from '@/redux/features/customer/userSlice'
+import { registerUser, resendVerifyAccount, verifyAccount } from '@/redux/features/customer/userSlice'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { Loader } from 'lucide-react';
 
 const Register = () => {
-    // function for redux to send login : 
+    // function for redux to send register : 
     const dispatch = useDispatch()
-    const { loading, error, userId, errorMessage } = useSelector(state => state.user)
+    const { loading, error, errorMessage, userId, verifyAccountFail, resendEmailSuccess } = useSelector(state => state.user)
 
     // navigate : 
     const navigate = useNavigate()
-
+    const [searchParams] = useSearchParams();
+    const userIdParam = searchParams.get('userId')
+    const verifyToken = searchParams.get('verifyToken')
 
     // state for username and password : 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+
     // function for handle submit form : 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -26,28 +29,77 @@ const Register = () => {
             toast.error('Confirm password is incorrect!')
             return
         }
+        // check if password strong : 
+        if (!isStrongPassword(password)) {
+            return
+        }
         await dispatch(registerUser({ email, password }))
     }
 
     // handle login by oauth : 
     const handleLoginByOauth = (provider) => {
-        // window.location.href = `http://localhost:5000/auth/${provider}`
-        window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
+        window.location.href = `http://localhost:5000/auth/${provider}`
+        // window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
     }
-    useEffect(() => {
-        // toast : 
-        if (userId) {
-            toast.success('Register successfully!')
-            window.scrollTo(0, 0);
+    // resend verify email : 
+    const resendVerifyEmail = async () => {
+        if (!email) {
+            console.log('Dont have email for resend verify email!');
+            return
+        }
+        await dispatch(resendVerifyAccount({ email }))
+    }
+    const isStrongPassword = (password) => {
+        const minLength = 8;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasDigit = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-            navigate('/')
-        } else {
-            if (error) {
-                toast.error(errorMessage || 'Register fail ,try again!')
+        if (password.length < minLength) {
+            toast.error('Password must be at least 8 characters long');
+            return false;
+        }
+        if (!hasUpper) {
+            toast.error('Password must include at least one uppercase letter');
+            return false;
+        }
+        if (!hasLower) {
+            toast.error('Password must include at least one lowercase letter');
+            return false;
+        }
+        if (!hasDigit) {
+            toast.error('Password must include at least one number');
+            return false;
+        }
+        if (!hasSpecial) {
+            toast.error('Password must include at least one special character');
+            return false;
+        }
+        return true
+    }
+
+    // after dispatch register : 
+    useEffect(() => {
+        if (userId & !email) {
+            toast.success('Register successfuly! Check your email to verify account!')
+        }
+        if (error) {
+            toast.error('Register fail, try again!')
+        }
+    }, [error, userId])
+
+    // chenk if it is verify account link : 
+    useEffect(() => {
+        const verify = async () => {
+            if (userIdParam && verifyToken) {
+                await dispatch(verifyAccount({ userId: userIdParam, verifyToken }))
+                window.scrollTo(0, 0);
+                navigate('/login')
             }
         }
-    }, [userId, error])
-
+        verify()
+    }, [userIdParam, verifyToken])
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -113,10 +165,14 @@ const Register = () => {
                         </div>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                                <input id="remember_me" name="remember_me" type="checkbox"
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
-                                <label htmlFor="remember_me" className="ml-2 block text-sm text-gray-900">
-                                    Remember me
+                                <label htmlFor="remember_me" className="text-red-500 ml-2 block text-sm">
+                                    {verifyAccountFail === false && <button type='button' onClick={() => { resendVerifyEmail() }}>Verify fail ,click here to send email again </button>}
+                                </label>
+
+                                <label
+                                    className='text-green-600'
+                                >
+                                    {resendEmailSuccess && 'Resend verify email success! , check your email now!'}
                                 </label>
                             </div>
 

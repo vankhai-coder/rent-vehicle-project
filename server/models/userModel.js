@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema(
         fullName: { type: String },
         age: { type: Number },
         phone: { type: String },
-        email: { type: String }, 
-        password: { type: String},
+        email: { type: String },
+        password: { type: String },
         gender: { type: String, enum: ["male", "female"] },
         address: { type: String },
         commune: { type: String },
@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema(
         },
         identityCard: {
             before: { type: String },
-            after: { type: String } 
-        }, 
+            after: { type: String }
+        },
         // field for oauth : 
         authMethod: {
             type: String,
@@ -31,11 +31,19 @@ const userSchema = new mongoose.Schema(
         },
         provider: {
             type: String,
-            enum: ['google', 'facebook', 'github'], 
+            enum: ['google', 'facebook', 'github'],
         },
         providerId: {
             type: String,
-        }
+        },
+        // field for auth with email : 
+        isVerifyAccount: {
+            type: Boolean ,
+            default : false 
+        },
+        verifyToken: {
+            type: String
+        },
     },
     { timestamps: true }
 );
