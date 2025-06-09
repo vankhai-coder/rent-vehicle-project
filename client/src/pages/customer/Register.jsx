@@ -38,8 +38,8 @@ const Register = () => {
 
     // handle login by oauth : 
     const handleLoginByOauth = (provider) => {
-        window.location.href = `http://localhost:5000/auth/${provider}`
-        // window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
+        // window.location.href = `http://localhost:5000/auth/${provider}`
+        window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
     }
     // resend verify email : 
     const resendVerifyEmail = async () => {
