@@ -10,7 +10,7 @@ import { getUserProfile } from '@/redux/features/customer/userProfileSlice'
 const Login = () => {
     // function for redux to send login : 
     const dispatch = useDispatch()
-    const { loading, error, userId, errorMessage , verifyAccountFail } = useSelector(state => state.user)
+    const { loading, error, userId, errorMessage, unverifyAccount, resendEmailSuccess } = useSelector(state => state.user)
 
     // get params : 
     const [searchParams] = useSearchParams();
@@ -44,19 +44,24 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         await dispatch(loginUserByEmail({ email, password }))
-        await dispatch(getUserProfile())
 
-        window.scrollTo(0, 0);
-        navigate('/')
-    }
-      // resend verify email : 
-        const resendVerifyEmail = async () => {
-            if (!email) {
-                console.log('Dont have email for resend verify email!');
-                return
-            }
-            await dispatch(resendVerifyAccount({ email }))
+        if (userId) {
+            await dispatch(getUserProfile())
+            window.scrollTo(0, 0);
+            navigate('/')
         }
+        if (unverifyAccount) {
+            toast.error('Unverify Account!')
+        }
+    }
+    // resend verify email : 
+    const resendVerifyEmail = async () => {
+        if (!email) {
+            console.log('Dont have email for resend verify email!');
+            return
+        }
+        await dispatch(resendVerifyAccount({ email }))
+    }
     useEffect(() => {
         // toast : 
         if (userId) {
@@ -71,8 +76,8 @@ const Login = () => {
 
     // handle login by oauth : 
     const handleLoginByOauth = (provider) => {
-        // window.location.href = `http://localhost:5000/auth/${provider}`
-        window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
+        window.location.href = `http://localhost:5000/auth/${provider}`
+        // window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
     }
 
     return (
@@ -136,11 +141,13 @@ const Login = () => {
                         <div className="flex items-center justify-between ">
                             <div className="flex items-center">
                                 <label htmlFor="remember_me" className="ml-2 block text-sm text-red-500">
-                                   {verifyAccountFail && <button 
-                                    onClick={()=> {
-                                        resendVerifyEmail()
-                                    }}
-                                   >Unverify Account, resend verify email here!</button>}
+                                    {unverifyAccount === true && resendEmailSuccess !== true && <button
+                                        onClick={() => {
+                                            resendVerifyEmail()
+                                        }}
+                                    >Unverify Account, resend verify email here!</button>}
+                                    {resendEmailSuccess === true && <p className='text-green-500'>Resend email successfully! Check your email</p>}
+
                                 </label>
                             </div>
 

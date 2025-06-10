@@ -52,19 +52,23 @@ export const login = async (req, res) => {
         // check email exist : 
         const user = await User.findOne({ email, authMethod: 'mail' })
         if (!user) {
+            console.log('can not find this userId!')
             return res.status(400).json({ error: true, message: "Invalid credential!" })
         }
         // check if account is verified : 
         if (!user.isVerifyAccount) {
+            console.log('this account is not verify!')
             return res.status(400).json({ message: 'Account is not verified!', unverify: true })
         }
         // check if user is banned : 
         if (user.isBanned) {
+            console.log('this account is banned!')
             return res.status(400).json({ error: true, message: "Account is banned!" })
         }
         // check if password correct : 
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
         if (!isPasswordCorrect) {
+            console.log('password is incorrect!')
             return res.status(400).json({ message: 'Unauthorizied! Try again!' })
         }
 
@@ -273,6 +277,7 @@ export const verifyAccount = async (req, res) => {
     try {
         const { userId, verifyToken } = req.body
         if (!userId || !verifyToken) {
+            console.log('userId,verifyToken fields required!');
             return res.status(400).json({ error: true, message: "userId,verifyToken fields required!" })
         }
         // find user with that id : 
@@ -280,15 +285,18 @@ export const verifyAccount = async (req, res) => {
 
         // if dont have user : 
         if (!user) {
+            console.log("Can not verify this account , because can not find this user in database!");
             return res.status(400).json({ message: 'Can not verify this account , because can not find this user in database!' })
         }
         // if this user already verify : 
         if (user.isVerifyAccount) {
+            console.log('This account already verify!');
             return res.status(400).json({ message: 'This account already verify!' })
         }
         // check match token : 
         const isMatchToken = verifyToken === user.verifyToken ? true : false
         if (!isMatchToken) {
+            console.log('Can not verify this account because verify token is not match');
             return res.status(400).json({ message: 'Can not verify this account because verify token is not match' })
         }
         // verify account : 
@@ -308,20 +316,25 @@ export const resendVerifyEmail = async (req, res) => {
     try {
         const { email } = req.body
         if (!email) {
+            console.log('dont have email when resend!');
             return res.status(400).json({ message: 'Email field is required!' })
         }
         // find user with this email : 
         const user = await User.findOne({ email, authMethod: 'mail' })
         if (!user) {
+            console.log('can not find this user in db!')
             return res.status(400).json({ message: 'Can not find user with this email!' })
         }
         // if user already verify : 
         if (user.isVerifyAccount) {
+            console.log('this account is already verify!')
             return res.status(400).json({ message: 'Account already verify!' })
         }
         // reset some fields in user document : 
-        const verifyToken = crypto.randomBytes(32).toString('hex')
+        const verifyToken = await crypto.randomBytes(32).toString('hex')
+        console.log('created verify token!')
         user.verifyToken = verifyToken
+        await user.save()
         // resend email : 
         await sendEmail(email, 'Verify email for rent-motobike', `Click <a href="${process.env.CLIENT_ORIGIN}/register?userId=${user.id}&verifyToken=${verifyToken}">here</a> to verify your account!`)
         // response : 

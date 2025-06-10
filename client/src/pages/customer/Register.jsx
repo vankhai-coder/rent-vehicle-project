@@ -8,7 +8,7 @@ import { Loader } from 'lucide-react';
 const Register = () => {
     // function for redux to send register : 
     const dispatch = useDispatch()
-    const { loading, error, errorMessage, userId, verifyAccountFail, resendEmailSuccess } = useSelector(state => state.user)
+    const { loading, error, errorMessage, userId, verifyAccountFail, sendVerifyEmailWhenRegisterSuccess } = useSelector(state => state.user)
 
     // navigate : 
     const navigate = useNavigate()
@@ -38,8 +38,8 @@ const Register = () => {
 
     // handle login by oauth : 
     const handleLoginByOauth = (provider) => {
-        // window.location.href = `http://localhost:5000/auth/${provider}`
-        window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
+        window.location.href = `http://localhost:5000/auth/${provider}`
+        // window.location.href = `https://rent-vehicle-project.onrender.com/auth/${provider}`
     }
     // resend verify email : 
     const resendVerifyEmail = async () => {
@@ -166,13 +166,13 @@ const Register = () => {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <label htmlFor="remember_me" className="text-red-500 ml-2 block text-sm">
-                                    {verifyAccountFail === false && <button type='button' onClick={() => { resendVerifyEmail() }}>Verify fail ,click here to send email again </button>}
+                                    {verifyAccountFail === true && <button type='button' onClick={() => { resendVerifyEmail() }}>Verify fail ,click here to send email again </button>}
                                 </label>
 
                                 <label
                                     className='text-green-600'
                                 >
-                                    {resendEmailSuccess && 'Resend verify email success! , check your email now!'}
+                                    {sendVerifyEmailWhenRegisterSuccess === true && 'Resend verify email success! , check your email now!'}
                                 </label>
                             </div>
 

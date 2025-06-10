@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const axiosInstance = axios.create({
-    baseURL: 'https://rent-vehicle-project.onrender.com',
-    // baseURL: 'http://localhost:5000',
+    // baseURL: 'https://rent-vehicle-project.onrender.com',
+    baseURL: 'http://localhost:5000',
     withCredentials: true, // send cookie for each request 
     headers: {
         'Content-Type': 'application/json'

@@ -12,7 +12,10 @@ const initialState = {
     fullName: '',
     email: '',
     verifyAccountFail: '' ,
-    resendEmailSuccess : ''
+    resendEmailSuccess : '',
+    sendVerifyEmailWhenRegisterSuccess : '',
+    unverifyAccount : ''
+    
 };
 
 // Async function for user login:
@@ -135,7 +138,7 @@ const userSlice = createSlice({
                 state.error = true
                 state.errorMessage = action.payload
                 state.userImage = ''
-                state.verifyAccountFail = action.payload.unverify
+                state.unverifyAccount = true
             })
             // get user : 
             .addCase(getUser.pending, (state) => {
@@ -172,7 +175,6 @@ const userSlice = createSlice({
                 state.error = false;
                 state.errorMessage = ''
                 state.userImage = ''
-
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.userId = action.payload.userId
@@ -183,7 +185,7 @@ const userSlice = createSlice({
                 state.userImage = ''
                 state.fullName = ''
                 state.email = ''
-                state.verifyAccountFail = false
+                state.sendVerifyEmailWhenRegisterSuccess = true
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.userId = null;
@@ -202,7 +204,6 @@ const userSlice = createSlice({
                 state.error = false;
                 state.errorMessage = ''
                 state.userImage = ''
-                state.verifyAccountFail = false
             })
             .addCase(verifyAccount.fulfilled, (state, action) => {
                 state.userId = action.payload.user.userId
@@ -213,7 +214,6 @@ const userSlice = createSlice({
                 state.userImage = action.payload.user.userImage
                 state.fullName = action.payload.user.fullName
                 state.email = action.payload.user.email
-                state.verifyAccountFail = true
             })
             .addCase(verifyAccount.rejected, (state, action) => {
                 state.userId = null;
@@ -222,7 +222,7 @@ const userSlice = createSlice({
                 state.error = true;
                 state.errorMessage = action.payload;
                 state.userImage = ''
-                state.verifyAccountFail = false
+                state.verifyAccountFail = true
             })
             // resend verify email : 
             .addCase(resendVerifyAccount.pending, (state) => {
@@ -232,14 +232,12 @@ const userSlice = createSlice({
                 state.error = false;
                 state.errorMessage = ''
                 state.userImage = ''
-                state.verifyAccountFail = false
                 state.resendEmailSuccess = false
             })
             .addCase(resendVerifyAccount.fulfilled, (state, action) => {
                 state.loading = false
                 state.error = false
                 state.errorMessage = ''
-                 state.verifyAccountFail = true
                 state.resendEmailSuccess = true 
             })
             .addCase(resendVerifyAccount.rejected, (state, action) => {
@@ -249,7 +247,7 @@ const userSlice = createSlice({
                 state.error = true;
                 state.errorMessage = action.payload;
                 state.userImage = ''
-                state.verifyAccountFail = false
+                state.verifyAccountFail = true
                 state.resendEmailSuccess = false 
             })
             // logout:
