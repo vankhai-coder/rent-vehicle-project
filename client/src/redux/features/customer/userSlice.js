@@ -234,7 +234,7 @@ const userSlice = createSlice({
                 state.userImage = ''
                 state.resendEmailSuccess = false
             })
-            .addCase(resendVerifyAccount.fulfilled, (state, action) => {
+            .addCase(resendVerifyAccount.fulfilled, (state) => {
                 state.loading = false
                 state.error = false
                 state.errorMessage = ''

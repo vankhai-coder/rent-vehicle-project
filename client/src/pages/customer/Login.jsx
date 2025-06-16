@@ -44,12 +44,9 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         await dispatch(loginUserByEmail({ email, password }))
-
-        if (userId) {
-            await dispatch(getUserProfile())
-            window.scrollTo(0, 0);
-            navigate('/')
-        }
+        await dispatch(getUserProfile())
+        window.scrollTo(0, 0);
+        navigate('/')
         if (unverifyAccount) {
             toast.error('Unverify Account!')
         }

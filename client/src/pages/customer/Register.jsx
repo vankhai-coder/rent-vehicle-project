@@ -8,7 +8,7 @@ import { Loader } from 'lucide-react';
 const Register = () => {
     // function for redux to send register : 
     const dispatch = useDispatch()
-    const { loading, error, errorMessage, userId, verifyAccountFail, sendVerifyEmailWhenRegisterSuccess } = useSelector(state => state.user)
+    const { loading, error, userId, verifyAccountFail, sendVerifyEmailWhenRegisterSuccess } = useSelector(state => state.user)
 
     // navigate : 
     const navigate = useNavigate()
