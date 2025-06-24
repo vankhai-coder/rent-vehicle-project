@@ -27,6 +27,8 @@ import motobikeRoutes from './routes/owner/motobikeRoutes.js'
 // customer routes : 
 import customerSearchRoutes from './routes/customer/customerSearchRoutes.js'
 import customerBookingRoutes from './routes/customer/bookingRoutes.js'
+import customerPaymentRoutes from './routes/customer/paymentRoutes.js'
+
 // init app : 
 const app = express()
 
@@ -131,6 +133,18 @@ app.use('/api/owner/motobike', motobikeRoutes)
 // CUSTOMER ROUTES : 
 app.use('/api/customer/search', customerSearchRoutes)
 app.use('/api/customer/booking', customerBookingRoutes)
+app.use('/api/customer/payment', customerPaymentRoutes)
+
+// Stripe webhook route (must be before other routes to avoid conflicts)
+app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    try {
+        const { handleWebhook } = await import('./controllers/customer/paymentController.js');
+        await handleWebhook(req, res);
+    } catch (error) {
+        console.error('Webhook error:', error);
+        res.status(500).json({ error: 'Webhook processing failed' });
+    }
+});
 
 // ADMIN ROUTES : 
 app.use('/api/admin/view', adminRoutes)
@@ -145,7 +159,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 // port : 
-const PORT = process.env.PORT || 5001
+const PORT = process.env.PORT || 5000
 // listen port : 
 app.listen(PORT, (req, res) => {
     console.log(`App running on http://localhost:${PORT}`);

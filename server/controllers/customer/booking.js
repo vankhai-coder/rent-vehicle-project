@@ -70,7 +70,7 @@ export const bookMotobike = async (req, res) => {
             amountMotobike,
             pickUpLocation,
             dropOffLocation,
-            status: "renting", // Default status
+            status: "pending_payment", // Default status - requires payment
         });
 
         // Save the booking to the database
@@ -127,6 +127,7 @@ export const getAllBookings = async (req, res) => {
             );
 
             return {
+                _id: booking._id,
                 customerName: booking.customerId.fullName || booking.customerId.email,
                 ownerName: booking.ownerId.fullName || booking.ownerId.email,
                 motobikeName: motobikeNames.join(', '),
@@ -136,6 +137,9 @@ export const getAllBookings = async (req, res) => {
                 pickup: booking.pickUpLocation,
                 dropoff: booking.dropOffLocation,
                 status: booking.status,
+                paymentStatus: booking.paymentStatus,
+                paymentMethod: booking.paymentMethod,
+                paidAt: booking.paidAt,
                 ownerId: booking.ownerId._id,
                 customerId: booking.customerId._id,
             };
@@ -146,6 +150,41 @@ export const getAllBookings = async (req, res) => {
     } catch (error) {
         console.error('Error fetching bookings:', error.message);
         return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+// Cancel booking
+export const cancelBooking = async (req, res) => {
+    try {
+        const { bookingId } = req.params;
+        const { userId } = req.user;
+
+        const booking = await Booking.findById(bookingId);
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found' });
+        }
+
+        if (booking.customerId.toString() !== userId) {
+            return res.status(403).json({ success: false, message: 'You are not authorized to cancel this booking' });
+        }
+
+        if (['canceled', 'completed'].includes(booking.status)) {
+            return res.status(400).json({ success: false, message: `Booking is already ${booking.status} and cannot be canceled.` });
+        }
+
+        await Motobike.updateMany(
+            { _id: { $in: booking.motobike } },
+            { $pull: { bookedDate: { $in: booking.bookedDate } } }
+        );
+
+        booking.status = 'canceled';
+        booking.paymentStatus = 'canceled';
+        const updatedBooking = await booking.save();
+
+        res.status(200).json({ success: true, message: 'Booking canceled successfully', data: updatedBooking });
+    } catch (error) {
+        console.error('Error canceling booking:', error);
+        res.status(500).json({ success: false, message: 'Server error while canceling booking' });
     }
 };
 

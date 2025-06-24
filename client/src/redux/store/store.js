@@ -4,6 +4,7 @@ import userProfileReducer from '../features/customer/userProfileSlice'
 import motobikeReducer from '../features/customer/motobikeSlice'
 import bookingReducer from '../features/customer/bookingSlice'
 import billReducer from '../features/customer/billSlice'
+import paymentReducer from '../features/customer/paymentSlice'
 import ownerAddonReducer from '../features/owner/addonSlice'
 import ownerMotobikeTypeReducer from '../features/owner/motobikeTypeSlice'
 import ownerStoreLocationReducer from '../features/owner/storeLocationSlice'
@@ -24,6 +25,7 @@ export const store = configureStore({
     motobike: motobikeReducer,
     booking: bookingReducer,
     bill: billReducer,
+    payment: paymentReducer,
 
     // for owner :
     owner_addon: ownerAddonReducer,

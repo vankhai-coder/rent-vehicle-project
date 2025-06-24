@@ -51,7 +51,7 @@ const bookingSlice = createSlice({
             state.bookedDate = action.payload; // Update bookedDate
         },
         createBooking(state, action) {
-            const { image, price, name, district, ownerId, motobike, height, weight } = action.payload;
+            const { image, price, name, district, ownerId, motobike, height, weight, bookedDate } = action.payload;
             state.image = image;
             state.price = price;
             state.name = name;
@@ -60,6 +60,7 @@ const bookingSlice = createSlice({
             state.motobike = motobike;
             state.height = height;
             state.weight = weight;
+            state.bookedDate = bookedDate || [];
         },
     },
     extraReducers: (builder) => {

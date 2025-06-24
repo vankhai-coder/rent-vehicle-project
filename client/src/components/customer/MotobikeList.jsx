@@ -3,21 +3,25 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const MotobikeCard = ({ image, price, name, addOns, district, reviews, motobike, ownerId, height, weight }) => {
-
+const MotobikeCard = ({ image, price, name, addOns, district, reviews, motobike, ownerId, height, weight, selectedDates }) => {
   const navigate = useNavigate()
-  // redux : 
   const dispatch = useDispatch()
 
+  const handleCardClick = () => {
+    console.log('Motobike data being dispatched:', { image, price, name, district, ownerId, motobike, height, weight, bookedDate: selectedDates });
+    
+    // Dispatch the booking data first
+    dispatch(createBooking({ image, price, name, district, ownerId, motobike, height, weight, bookedDate: selectedDates }))
+    
+    // Then navigate after a small delay to ensure Redux state is updated
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      navigate('/rental-check')
+    }, 200)
+  }
+
   return (
-    <div className="w-full border border-gray-300 rounded-lg p-4 font-sans shadow-md hover:opacity-70"
-      // navigate to detail page : 
-      onClick={() => {
-        window.scrollTo(0, 0);
-        navigate('/detail')
-        dispatch(createBooking({ image, price, name, district, ownerId, motobike, height, weight}))
-      }}
-    >
+    <div className="w-full border border-gray-300 rounded-lg p-4 font-sans shadow-md hover:shadow-lg transition-all duration-200">
       {/* Image */}
       <div className="text-center mt-4 relative">
         <img src={image} alt={name} className="w-64 h-auto" />
@@ -53,8 +57,16 @@ const MotobikeCard = ({ image, price, name, addOns, district, reviews, motobike,
           <span className="text-sm text-blue-500 align-middle">{district}</span>
         </div>
         <div>
-          <button className="bg-blue-500 hover:bg-blue-700 border-none py-2 px-4 rounded-md text-sm text-white cursor-pointer">
-            DETAILS
+          <button 
+            onClick={handleCardClick}
+            disabled={!selectedDates || selectedDates.length === 0}
+            className={`border-none py-2 px-4 rounded-md text-sm text-white cursor-pointer transition-colors duration-200 ${
+              selectedDates && selectedDates.length > 0 
+                ? 'bg-blue-500 hover:bg-blue-700' 
+                : 'bg-gray-400 cursor-not-allowed'
+            }`}
+          >
+            {selectedDates && selectedDates.length > 0 ? 'RENT NOW' : 'SELECT DATES FIRST'}
           </button>
         </div>
       </div>
@@ -64,14 +76,14 @@ const MotobikeCard = ({ image, price, name, addOns, district, reviews, motobike,
   );
 };
 
-const MotobikeList = ({ motobikes }) => {
+const MotobikeList = ({ motobikes, selectedDates = [] }) => {
   if (motobikes.length === 0) {
     return <div>Cant find vehicle that match this filter!</div>
   }
   return (
     <div className="grid grid-cols-3 gap-8">
       {motobikes.map((bike, index) => (
-        <MotobikeCard key={index} {...bike} />
+        <MotobikeCard key={index} {...bike} selectedDates={selectedDates} />
       ))}
     </div>
   );

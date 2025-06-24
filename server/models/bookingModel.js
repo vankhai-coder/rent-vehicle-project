@@ -10,11 +10,20 @@ const bookingSchema = new mongoose.Schema(
         amountMotobike: { type: Number, required: true, min: 1 }, // Number of motobikes booked
         status: {
             type: String,
-            enum: ["canceled", "completed", "renting"],
-            default: "renting"
+            enum: ["canceled", "completed", "renting", "pending_payment"],
+            default: "pending_payment"
         }, // Booking status
         pickUpLocation: { type: String, required: true }, // Where the customer picks up the motobike
-        dropOffLocation: { type: String, required: true } // Where the customer returns the motobike
+        dropOffLocation: { type: String, required: true }, // Where the customer returns the motobike
+        // Payment related fields
+        paymentIntentId: { type: String }, // Stripe payment intent ID
+        paymentStatus: {
+            type: String,
+            enum: ["pending", "succeeded", "failed", "canceled"],
+            default: "pending"
+        },
+        paymentMethod: { type: String }, // Payment method used
+        paidAt: { type: Date }, // When payment was completed
     },
     { timestamps: true }
 );

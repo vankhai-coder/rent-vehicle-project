@@ -23,17 +23,41 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchByDates } from '@/redux/features/customer/motobikeSlice';
-const Home = () => {
 
-  const { motobikes, isLoading, error, } = useSelector(state => state.motobike)
+const Home = () => {
+  const { motobikes, isLoading, error } = useSelector(state => state.motobike)
   const dispatch = useDispatch()
   
   useEffect(() => {
-    dispatch(searchByDates({ dates: [["2025-3-18"]] }))
-  }, [])
+    const fetchInitialData = async () => {
+      try {
+        // Fetch motobikes for a default date (today)
+        const today = new Date();
+        const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+        await dispatch(searchByDates({ dates: [[formattedDate]] }));
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+        toast.error('Failed to load motobikes');
+      }
+    };
+
+    fetchInitialData();
+  }, [dispatch]);
 
   if (isLoading) {
-    return null
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500">Error: {error}</p>
+      </div>
+    );
   }
 
   return (

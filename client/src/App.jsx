@@ -15,6 +15,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import OwnerDashboard from "./pages/owner/OwnerDashboard"
 import Details from "./pages/customer/Detail"
 import { RejectOauth } from "./pages/customer/RejectOauth"
+import RentalCheck from "./pages/customer/RentalCheck"
+import PaymentSuccess from "./pages/customer/PaymentSuccess"
 
 function App() {
   return (
@@ -48,9 +50,15 @@ function App() {
 
           <Route path="/detail" element={<Details />}></Route>
 
+          {/* Payment and Rental Check Routes */}
+          <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
+            <Route path="/rental-check" element={<RentalCheck />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+          </Route>
+
           {/* customer-dashboard */}
           <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
-            <Route path="/customer-dashboard/*" element={<CustomerDashboard />} />
+            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           </Route>
 
           {/* owner */}

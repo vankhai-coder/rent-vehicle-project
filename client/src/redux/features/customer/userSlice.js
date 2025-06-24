@@ -2,20 +2,19 @@ import axiosInstance from "@/utils/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    userId: null,
-    role: null,
+    userId: localStorage.getItem('userId') || null,
+    role: localStorage.getItem('role') || null,
     loading: false,
     error: null,
     errorMessage: '',
-    userImage: '',
+    userImage: localStorage.getItem('userImage') || '',
     updatePasswordSuccess: false,
-    fullName: '',
-    email: '',
-    verifyAccountFail: '' ,
-    resendEmailSuccess : '',
-    sendVerifyEmailWhenRegisterSuccess : '',
-    unverifyAccount : ''
-    
+    fullName: localStorage.getItem('fullName') || '',
+    email: localStorage.getItem('email') || '',
+    verifyAccountFail: '',
+    resendEmailSuccess: '',
+    sendVerifyEmailWhenRegisterSuccess: '',
+    unverifyAccount: ''
 };
 
 // Async function for user login:
@@ -130,6 +129,13 @@ const userSlice = createSlice({
                 state.userImage = action.payload.user.userImage
                 state.fullName = action.payload.user.fullName
                 state.email = action.payload.user.email
+                
+                // Save to localStorage
+                localStorage.setItem('userId', action.payload.user.userId)
+                localStorage.setItem('role', action.payload.user.role)
+                localStorage.setItem('userImage', action.payload.user.userImage)
+                localStorage.setItem('fullName', action.payload.user.fullName)
+                localStorage.setItem('email', action.payload.user.email)
             })
             .addCase(loginUserByEmail.rejected, (state, action) => {
                 state.userId = null
@@ -266,6 +272,13 @@ const userSlice = createSlice({
                 state.userImage = ''
                 state.fullName = ''
                 state.email = ''
+                
+                // Clear localStorage
+                localStorage.removeItem('userId')
+                localStorage.removeItem('role')
+                localStorage.removeItem('userImage')
+                localStorage.removeItem('fullName')
+                localStorage.removeItem('email')
             })
             .addCase(logoutUser.rejected, (state, action) => {
                 state.loading = false;
