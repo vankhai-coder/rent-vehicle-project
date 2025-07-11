@@ -96,23 +96,23 @@ export const bookMotobike = async (req, res) => {
 
 // get motobikename from id : 
 const getMotobikeTypeName = async (motobikeId) => {
-  try {
-    const motobike = await Motobike.findById(motobikeId)
-      .populate('motobikeType', 'name') // only populate the `name` field from MotobikeType
-      .exec();
+    try {
+        const motobike = await Motobike.findById(motobikeId)
+            .populate('motobikeType', 'name') // only populate the `name` field from MotobikeType
+            .exec();
 
-    if (!motobike) {
-      console.log('Motobike not found');
-      return null;
+        if (!motobike) {
+            console.log('Motobike not found');
+            return null;
+        }
+
+        const motobikeTypeName = motobike.motobikeType?.name;
+        console.log('Motobike type name:', motobikeTypeName);
+        return motobikeTypeName;
+    } catch (err) {
+        console.error('Error fetching motobike type name:', err);
+        throw err;
     }
-
-    const motobikeTypeName = motobike.motobikeType?.name;
-    console.log('Motobike type name:', motobikeTypeName);
-    return motobikeTypeName;
-  } catch (err) {
-    console.error('Error fetching motobike type name:', err);
-    throw err;
-  }
 };
 
 // get all booking of : customer || owner || admin : 
@@ -228,6 +228,8 @@ export const bookingUsePayosGateway = async (req, res) => {
             "78c2c7e6-036e-4ec6-b801-4e0739e10b67",
             "a3a30e98bb461cd4f54253c1af405f4317bf29116470cfcabc5ee1016e64f52d"
         );
+        // 
+        const nameOfMotobike = await getMotobikeTypeName(motobike)
         // create link payment : 
         const body = {
             // create orderCode less than 100000 
@@ -235,9 +237,10 @@ export const bookingUsePayosGateway = async (req, res) => {
             amount: totalPrice,
             // amount: 2000,
             description: "Thanh toan don hang",
+
             items: [
                 {
-                    name: getMotobikeTypeName(motobike),
+                    name: nameOfMotobike,
                     quantity: amountMotobike,
                     price: totalPrice,
                 },
