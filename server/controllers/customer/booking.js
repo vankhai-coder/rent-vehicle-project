@@ -221,8 +221,8 @@ export const bookingUsePayosGateway = async (req, res) => {
                     price: totalPrice,
                 },
             ],
-            cancelUrl: "http://localhost:5173/cancelBooking",
-            returnUrl: `http://localhost:5173/successBooking` +
+            cancelUrl: "https://rent-vehicle-project.onrender.com/cancelBooking",
+            returnUrl: `https://rent-vehicle-project.onrender.com/successBooking` +
                 `?customerId=${customerId}` +
                 `&ownerId=${ownerId}` +
                 `&totalPrice=${totalPrice}` +
