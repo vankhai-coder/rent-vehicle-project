@@ -32,7 +32,7 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: true, message: 'Error when create new user!' })
         }
         // send email : 
-        await sendEmail(email, 'Verify email for rent-motobike', `Click <a href="${process.env.CLIENT_ORIGIN}/register?userId=${newUser.id}&verifyToken=${verifyToken}">here</a> to verify your account!`)
+        await sendEmail(email, 'Verify email for rent-motobike', `Click <a href="https://rent-vehicle-project.onrender.com/register?userId=${newUser.id}&verifyToken=${verifyToken}">here</a> to verify your account!`)
         // response
         return res.status(201).json({ message: 'Send verify email successfully!', userId: newUser.id })
 
