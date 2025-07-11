@@ -172,9 +172,10 @@ function Details() {
   };
   useEffect(() => {
     if (paymentLink) {
-      window.location.href = paymentLink;
+      window.open(paymentLink, "_blank"); // mở ở tab mới
     }
   }, [paymentLink]);
+
   return (
     <div>
       <div className="flex flex-col md:flex-row p-8 bg-white max-w-4xl mx-auto">

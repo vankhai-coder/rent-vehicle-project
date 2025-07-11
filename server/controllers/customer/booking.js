@@ -211,8 +211,8 @@ export const bookingUsePayosGateway = async (req, res) => {
         const body = {
             // create orderCode less than 100000 
             orderCode: Math.floor(Math.random() * 1_000_000_000),
-            // amount: totalPrice,
-            amount: 2000,
+            amount: totalPrice,
+            // amount: 2000,
             description: "Thanh toan don hang",
             items: [
                 {

@@ -1,10 +1,12 @@
 import { reserveBookingForSaveToDb } from "@/redux/features/customer/bookingSlice";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const SuccessBooking = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   // search params :
   const searchParams = new URLSearchParams(window.location.search);
@@ -45,7 +47,9 @@ const SuccessBooking = () => {
       );
       // toast success :
       toast.success("Booking successfully!");
+      
       // return home page :
+      navigate('/')
     };
     // call function :
     handleBooking();
@@ -58,6 +62,7 @@ const SuccessBooking = () => {
     amountMotobike,
     ownerId,
     bookedDate,
+    navigate
   ]);
 
   return (
