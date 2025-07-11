@@ -12,7 +12,7 @@ export async function sendEmail(receiver, subject, htmlElement) {
     })
 
     let mailOptions = {
-        from: process.env.EMAIL,
+        from: process.env.EMAIL_SENDER,
         to: receiver,
         subject,
         html: htmlElement
