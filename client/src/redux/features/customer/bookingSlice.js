@@ -58,8 +58,8 @@ const bookingSlice = createSlice({
             state.motobike = '';
             state.height = '';
             state.weight = '';
-            state.bookedDate = ""
-
+            state.bookedDate = "";
+            state.paymentLink = ''
         },
         setBookedDate(state, action) {
             state.bookedDate = action.payload; // Update bookedDate

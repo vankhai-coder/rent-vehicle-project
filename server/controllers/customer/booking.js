@@ -94,6 +94,27 @@ export const bookMotobike = async (req, res) => {
     }
 };
 
+// get motobikename from id : 
+const getMotobikeTypeName = async (motobikeId) => {
+  try {
+    const motobike = await Motobike.findById(motobikeId)
+      .populate('motobikeType', 'name') // only populate the `name` field from MotobikeType
+      .exec();
+
+    if (!motobike) {
+      console.log('Motobike not found');
+      return null;
+    }
+
+    const motobikeTypeName = motobike.motobikeType?.name;
+    console.log('Motobike type name:', motobikeTypeName);
+    return motobikeTypeName;
+  } catch (err) {
+    console.error('Error fetching motobike type name:', err);
+    throw err;
+  }
+};
+
 // get all booking of : customer || owner || admin : 
 export const getAllBookings = async (req, res) => {
     try {
@@ -216,7 +237,7 @@ export const bookingUsePayosGateway = async (req, res) => {
             description: "Thanh toan don hang",
             items: [
                 {
-                    name: String(motobike),
+                    name: getMotobikeTypeName(motobike),
                     quantity: amountMotobike,
                     price: totalPrice,
                 },
