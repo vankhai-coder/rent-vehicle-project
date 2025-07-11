@@ -15,6 +15,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import OwnerDashboard from "./pages/owner/OwnerDashboard"
 import Details from "./pages/customer/Detail"
 import { RejectOauth } from "./pages/customer/RejectOauth"
+import CancelBooking from "./pages/customer/CancleBooking"
+import SuccessBooking from "./pages/customer/SuccessBooking"
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path='/cancelBooking' element={<CancelBooking />} />
+          <Route path='/successBooking' element={<SuccessBooking />} />
 
           {/* Protected Routes for update profile :  */}
           <Route element={<ProtectedRoute allowedRoles={["customer", "owner", "admin"]} />}>
