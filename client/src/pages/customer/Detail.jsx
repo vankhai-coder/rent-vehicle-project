@@ -182,7 +182,7 @@ function Details() {
         {/* Left Side (Car Info) */}
         <div className="md:w-1/2">
           <h1 className="text-3xl font-bold mb-2">{name}</h1>
-          <p className="text-2xl text-gray-700 mb-4">VND{price} / day</p>
+          <p className="text-2xl text-gray-700 mb-4">VND{formatNumberWithCommas(price)} / day</p>
           <div
             className="bg-gray-200 h-64 w-full mb-4 rounded-lg bg-cover bg-center"
             style={{ backgroundImage: `url("${image}")` }}
@@ -451,7 +451,9 @@ function Details() {
               {" "}
               {/* Shadow added here */}
               <div className="flex justify-between items-center mb-4">
-                <span className="text-2xl font-semibold">VND {price} /day</span>
+                <span className="text-2xl font-semibold">
+                  VND {formatNumberWithCommas(price)} /days
+                </span>
                 <div className="flex items-center">
                   <span className="text-yellow-500 mr-1">★</span>
                   <span className="text-sm">4.9 (122 reviews)</span>

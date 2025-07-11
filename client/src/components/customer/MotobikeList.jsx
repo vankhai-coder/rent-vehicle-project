@@ -1,4 +1,5 @@
 import { createBooking } from "@/redux/features/customer/bookingSlice";
+import { formatNumberWithCommas } from "@/utils/formatFunction";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +25,7 @@ const MotobikeCard = ({ image, price, name, addOns, district, reviews, motobike,
         {/* Price and Pay Later Section */}
         <div className="flex justify-between items-center absolute top-0 left-0 right-0">
           <div>
-            <div className="text-xl font-bold text-gray-800">{price} VND /day</div>
+            <div className="text-xl font-bold text-gray-800">{formatNumberWithCommas(price)} VND /day</div>
           </div>
           <div>
             <button className="bg-blue-50 hover:bg-blue-100 border-none py-2 px-3 rounded-md text-xs text-blue-500 cursor-pointer">

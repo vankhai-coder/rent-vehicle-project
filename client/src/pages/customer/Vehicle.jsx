@@ -20,7 +20,7 @@ const Vehicle = () => {
 
   // redux : 
   const dispatch = useDispatch()
-  const { loading, error, motobikes, districts, motobikeTypes } = useSelector(state => state.motobike)
+  const { loading, motobikes, districts, motobikeTypes } = useSelector(state => state.motobike)
 
   const [dates, setDates] = useState([])
   const [district, setDistrict] = useState('none')
