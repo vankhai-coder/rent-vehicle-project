@@ -122,3 +122,164 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Responsive utilities */
+@layer utilities {
+  /* Mobile-first responsive text sizes */
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm md:text-base;
+  }
+  
+  .text-responsive-sm {
+    @apply text-sm sm:text-base md:text-lg;
+  }
+  
+  .text-responsive-base {
+    @apply text-base sm:text-lg md:text-xl;
+  }
+  
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+  
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl md:text-4xl;
+  }
+  
+  /* Responsive spacing */
+  .space-responsive {
+    @apply space-y-4 sm:space-y-6 md:space-y-8;
+  }
+  
+  .gap-responsive {
+    @apply gap-4 sm:gap-6 md:gap-8;
+  }
+  
+  /* Responsive padding */
+  .p-responsive {
+    @apply p-4 sm:p-6 md:p-8;
+  }
+  
+  .px-responsive {
+    @apply px-4 sm:px-6 md:px-8;
+  }
+  
+  .py-responsive {
+    @apply py-4 sm:py-6 md:py-8;
+  }
+  
+  /* Responsive margins */
+  .m-responsive {
+    @apply m-4 sm:m-6 md:m-8;
+  }
+  
+  .mx-responsive {
+    @apply mx-4 sm:mx-6 md:mx-8;
+  }
+  
+  .my-responsive {
+    @apply my-4 sm:my-6 md:my-8;
+  }
+  
+  /* Responsive grid */
+  .grid-responsive {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+  
+  /* Responsive flex */
+  .flex-responsive {
+    @apply flex-col sm:flex-row;
+  }
+  
+  /* Responsive width */
+  .w-responsive {
+    @apply w-full sm:w-auto;
+  }
+  
+  /* Responsive height */
+  .h-responsive {
+    @apply h-auto sm:h-full;
+  }
+}
+
+/* Custom responsive breakpoints */
+@media (max-width: 640px) {
+  .mobile-only {
+    display: block;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+}
+
+@media (min-width: 641px) {
+  .mobile-only {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Touch-friendly buttons for mobile */
+@media (max-width: 768px) {
+  button, 
+  [role="button"],
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Smooth transitions for responsive changes */
+* {
+  transition: width 0.3s ease, height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+/* Container responsive max-widths */
+.container-responsive {
+  @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 1200px;
+}
+
+/* Responsive image handling */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  table {
+    @apply text-sm;
+  }
+  
+  th, td {
+    @apply px-2 py-1;
+  }
+}
+
+/* Responsive form elements */
+@media (max-width: 640px) {
+  .form-responsive {
+    @apply space-y-4;
+  }
+  
+  .form-responsive input,
+  .form-responsive select,
+  .form-responsive textarea {
+    @apply w-full;
+  }
+}
